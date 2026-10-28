@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Login | Prep AI Dashboard</title>
+  <meta name="theme-color" content="#060813" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%234f46e5'/%3E%3Cpath d='M12 5L5 8.5L12 12L19 8.5L12 5Z' fill='white'/%3E%3C/svg%3E" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="/prepai-config.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://artcffpfotgrmbhtrtsb.supabase.co wss://artcffpfotgrmbhtrtsb.supabase.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none';" />
+
+  <style>
+    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #060813; color: #f1f5f9; min-height: 100vh; }
+    .glass { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(12px); }
+    button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- LOGIN VIEW -->
+  <section id="view-login" class="hidden min-h-screen flex items-center justify-center p-4">
+    <div class="glass rounded-3xl p-6 sm:p-8 w-full max-w-sm">
+      <div class="flex items-center gap-2.5 mb-5">
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center" aria-hidden="true">
+          <span class="text-white text-sm">✦</span>
+        </div>
+        <span class="text-xl font-black tracking-tight">Prep <span class="text-indigo-400">AI</span></span>
+      </div>
+      <h1 class="text-xl font-black">Student Login</h1>
+      <p class="text-xs text-slate-400 mt-1">Apna email aur password daalein. Account nahi hai? <a href="https://prepxai.online/" class="text-indigo-300 font-bold hover:underline">Free account banayein</a></p>
+
+      <form id="login-form" class="mt-5 space-y-3" autocomplete="on" novalidate>
+        <label for="li-email" class="block text-[11px] text-slate-400">Email</label>
+        <input id="li-email" type="email" required maxlength="120" autocomplete="email" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 focus:border-indigo-500 text-sm focus:outline-none" />
+        <label for="li-pass" class="block text-[11px] text-slate-400">Password</label>
+        <input id="li-pass" type="password" required maxlength="72" autocomplete="current-password" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 focus:border-indigo-500 text-sm focus:outline-none" />
+        <p id="li-msg" class="text-xs min-h-[1.25rem]" role="status" aria-live="polite"></p>
+        <button id="li-btn" type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 font-bold text-sm transition">Login</button>
+      </form>
+      <p class="text-[11px] text-slate-400 mt-4 text-center">Confirmation mail nahi mila? Spam folder dekhein, ya <a href="https://prepxai.online/" class="text-indigo-300 hover:underline">dobara signup</a> karein.</p>
+    </div>
+  </section>
+
+  <!-- DASHBOARD VIEW -->
+  <section id="view-dash" class="hidden max-w-4xl mx-auto px-4 py-6 sm:py-10 space-y-5">
+    <header class="flex items-center justify-between gap-3">
+      <div>
+        <p class="text-xs text-slate-400">Welcome back</p>
+        <h1 id="d-name" class="text-2xl font-black">Student</h1>
+      </div>
+      <button id="btn-logout" type="button" class="px-3 py-2 rounded-xl glass text-xs font-bold hover:bg-white/10 transition">Logout</button>
+    </header>
+
+    <div id="d-missing" class="hidden glass rounded-2xl p-4 text-sm text-amber-300">
+      Aapka profile abhi ready nahi hai. Thodi der baad refresh karein, ya support par contact karein.
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Target exam</p><p id="d-exam" class="font-extrabold text-sm mt-1">-</p></div>
+      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Days left</p><p id="d-days" class="font-extrabold text-2xl text-indigo-300 mt-1">-</p></div>
+      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Daily target</p><p id="d-hours" class="font-extrabold text-sm mt-1">-</p></div>
+      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Plan</p><p id="d-plan" class="font-extrabold text-sm mt-1">Free</p></div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-4">
+      <div class="glass rounded-2xl p-5 space-y-2 text-sm">
+        <h2 class="font-bold">Your profile</h2>
+        <p class="text-xs text-slate-400">Target year: <span id="d-year" class="text-slate-100">-</span></p>
+        <p class="text-xs text-slate-400">Exam date: <span id="d-date" class="text-slate-100">-</span></p>
+        <p class="text-xs text-slate-400">Current stage: <span id="d-stage" class="text-slate-100">-</span></p>
+        <p class="text-xs text-slate-400">Focus areas: <span id="d-weak" class="text-slate-100">-</span></p>
+      </div>
+      <div class="glass rounded-2xl p-5 space-y-3 text-sm">
+        <h2 class="font-bold">Upgrade</h2>
+        <p class="text-xs text-slate-400">Premium mein backlog recovery, AI timetable, mistake notebook aur revision calendar milta hai.</p>
+        <a href="https://prepxai.online/#pricing" class="block text-center w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-xs transition">Plans dekhein</a>
+      </div>
+    </div>
+
+    <p class="text-[11px] text-slate-500">Today's timetable, PYQ practice, mock analysis aur reminders is dashboard ke next version mein aayenge.</p>
+  </section>
+
+  <script>
+  (function () {
+    'use strict';
+    var SB_URL = 'https://artcffpfotgrmbhtrtsb.supabase.co';
+    var SB_KEY = 'sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB';
+    var $ = function (id) { return document.getElementById(id); };
+    var sb = null;
+    try { if (window.supabase && window.supabase.createClient) sb = window.supabase.createClient(SB_URL, SB_KEY); } catch (e) { sb = null; }
+
+    function show(view) {
+      $('view-login').classList.toggle('hidden', view !== 'login');
+      $('view-dash').classList.toggle('hidden', view !== 'dash');
+    }
+    function setMsg(text, kind) {
+      var m = $('li-msg');
+      m.textContent = text;
+      m.className = 'text-xs min-h-[1.25rem] ' + (kind === 'err' ? 'text-rose-300' : 'text-slate-300');
+    }
+
+    function loginError(msg) {
+      if (/invalid login/i.test(msg)) return 'Email ya password galat hai.';
+      if (/email not confirmed/i.test(msg)) return 'Email abhi confirm nahi hui. Confirmation mail ka link click karein.';
+      if (/too many|rate limit/i.test(msg)) return 'Bahut zyada koshish ho gayi. Thodi der baad try karein.';
+      return 'Login nahi ho paya: ' + msg;
+    }
+
+    $('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      if (!sb) return setMsg('Service load nahi hui. Page refresh karein.', 'err');
+      var email = $('li-email').value.trim().toLowerCase();
+      var pass = $('li-pass').value;
+      if (!email || !pass) return setMsg('Email aur password dono daalein.', 'err');
+      $('li-btn').disabled = true;
+      setMsg('Login ho raha hai...', '');
+      try {
+        var res = await sb.auth.signInWithPassword({ email: email, password: pass });
+        if (res.error) {
+          setMsg(loginError(res.error.message), 'err');
+          $('li-btn').disabled = false;
+          return;
+        }
+        await loadDashboard();
+      } catch (err) {
+        setMsg('Network error. Internet check karke dobara try karein.', 'err');
+        $('li-btn').disabled = false;
+      }
+    });
+
+    $('btn-logout').addEventListener('click', async function () {
+      if (sb) await sb.auth.signOut();
+      $('li-btn').disabled = false;
+      $('li-pass').value = '';
+      setMsg('', '');
+      show('login');
+    });
+
+    function fmtDate(iso) {
+      if (!iso) return '-';
+      var d = new Date(iso + 'T00:00:00');
+      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    async function loadDashboard() {
+      var s = await sb.auth.getSession();
+      if (!s.data || !s.data.session) return show('login');
+      var user = s.data.session.user;
+      var res = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
+      show('dash');
+      if (res.error || !res.data) {
+        $('d-missing').classList.remove('hidden');
+        $('d-name').textContent = (user.user_metadata && user.user_metadata.name) || 'Student';
+        return;
+      }
+      var p = res.data;
+      $('d-name').textContent = p.name || 'Student';
+      $('d-exam').textContent = p.target_exam || '-';
+      $('d-year').textContent = p.target_year || '-';
+      $('d-date').textContent = fmtDate(p.exam_date);
+      $('d-stage').textContent = ({ beginner: 'Beginner', midway: 'Midway (30-50%)', advanced: 'Syllabus finished' })[p.stage] || '-';
+      $('d-weak').textContent = p.weakness ? p.weakness.split(',').join(', ') : '-';
+      $('d-hours').textContent = p.daily_hours || '-';
+      $('d-plan').textContent = (p.plan || 'free').replace(/^./, function (c) { return c.toUpperCase(); });
+      if (p.exam_date && window.PREP) {
+        var days = PREP.daysLeft(p.exam_date);
+        $('d-days').textContent = days > 0 ? days : 'Done';
+      }
+    }
+
+    // Email confirmation / existing session: go straight to dashboard
+    if (sb) {
+      sb.auth.onAuthStateChange(function (event, session) {
+        if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
+          loadDashboard();
+        }
+      });
+      loadDashboard();
+    } else {
+      show('login');
+      setMsg('Service load nahi hui. Page refresh karein.', 'err');
+    }
+  })();
+  </script>
+</body>
+</html>
