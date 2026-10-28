@@ -1,194 +1,439 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="robots" content="noindex, nofollow" />
-  <title>Login | Prep AI Dashboard</title>
-  <meta name="theme-color" content="#060813" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%234f46e5'/%3E%3Cpath d='M12 5L5 8.5L12 12L19 8.5L12 5Z' fill='white'/%3E%3C/svg%3E" />
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-  <script src="/prepai-config.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://artcffpfotgrmbhtrtsb.supabase.co wss://artcffpfotgrmbhtrtsb.supabase.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none';" />
-
-  <style>
-    body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #060813; color: #f1f5f9; min-height: 100vh; }
-    .glass { background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08); backdrop-filter: blur(12px); }
-    button:focus-visible, a:focus-visible, input:focus-visible { outline: 2px solid #818cf8; outline-offset: 2px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Student Dashboard · PrepX AI</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#070914">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://artcffpfotgrmbhtrtsb.supabase.co wss://artcffpfotgrmbhtrtsb.supabase.co; frame-ancestors 'none'; base-uri 'self'; object-src 'none';">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='7' fill='%238b5cf6'/%3E%3Cpath d='M12 5l7 3.5-7 3.5-7-3.5z' fill='white'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+<style>
+:root{--a:#8b5cf6;--b:#22d3ee;--bg:#070914;--tx:#f1f3ff;--mu:#9aa3c7;--gl:rgba(255,255,255,.06);--bd:rgba(255,255,255,.12);--in:rgba(255,255,255,.07);--grad:linear-gradient(135deg,var(--a),var(--b));--ok:#34d399;--warn:#fbbf24}
+[data-theme=light]{--bg:#f4f5ff;--tx:#12142b;--mu:#5b6288;--gl:rgba(255,255,255,.7);--bd:rgba(40,40,100,.14);--in:rgba(255,255,255,.85)}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5;min-height:100vh}
+h1,h2,h3,.logo{font-family:Sora,Inter,sans-serif;letter-spacing:-.02em}
+button{font:inherit;color:inherit}
+button:focus:not(:focus-visible){outline:none}
+.gt{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.card{background:var(--gl);border:1px solid var(--bd);border-radius:18px;padding:18px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;cursor:pointer;font:600 14px Inter;padding:11px 18px;border-radius:13px;color:#fff;background:var(--grad);text-decoration:none}
+.btn.o{background:var(--gl);color:var(--tx);border:1px solid var(--bd)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.muted{color:var(--mu);font-size:13px}
+.lock{position:relative}
+.lock .lk-tag{position:absolute;top:12px;right:12px;font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;background:var(--grad);color:#fff}
+/* layout */
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+aside{border-right:1px solid var(--bd);padding:20px 14px;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;gap:6px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:19px;padding:4px 10px 18px}
+.mark{width:32px;height:32px;border-radius:10px;background:var(--grad);display:grid;place-items:center}
+.nv{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:none;border:0;cursor:pointer;color:var(--mu);font-size:14px;font-weight:500;text-align:left}
+.nv:hover{background:var(--gl);color:var(--tx)}
+.nv.on{background:var(--gl);color:var(--tx);border:1px solid var(--bd)}
+.nv .ic{width:20px;text-align:center}
+.side-foot{margin-top:auto}
+main{padding:24px 28px 60px;max-width:1100px;width:100%}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px;flex-wrap:wrap}
+.top h1{font-size:26px}
+.grid2{display:grid;gap:14px;grid-template-columns:1fr 1fr}
+.grid3{display:grid;gap:14px;grid-template-columns:repeat(3,1fr)}
+.stat b{display:block;font:800 28px Sora;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--mu)}
+.bar{height:8px;border-radius:9px;background:var(--in);overflow:hidden;margin-top:10px}
+.bar i{display:block;height:100%;background:var(--grad);width:0;transition:width .6s}
+.task{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px dashed var(--bd)}
+.task:last-child{border-bottom:0}
+.chk{width:22px;height:22px;border-radius:7px;border:1.5px solid var(--bd);background:var(--in);display:grid;place-items:center;cursor:pointer;flex:none;font-size:13px;color:#fff}
+.chk.on{background:var(--grad);border-color:transparent}
+.task.done span.t{text-decoration:line-through;color:var(--mu)}
+.task .tm{margin-left:auto;font-size:12.5px;color:var(--mu);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chip{font-size:12px;padding:4px 10px;border-radius:99px;border:1px solid var(--bd);background:var(--in);color:var(--mu)}
+.chip.weak{border-color:var(--warn);color:var(--warn)}
+.week{display:grid;gap:10px;grid-template-columns:repeat(7,1fr)}
+.day{padding:12px 8px;text-align:center;border-radius:14px;border:1px solid var(--bd);background:var(--in);font-size:12px}
+.day b{display:block;font:700 13px Sora;margin-bottom:4px}
+.day.today{border-color:var(--a)}
+.subj{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px dashed var(--bd);flex-wrap:wrap}
+.subj:last-child{border-bottom:0}
+.lvl{display:flex;gap:6px}
+.lvl button{border:1px solid var(--bd);background:var(--in);border-radius:99px;padding:5px 11px;font-size:12px;cursor:pointer;color:var(--mu)}
+.lvl button.on{background:var(--grad);color:#fff;border-color:transparent}
+.pyq a{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px dashed var(--bd);color:var(--tx);text-decoration:none;font-size:14px}
+.pyq a:last-child{border-bottom:0}
+.chat{display:flex;flex-direction:column;gap:10px;min-height:260px;max-height:420px;overflow-y:auto;padding:4px}
+.msg-u,.msg-a{max-width:85%;padding:10px 13px;border-radius:14px;font-size:14px;white-space:pre-wrap}
+.msg-u{align-self:flex-end;background:var(--grad);color:#fff}
+.msg-a{align-self:flex-start;background:var(--in);border:1px solid var(--bd)}
+.inputrow{display:flex;gap:8px;margin-top:12px}
+.inputrow input{flex:1;padding:12px 14px;border-radius:13px;border:1px solid var(--bd);background:var(--in);color:var(--tx);font:15px Inter;outline:0}
+.inputrow input:focus{border-color:var(--a)}
+.empty{text-align:center;padding:30px 10px}
+.empty b{display:block;font:700 17px Sora;margin-bottom:6px}
+.notice{font-size:12.5px;color:var(--mu);margin-top:10px}
+/* login gate */
+.gate{min-height:100vh;display:grid;place-items:center;padding:20px}
+.gate .card{max-width:380px;width:100%;text-align:center}
+.mob-nav{display:none}
+@media(max-width:860px){
+  .app{grid-template-columns:1fr}
+  aside{display:none}
+  main{padding:18px 14px 110px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .week{grid-template-columns:repeat(4,1fr)}
+  .mob-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--bg);border-top:1px solid var(--bd);padding:8px 6px calc(8px + env(safe-area-inset-bottom,0px));justify-content:space-around}
+  .mob-nav button{background:none;border:0;color:var(--mu);font-size:11px;display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;cursor:pointer}
+  .mob-nav button.on{color:var(--tx)}
+  .mob-nav .ic{font-size:18px}
+}
+</style>
 </head>
-<body class="antialiased">
+<body>
 
-  <!-- LOGIN VIEW -->
-  <section id="view-login" class="hidden min-h-screen flex items-center justify-center p-4">
-    <div class="glass rounded-3xl p-6 sm:p-8 w-full max-w-sm">
-      <div class="flex items-center gap-2.5 mb-5">
-        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-purple-600 flex items-center justify-center" aria-hidden="true">
-          <span class="text-white text-sm">✦</span>
+<div id="gate" class="gate" hidden>
+  <div class="card">
+    <div class="logo" style="justify-content:center;padding:0 0 12px"><span class="mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4-8 4-8-4z"/><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg></span>PrepX <span class="gt">AI</span></div>
+    <h3 style="margin-bottom:6px">Log in to see your plan</h3>
+    <p class="muted" style="margin-bottom:16px">Your study plan is saved to your account, so it opens on any device.</p>
+    <a class="btn" href="/?login" style="width:100%">Log in</a>
+  </div>
+</div>
+
+<div id="app" class="app" hidden>
+  <aside>
+    <div class="logo"><span class="mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4-8 4-8-4z"/><path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/></svg></span>PrepX <span class="gt">AI</span></div>
+    <button class="nv on" data-v="home"><span class="ic">🏠</span>Today</button>
+    <button class="nv" data-v="week"><span class="ic">📆</span>Weekly roadmap</button>
+    <button class="nv" data-v="subj"><span class="ic">📚</span>Subjects</button>
+    <button class="nv" data-v="pyq"><span class="ic">🧾</span>PYQ</button>
+    <button class="nv" data-v="mock"><span class="ic">🧪</span>Mock tests</button>
+    <button class="nv" data-v="doubt"><span class="ic">🤖</span>Doubt engine</button>
+    <button class="nv" data-v="plan"><span class="ic">💳</span>My plan</button>
+    <div class="side-foot"><button class="nv" id="logout"><span class="ic">↩︎</span>Log out</button></div>
+  </aside>
+
+  <main>
+    <div class="top">
+      <div><div class="muted" id="greet"></div><h1 id="title">Today</h1></div>
+      <div class="muted" id="today"></div>
+    </div>
+
+    <!-- HOME -->
+    <section data-s="home">
+      <div class="grid3" style="margin-bottom:14px">
+        <div class="card stat"><b id="dLeft">–</b><span>days to your exam</span><div class="bar"><i id="dBar"></i></div></div>
+        <div class="card stat"><b id="hrsToday">–</b><span>study time planned today</span></div>
+        <div class="card stat"><b id="streak">0</b><span>day streak</span></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="margin-bottom:4px">Today's schedule</h3>
+          <p class="muted" style="margin-bottom:8px" id="doneTxt"></p>
+          <div id="tasks"></div>
         </div>
-        <span class="text-xl font-black tracking-tight">Prep <span class="text-indigo-400">AI</span></span>
+        <div class="card">
+          <h3 style="margin-bottom:4px">This week's focus</h3>
+          <p class="muted" style="margin-bottom:12px">Weak subjects come up more often.</p>
+          <div id="focus"></div>
+        </div>
       </div>
-      <h1 class="text-xl font-black">Student Login</h1>
-      <p class="text-xs text-slate-400 mt-1">Apna email aur password daalein. Account nahi hai? <a href="https://prepxai.online/" class="text-indigo-300 font-bold hover:underline">Free account banayein</a></p>
+    </section>
 
-      <form id="login-form" class="mt-5 space-y-3" autocomplete="on" novalidate>
-        <label for="li-email" class="block text-[11px] text-slate-400">Email</label>
-        <input id="li-email" type="email" required maxlength="120" autocomplete="email" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 focus:border-indigo-500 text-sm focus:outline-none" />
-        <label for="li-pass" class="block text-[11px] text-slate-400">Password</label>
-        <input id="li-pass" type="password" required maxlength="72" autocomplete="current-password" class="w-full p-3 rounded-xl bg-white/5 border border-white/10 focus:border-indigo-500 text-sm focus:outline-none" />
-        <p id="li-msg" class="text-xs min-h-[1.25rem]" role="status" aria-live="polite"></p>
-        <button id="li-btn" type="submit" class="w-full py-3 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-60 font-bold text-sm transition">Login</button>
-      </form>
-      <p class="text-[11px] text-slate-400 mt-4 text-center">Confirmation mail nahi mila? Spam folder dekhein, ya <a href="https://prepxai.online/" class="text-indigo-300 hover:underline">dobara signup</a> karein.</p>
-    </div>
-  </section>
-
-  <!-- DASHBOARD VIEW -->
-  <section id="view-dash" class="hidden max-w-4xl mx-auto px-4 py-6 sm:py-10 space-y-5">
-    <header class="flex items-center justify-between gap-3">
-      <div>
-        <p class="text-xs text-slate-400">Welcome back</p>
-        <h1 id="d-name" class="text-2xl font-black">Student</h1>
+    <!-- WEEK -->
+    <section data-s="week" hidden>
+      <div class="card">
+        <h3 style="margin-bottom:12px">7-day roadmap</h3>
+        <div class="week" id="weekGrid"></div>
+        <p class="notice">Roadmap updates when you change subject levels in Subjects.</p>
       </div>
-      <button id="btn-logout" type="button" class="px-3 py-2 rounded-xl glass text-xs font-bold hover:bg-white/10 transition">Logout</button>
-    </header>
+    </section>
 
-    <div id="d-missing" class="hidden glass rounded-2xl p-4 text-sm text-amber-300">
-      Aapka profile abhi ready nahi hai. Thodi der baad refresh karein, ya support par contact karein.
-    </div>
+    <!-- SUBJECTS -->
+    <section data-s="subj" hidden>
+      <div class="card"><h3 style="margin-bottom:4px">Your subjects</h3><p class="muted" style="margin-bottom:8px">Set each subject as Strong, Okay or Weak. Weak subjects get more time in your plan.</p><div id="subjList"></div></div>
+    </section>
 
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Target exam</p><p id="d-exam" class="font-extrabold text-sm mt-1">-</p></div>
-      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Days left</p><p id="d-days" class="font-extrabold text-2xl text-indigo-300 mt-1">-</p></div>
-      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Daily target</p><p id="d-hours" class="font-extrabold text-sm mt-1">-</p></div>
-      <div class="glass rounded-2xl p-4"><p class="text-[11px] text-slate-400">Plan</p><p id="d-plan" class="font-extrabold text-sm mt-1">Free</p></div>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-4">
-      <div class="glass rounded-2xl p-5 space-y-2 text-sm">
-        <h2 class="font-bold">Your profile</h2>
-        <p class="text-xs text-slate-400">Target year: <span id="d-year" class="text-slate-100">-</span></p>
-        <p class="text-xs text-slate-400">Exam date: <span id="d-date" class="text-slate-100">-</span></p>
-        <p class="text-xs text-slate-400">Current stage: <span id="d-stage" class="text-slate-100">-</span></p>
-        <p class="text-xs text-slate-400">Focus areas: <span id="d-weak" class="text-slate-100">-</span></p>
+    <!-- PYQ -->
+    <section data-s="pyq" hidden>
+      <div class="card lock" id="pyqCard">
+        <h3 style="margin-bottom:6px">Last 5 years topic-wise PYQ</h3>
+        <p class="muted" style="margin-bottom:10px">Previous year questions are sorted by topic. Questions come from official exam sites, and we link you there.</p>
+        <div class="pyq" id="pyqList"></div>
+        <p class="notice">Plus plan includes PYQ practice.</p>
       </div>
-      <div class="glass rounded-2xl p-5 space-y-3 text-sm">
-        <h2 class="font-bold">Upgrade</h2>
-        <p class="text-xs text-slate-400">Premium mein backlog recovery, AI timetable, mistake notebook aur revision calendar milta hai.</p>
-        <a href="https://prepxai.online/#pricing" class="block text-center w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-bold text-xs transition">Plans dekhein</a>
+    </section>
+
+    <!-- MOCK -->
+    <section data-s="mock" hidden>
+      <div class="card lock">
+        <h3 style="margin-bottom:6px">Weekly mock test</h3>
+        <div id="mockBody"></div>
       </div>
-    </div>
+    </section>
 
-    <p class="text-[11px] text-slate-500">Today's timetable, PYQ practice, mock analysis aur reminders is dashboard ke next version mein aayenge.</p>
-  </section>
+    <!-- DOUBT -->
+    <section data-s="doubt" hidden>
+      <div class="card">
+        <h3 style="margin-bottom:4px">Doubt engine</h3>
+        <p class="muted" style="margin-bottom:12px">Ask any study doubt in English or Hinglish. Check important facts in official books and notifications.</p>
+        <div class="chat" id="chat"><div class="msg-a">Hi! Which topic are you stuck on?</div></div>
+        <div class="inputrow"><input id="q" placeholder="Type your doubt..." maxlength="500" autocomplete="off"><button class="btn" id="send">Ask</button></div>
+        <p class="notice" id="dNote"></p>
+      </div>
+    </section>
 
-  <script>
-  (function () {
-    'use strict';
-    var SB_URL = 'https://artcffpfotgrmbhtrtsb.supabase.co';
-    var SB_KEY = 'sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB';
-    var $ = function (id) { return document.getElementById(id); };
-    var sb = null;
-    try { if (window.supabase && window.supabase.createClient) sb = window.supabase.createClient(SB_URL, SB_KEY); } catch (e) { sb = null; }
+    <!-- PLAN -->
+    <section data-s="plan" hidden>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="margin-bottom:8px">Your plan</h3>
+          <div class="row-s" style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--bd)"><span class="muted">Current plan</span><b id="planName"></b></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed var(--bd)"><span class="muted">Exam</span><b id="pExam"></b></div>
+          <div style="display:flex;justify-content:space-between;padding:8px 0"><span class="muted">Email</span><b id="pEmail"></b></div>
+        </div>
+        <div class="card" id="upgradeCard">
+          <h3 style="margin-bottom:6px">Upgrade</h3>
+          <p class="muted" style="margin-bottom:12px">Plus ₹39/month (early bird, regular ₹99). Pro ₹69/month (early bird, regular ₹199).</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn" href="/#pricing">See plans</a></div>
+          <p class="notice">Pay by UPI, then send the screenshot on WhatsApp. Your plan is activated after we verify the payment.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
 
-    function show(view) {
-      $('view-login').classList.toggle('hidden', view !== 'login');
-      $('view-dash').classList.toggle('hidden', view !== 'dash');
-    }
-    function setMsg(text, kind) {
-      var m = $('li-msg');
-      m.textContent = text;
-      m.className = 'text-xs min-h-[1.25rem] ' + (kind === 'err' ? 'text-rose-300' : 'text-slate-300');
-    }
+<nav class="mob-nav" id="mobNav" hidden>
+  <button class="on" data-v="home"><span class="ic">🏠</span>Today</button>
+  <button data-v="week"><span class="ic">📆</span>Week</button>
+  <button data-v="subj"><span class="ic">📚</span>Subjects</button>
+  <button data-v="doubt"><span class="ic">🤖</span>Doubts</button>
+  <button data-v="plan"><span class="ic">👤</span>Me</button>
+</nav>
 
-    function loginError(msg) {
-      if (/invalid login/i.test(msg)) return 'Email ya password galat hai.';
-      if (/email not confirmed/i.test(msg)) return 'Email abhi confirm nahi hui. Confirmation mail ka link click karein.';
-      if (/too many|rate limit/i.test(msg)) return 'Bahut zyada koshish ho gayi. Thodi der baad try karein.';
-      return 'Login nahi ho paya: ' + msg;
-    }
+<script>
+(function(){
+'use strict';
+var SB_URL='https://artcffpfotgrmbhtrtsb.supabase.co',SB_KEY='sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB';
+var sb=null;try{sb=window.supabase.createClient(SB_URL,SB_KEY)}catch(e){}
+var $=function(i){return document.getElementById(i)};
+var esc=function(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var ls=function(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){return null}};
 
-    $('login-form').addEventListener('submit', async function (e) {
-      e.preventDefault();
-      if (!sb) return setMsg('Service load nahi hui. Page refresh karein.', 'err');
-      var email = $('li-email').value.trim().toLowerCase();
-      var pass = $('li-pass').value;
-      if (!email || !pass) return setMsg('Email aur password dono daalein.', 'err');
-      $('li-btn').disabled = true;
-      setMsg('Login ho raha hai...', '');
-      try {
-        var res = await sb.auth.signInWithPassword({ email: email, password: pass });
-        if (res.error) {
-          setMsg(loginError(res.error.message), 'err');
-          $('li-btn').disabled = false;
-          return;
-        }
-        await loadDashboard();
-      } catch (err) {
-        setMsg('Network error. Internet check karke dobara try karein.', 'err');
-        $('li-btn').disabled = false;
-      }
-    });
+/* subjects per exam (same list as the landing page) and official sites for PYQ links */
+var EXAMS={
+ upsc:{n:'UPSC Civil Services',d:'2027-05-23',sub:['History & Culture','Polity','Geography','Economy','Environment','Science & Tech','Current Affairs','CSAT','Essay & Ethics'],site:'https://upsc.gov.in'},
+ bpsc:{n:'BPSC Civil Services',d:'2027-03-15',sub:['Bihar History & Culture','Bihar Polity','Bihar Economy','Indian Polity','Geography','Science & Tech','Current Affairs','CSAT','Essay & Ethics'],site:'https://www.bpsc.bih.nic.in'},
+ ssc:{n:'SSC CGL / CHSL',d:'2027-06-15',sub:['Quant','Reasoning','English','General Awareness','Current Affairs'],site:'https://ssc.gov.in'},
+ neet:{n:'NEET UG',d:'2027-05-03',sub:['Physics','Chemistry','Botany','Zoology'],site:'https://neet.nta.nic.in'},
+ jeem:{n:'JEE Main',d:'2027-01-22',sub:['Physics','Chemistry','Mathematics'],site:'https://jeemain.nta.nic.in'},
+ jeea:{n:'JEE Advanced',d:'2027-05-16',sub:['Physics','Chemistry','Mathematics'],site:'https://jeeadv.ac.in'},
+ rrb:{n:'RRB NTPC / Group D',d:'2027-06-01',sub:['Maths','Reasoning','General Science','General Awareness','Current Affairs'],site:'https://www.indianrailways.gov.in'},
+ cuet:{n:'CUET UG',d:'2027-05-15',sub:['English / Language','Domain Subjects','General Test','Current Affairs'],site:'https://cuet.nta.nic.in'},
+ nda:{n:'NDA / CDS',d:'2027-04-11',sub:['Mathematics','English','General Ability','Physics','Chemistry','History & Geography'],site:'https://www.upsc.gov.in'},
+ bank:{n:'Banking (IBPS / SBI)',d:'2027-08-22',sub:['Quant','Reasoning','English','Banking Awareness','Current Affairs','Computer'],site:'https://www.ibps.in'}
+};
+var STUDY_BLOCK=50; /* minutes per block */
+var TODAY=new Date();TODAY.setHours(0,0,0,0);
+var todayKey=TODAY.toISOString().slice(0,10);
 
-    $('btn-logout').addEventListener('click', async function () {
-      if (sb) await sb.auth.signOut();
-      $('li-btn').disabled = false;
-      $('li-pass').value = '';
-      setMsg('', '');
-      show('login');
-    });
+var P=null; /* profile: loaded from Supabase only */
+var RATE={};  /* subject -> 'strong'|'okay'|'weak' */
+var WEIGHT={weak:1.8,okay:1,strong:.5};
 
-    function fmtDate(iso) {
-      if (!iso) return '-';
-      var d = new Date(iso + 'T00:00:00');
-      return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-    }
+function daysLeft(d){return Math.max(0,Math.ceil((new Date(d+'T00:00:00')-TODAY)/864e5))}
+function fmtH(h){return h<1?Math.round(h*60)+' min':h+' hr'}
+function hoursFor(days,b){var u=days>365?.6:days>240?.75:days>120?.9:days>45?1:1.1;return Math.max(2,Math.min(14,Math.round(b*u*2)/2))}
 
-    async function loadDashboard() {
-      var s = await sb.auth.getSession();
-      if (!s.data || !s.data.session) return show('login');
-      var user = s.data.session.user;
-      var res = await sb.from('profiles').select('*').eq('id', user.id).maybeSingle();
-      show('dash');
-      if (res.error || !res.data) {
-        $('d-missing').classList.remove('hidden');
-        $('d-name').textContent = (user.user_metadata && user.user_metadata.name) || 'Student';
-        return;
-      }
-      var p = res.data;
-      $('d-name').textContent = p.name || 'Student';
-      $('d-exam').textContent = p.target_exam || '-';
-      $('d-year').textContent = p.target_year || '-';
-      $('d-date').textContent = fmtDate(p.exam_date);
-      $('d-stage').textContent = ({ beginner: 'Beginner', midway: 'Midway (30-50%)', advanced: 'Syllabus finished' })[p.stage] || '-';
-      $('d-weak').textContent = p.weakness ? p.weakness.split(',').join(', ') : '-';
-      $('d-hours').textContent = p.daily_hours || '-';
-      $('d-plan').textContent = (p.plan || 'free').replace(/^./, function (c) { return c.toUpperCase(); });
-      if (p.exam_date && window.PREP) {
-        var days = PREP.daysLeft(p.exam_date);
-        $('d-days').textContent = days > 0 ? days : 'Done';
-      }
-    }
+/* ---------- load profile from Supabase ---------- */
+async function loadProfile(){
+  if(!sb)return null;
+  var s=await sb.auth.getSession();
+  if(!s.data||!s.data.session)return null;
+  var u=s.data.session.user,m=u.user_metadata||{};
+  var plan='free';
+  try{
+    /* plan is read from the server table; the browser cannot set it */
+    var r=await sb.from('profiles').select('plan').eq('id',u.id).single();
+    if(r.data&&r.data.plan)plan=r.data.plan;
+  }catch(e){}
+  return {id:u.id,email:u.email,name:m.name||u.email.split('@')[0],exam:m.target_exam||'',date:m.exam_date||'',
+    weak:(m.weak_subjects||'').split(',').filter(Boolean),hours:+m.daily_hours||4,plan:plan,
+    stage:m.stage||'',status:m.student_status||''};
+}
+var isPaid=function(){return P&&(P.plan==='plus'||P.plan==='pro')};
+var isPro=function(){return P&&P.plan==='pro'};
 
-    // Email confirmation / existing session: go straight to dashboard
-    if (sb) {
-      sb.auth.onAuthStateChange(function (event, session) {
-        if (session && (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED')) {
-          loadDashboard();
-        }
-      });
-      loadDashboard();
-    } else {
-      show('login');
-      setMsg('Service load nahi hui. Page refresh karein.', 'err');
-    }
-  })();
-  </script>
+/* ---------- today's schedule ---------- */
+function buildToday(){
+  var ex=EXAMS[P.exam];if(!ex)return [];
+  var subs=ex.sub;
+  var total=Math.round((P.hours||4)*60);
+  var w=subs.map(function(s){return WEIGHT[RATE[s]||'okay']});
+  var sum=w.reduce(function(a,b){return a+b},0);
+  var blocks=[];var start=6*60;
+  subs.forEach(function(s,i){
+    var mins=Math.max(25,Math.round(total*.88*w[i]/sum/5)*5);
+    var n=Math.max(1,Math.round(mins/STUDY_BLOCK));
+    for(var k=0;k<n;k++)blocks.push({t:s,m:Math.round(mins/n)});
+  });
+  blocks.push({t:'Revision + Mock review',m:Math.max(20,Math.round(total*.12/5)*5)});
+  var out=[];
+  blocks.forEach(function(b,i){
+    if(i>0&&i%3===0)start+=15; /* short break every 3 blocks */
+    out.push({label:b.t,from:start,m:b.m});start+=b.m;
+  });
+  return out;
+}
+var fmtT=function(min){var h=Math.floor(min/60)%24,m=min%60;var ap=h>=12?'PM':'AM';var h12=h%12||12;return h12+':'+String(m).padStart(2,'0')+' '+ap};
+function doneKey(){return 'done:'+(P&&P.id||'anon')+':'+todayKey}
+function getDone(){try{return JSON.parse(ls(doneKey())||'[]')}catch(e){return[]}}
+function setDone(a){ls(doneKey(),JSON.stringify(a))}
+
+function renderToday(){
+  var list=buildToday(),done=getDone();
+  var total=list.reduce(function(a,b){return a+b.m},0);
+  $('hrsToday').textContent=fmtH(total/60);
+  $('doneTxt').textContent=done.length+' of '+list.length+' blocks done today';
+  $('tasks').innerHTML=list.map(function(b,i){
+    var on=done.indexOf(i)>-1;
+    return '<div class="task'+(on?' done':'')+'"><button class="chk'+(on?' on':'')+'" data-i="'+i+'" aria-label="Mark done">'+(on?'✓':'')+'</button><span class="t">'+esc(b.label)+'</span><span class="tm">'+fmtT(b.from)+' · '+b.m+' min</span></div>';
+  }).join('');
+  var weakSubs=(P.weak||[]).length?P.weak:[];
+  $('focus').innerHTML=weekPlan().slice(0,4).map(function(s,i){
+    return '<div class="subj"><span>'+esc(s)+'</span><span class="chip'+(weakSubs.indexOf(s)>-1?' weak':'')+'">'+(i===0?'Today':'Day '+(i+1))+'</span></div>';
+  }).join('');
+}
+$('tasks').onclick=function(e){
+  var b=e.target.closest('.chk');if(!b)return;
+  var i=+b.dataset.i,d=getDone(),p=d.indexOf(i);
+  p>-1?d.splice(p,1):d.push(i);setDone(d);renderToday();
+};
+
+/* ---------- weekly roadmap ---------- */
+function weekPlan(){
+  var ex=EXAMS[P.exam];if(!ex)return[];
+  var pool=[];
+  ex.sub.forEach(function(s){var r=RATE[s]||'okay';var c=r==='weak'?3:r==='okay'?2:1;for(var k=0;k<c;k++)pool.push(s)});
+  var out=[];for(var i=0;i<7;i++)out.push(pool[(i*3)%pool.length]);
+  return out;
+}
+function renderWeek(){
+  var names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],plan=weekPlan();
+  var todayIdx=(TODAY.getDay()+6)%7;
+  $('weekGrid').innerHTML=names.map(function(n,i){
+    return '<div class="day'+(i===todayIdx?' today':'')+'"><b>'+n+'</b>'+esc(plan[i]||'')+'</div>';
+  }).join('');
+}
+
+/* ---------- subjects ---------- */
+function renderSubjects(){
+  var ex=EXAMS[P.exam];if(!ex){$('subjList').innerHTML='<div class="empty"><b>No exam selected</b><span class="muted">Choose your exam from the home page to see subjects.</span></div>';return}
+  $('subjList').innerHTML=ex.sub.map(function(s){
+    var r=RATE[s]||'okay';
+    return '<div class="subj"><span>'+esc(s)+'</span><div class="lvl" data-s="'+esc(s)+'">'+
+      ['strong','okay','weak'].map(function(l){return '<button data-l="'+l+'" class="'+(r===l?'on':'')+'">'+({strong:'Strong',okay:'Okay',weak:'Weak'})[l]+'</button>'}).join('')+'</div></div>';
+  }).join('');
+}
+$('subjList').onclick=function(e){
+  var b=e.target.closest('button[data-l]');if(!b)return;
+  var s=b.parentNode.dataset.s;RATE[s]=b.dataset.l;ls('rate:'+P.id,JSON.stringify(RATE));
+  renderSubjects();renderToday();renderWeek();
+};
+
+/* ---------- PYQ (Plus) ---------- */
+function renderPYQ(){
+  var ex=EXAMS[P.exam];
+  var topics=ex?ex.sub:[];
+  var list=topics.map(function(t){return '<a href="'+(ex?ex.site:'#')+'" target="_blank" rel="noopener"><span>'+esc(t)+'</span><span class="muted">Official site ↗</span></a>'}).join('');
+  $('pyqList').innerHTML=list||'<div class="empty"><b>No exam selected</b></div>';
+  if(!isPaid()){
+    $('pyqCard').classList.add('lock');
+    $('pyqList').style.filter='blur(4px)';$('pyqList').style.pointerEvents='none';
+    if(!$('pyqTag')){var t=document.createElement('span');t.id='pyqTag';t.className='lk-tag';t.textContent='PLUS';$('pyqCard').appendChild(t)}
+  }else{$('pyqList').style.filter='';$('pyqList').style.pointerEvents='';var tg=$('pyqTag');if(tg)tg.remove()}
+}
+
+/* ---------- mock (Plus) ---------- */
+function renderMock(){
+  if(!isPaid()){
+    $('mockBody').innerHTML='<div class="empty"><b>Weekly mock tests are a Plus feature</b><span class="muted">Upgrade to get a timed mock every week with analysis.</span><div style="margin-top:14px"><a class="btn" href="/#pricing">See plans</a></div></div>';
+    return;
+  }
+  $('mockBody').innerHTML='<div class="empty"><b>This week\'s mock is not ready yet</b><span class="muted">Mock tests will appear here once they are added to the question bank. We will notify you on the dashboard.</span></div>';
+}
+
+/* ---------- doubt engine (calls our server endpoint) ---------- */
+async function askDoubt(){
+  var q=$('q').value.trim();if(!q)return;
+  var c=$('chat');
+  c.insertAdjacentHTML('beforeend','<div class="msg-u">'+esc(q)+'</div>');
+  $('q').value='';c.scrollTop=c.scrollHeight;
+  $('send').disabled=true;
+  try{
+    var s=await sb.auth.getSession();
+    var r=await fetch('/api/doubt',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+(s.data.session?s.data.session.access_token:'')},body:JSON.stringify({question:q,exam:P.exam})});
+    if(!r.ok)throw new Error('not ready');
+    var j=await r.json();
+    c.insertAdjacentHTML('beforeend','<div class="msg-a">'+esc(j.answer||'No answer received.')+'</div>');
+  }catch(e){
+    c.insertAdjacentHTML('beforeend','<div class="msg-a">The doubt engine is not connected yet. Your question is saved; please try again later.</div>');
+  }
+  $('send').disabled=false;c.scrollTop=c.scrollHeight;
+}
+$('send').onclick=askDoubt;
+$('q').onkeydown=function(e){if(e.key==='Enter')askDoubt()};
+
+/* ---------- navigation ---------- */
+var TITLES={home:'Today',week:'Weekly roadmap',subj:'Subjects',pyq:'PYQ',mock:'Mock tests',doubt:'Doubt engine',plan:'My plan'};
+function show(v){
+  document.querySelectorAll('[data-s]').forEach(function(s){s.hidden=s.dataset.s!==v});
+  document.querySelectorAll('.nv,.mob-nav button').forEach(function(b){b.classList.toggle('on',b.dataset.v===v)});
+  $('title').textContent=TITLES[v]||'Today';
+  if(v==='week')renderWeek();
+  if(v==='pyq')renderPYQ();
+  if(v==='mock')renderMock();
+  if(v==='subj')renderSubjects();
+  if(v==='plan')renderPlan();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('[data-v]').forEach(function(b){b.onclick=function(){show(b.dataset.v)}});
+
+function renderPlan(){
+  $('planName').textContent=P.plan==='pro'?'Pro':P.plan==='plus'?'Plus':'Free';
+  $('pExam').textContent=(EXAMS[P.exam]||{}).n||'Not set';
+  $('pEmail').textContent=P.email;
+}
+
+/* ---------- header and stats ---------- */
+function renderHeader(){
+  var h=new Date().getHours();
+  $('greet').textContent=(h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+esc(P.name);
+  $('today').textContent=TODAY.toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'});
+  var ex=EXAMS[P.exam];
+  var d=ex?daysLeft(ex.d):(P.date?daysLeft(P.date):0);
+  $('dLeft').textContent=ex||P.date?d:'–';
+  $('dBar').style.width=Math.min(100,d/365*100)+'%';
+  var s=+ls('streak:'+P.id)||0;$('streak').textContent=s;
+}
+
+/* ---------- start ---------- */
+async function start(){
+  P=await loadProfile();
+  if(!P){$('gate').hidden=false;$('app').hidden=true;$('mobNav').hidden=true;return}
+  $('gate').hidden=true;$('app').hidden=false;$('mobNav').hidden=false;
+  try{RATE=JSON.parse(ls('rate:'+P.id)||'{}')}catch(e){RATE={}}
+  if(!Object.keys(RATE).length)(P.weak||[]).forEach(function(s){RATE[s]='weak'});
+  renderHeader();renderToday();renderWeek();renderPlan();
+  $('chat').querySelector('.msg-a').textContent='Hi '+P.name+'! Which topic are you stuck on?';
+  $('dNote').textContent=isPaid()?'':'Free plan: limited doubts per day. Upgrade for unlimited doubts.';
+  if(!EXAMS[P.exam])$('dNote').textContent='Choose your exam on the home page to get a full plan.';
+}
+$('logout').onclick=async function(){if(sb)await sb.auth.signOut();location.href='/'};
+start();
+})();
+</script>
 </body>
 </html>
