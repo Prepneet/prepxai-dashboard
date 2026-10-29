@@ -10,6 +10,12 @@
 
   var EXAMS = [
     {
+      key: 'BPSC', label: 'BPSC (Bihar PSC)', icon: '🪷', sub: 'Bihar Civil Services', factor: 1,
+      calendar: {
+        2027: { date: '2027-03-15', status: 'tentative', note: 'BPSC 2027 prelims window expected. Always check the latest BPSC notification.' }
+      }
+    },
+    {
       key: 'Railways (RRB)', label: 'Railways (RRB)', icon: '🚆', sub: 'NTPC, ALP, Group D', factor: 0,
       calendar: {
         2027: { date: '2027-06-15', status: 'estimated', note: 'RRB 2027 CEN abhi notify nahi hua. Graduate CEN 06/2026 ka CBT Dec 2026 mein expected hai.' }
@@ -75,9 +81,37 @@
     return new Date(d.getFullYear(), d.getMonth(), d.getDate());
   }
 
+  // Signup slugs saved by the landing page (lowercase) mapped to canonical keys.
+  var ALIASES = {
+    'neet': 'NEET UG', 'neet ug': 'NEET UG', 'neet-ug': 'NEET UG',
+    'jee': 'JEE Main', 'jee main': 'JEE Main', 'jee-main': 'JEE Main', 'jee mains': 'JEE Main',
+    'jee advanced': 'JEE Advanced', 'jee-advanced': 'JEE Advanced',
+    'upsc': 'UPSC CSE', 'upsc cse': 'UPSC CSE', 'upsc-cse': 'UPSC CSE', 'ias': 'UPSC CSE',
+    'cuet': 'CUET UG', 'cuet ug': 'CUET UG', 'cuet-ug': 'CUET UG',
+    'ssc': 'SSC Exams', 'ssc exams': 'SSC Exams', 'ssc cgl': 'SSC Exams', 'ssc-cgl': 'SSC Exams',
+    'rrb': 'Railways (RRB)', 'railways': 'Railways (RRB)', 'railway': 'Railways (RRB)',
+    'nda': 'NDA / CDS', 'cds': 'NDA / CDS', 'nda-cds': 'NDA / CDS',
+    'banking': 'Banking Exams', 'ibps': 'Banking Exams', 'sbi': 'Banking Exams', 'bank': 'Banking Exams',
+    'jeem': 'JEE Main', 'jeea': 'JEE Advanced',
+    'bpsc': 'BPSC'
+  };
+
   function findExam(key) {
-    for (var i = 0; i < EXAMS.length; i++) if (EXAMS[i].key === key) return EXAMS[i];
+    if (!key) return null;
+    var k = String(key).trim();
+    for (var i = 0; i < EXAMS.length; i++) if (EXAMS[i].key === k) return EXAMS[i];
+    var alias = ALIASES[k.toLowerCase()];
+    if (alias && alias !== k) return findExam(alias);
     return null;
+  }
+
+  // Maps stage text saved at signup to 'beginner' | 'midway' | 'advanced' | ''.
+  function normalizeStage(s) {
+    var t = String(s || '').toLowerCase();
+    if (/beginner|just starting|0-30/.test(t)) return 'beginner';
+    if (/midway|mid|31-|40-|50-|60-/.test(t)) return 'midway';
+    if (/advanced|revision|70|80|90/.test(t)) return 'advanced';
+    return '';
   }
 
   // Returns { date:'YYYY-MM-DD', status, note }. Years without data are estimated from the previous year.
@@ -111,6 +145,7 @@
   window.PREP = {
     EXAMS: EXAMS,
     findExam: findExam,
+    normalizeStage: normalizeStage,
     examDateFor: examDateFor,
     daysLeft: daysLeft,
     recommendHours: recommendHours
