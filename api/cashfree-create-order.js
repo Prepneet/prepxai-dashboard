@@ -20,11 +20,11 @@ export default async function handler(req, res) {
   if (!['plus', 'pro'].includes(plan)) return json(res, 400, { error: 'Choose a valid plan.' });
 
   const { data: profile, error: profileError } = await admin
-    .from('profiles').select('id, plan, plan_expires_at, phone, mobile, name')
+    .from('profiles').select('id, plan, plan_expires_at, name')
     .eq('id', user.id).maybeSingle();
   if (profileError) return json(res, 500, { error: 'Could not load your account.' });
 
-  const phone = String(user.phone || profile?.phone || profile?.mobile || '').replace(/\D/g, '');
+  const phone = String(req.body?.phone || user.phone || '').replace(/\D/g, '');
   if (phone.length !== 10 && phone.length !== 12) {
     return json(res, 400, { error: 'Please add a valid 10-digit mobile number to your account before paying.' });
   }
@@ -44,7 +44,9 @@ export default async function handler(req, res) {
   if (insertError || !pending) return json(res, 500, { error: 'Could not start payment. Please try again.' });
 
   const origin = String(req.headers.origin || '').replace(/\/$/, '');
-  const baseUrl = process.env.APP_BASE_URL || origin;
+  const forwardedHost = String(req.headers['x-forwarded-host'] || req.headers.host || '');
+  const forwardedProto = String(req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
+  const baseUrl = process.env.APP_BASE_URL || origin || (forwardedHost ? forwardedProto + '://' + forwardedHost : '');
   if (!baseUrl || !/^https:\/\//i.test(baseUrl)) return json(res, 500, { error: 'APP_BASE_URL must be configured as your HTTPS dashboard URL.' });
 
   try {
