@@ -461,6 +461,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
         <section class="glass"><h2>Subject accuracy</h2><p class="sub">Correct out of attempted questions, across all mocks.</p><div id="perfSubjects"></div></section>
         <section class="glass"><h2>Next-week strategy</h2><div id="perfStrategy"></div></section>
       </div>
+      <section class="glass"><h2>Syllabus progress</h2><p class="sub">Topics you have marked complete, based on your saved progress.</p><div id="perfSyllabusProgress"><div class="empty">Loading syllabus progress…</div></div></section>
     </section>
     <section class="view" id="v-notes" aria-label="Notes and revision">
       <section class="glass">
@@ -1097,6 +1098,14 @@ function bars(el,items,max){
 async function renderPerformance(){
   var uid=st.profile&&st.profile.id;
   if(!uid)return;
+  var syllabusRes=await sb.from('student_syllabus_progress').select('node_id,completed,completed_at').eq('user_id',uid);
+  var syllabusRows=syllabusRes.data||[];
+  var completedRows=syllabusRows.filter(function(x){return x.completed===true});
+  var syllabusByDay={};
+  completedRows.forEach(function(x){if(x.completed_at){var day=x.completed_at.slice(0,10);syllabusByDay[day]=(syllabusByDay[day]||0)+1}});
+  var syllabusDays=Object.keys(syllabusByDay).sort().slice(-7);
+  $('perfSyllabusProgress').innerHTML='<div class="kpi" style="margin:0 0 12px"><div><small>Topics completed</small><b>'+completedRows.length+'</b></div><div><small>Topics tracked</small><b>'+syllabusRows.length+'</b></div><div><small>Last completion</small><b>'+(syllabusDays.length?new Date(syllabusDays[syllabusDays.length-1]+'T00:00:00').toLocaleDateString():'—')+'</b></div></div>'+(syllabusDays.length?syllabusDays.map(function(day){return '<div class="srow"><span>'+new Date(day+'T00:00:00').toLocaleDateString()+'</span><span>'+syllabusByDay[day]+' topic(s) completed</span></div>'}).join(''):'<div class="empty">Your completed syllabus topics will appear here as you mark them done.</div>');
+  if(syllabusRes.error){$('perfSyllabusProgress').innerHTML='<div class="empty">Syllabus progress is temporarily unavailable.</div>';}
   var ar=await sb.from('mock_attempts').select('score,accuracy,correct,incorrect,unattempted,time_taken_sec,subject_stats,submitted_at,test_id').eq('user_id',uid).not('submitted_at','is',null).order('submitted_at',{ascending:true}).limit(200);
   var attempts=ar.data||[];
   var tr=await sb.from('mock_tests').select('id,total_marks');
