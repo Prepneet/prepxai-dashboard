@@ -1158,11 +1158,13 @@ async function renderPerformance(){
   if(!uid)return;
   var syllabusRes=await sb.from('student_syllabus_progress').select('node_id,completed,completed_at').eq('user_id',uid);
   var syllabusRows=syllabusRes.data||[];
-  var completedRows=syllabusRows.filter(function(x){return x.completed===true});
+  var currentNodeIds=(syllabusNodes||[]).map(function(n){return n.id});
+  var currentProgress=syllabusRows.filter(function(x){return currentNodeIds.indexOf(x.node_id)>=0});
+  var completedRows=currentProgress.filter(function(x){return x.completed===true});
   var syllabusByDay={};
   completedRows.forEach(function(x){if(x.completed_at){var day=x.completed_at.slice(0,10);syllabusByDay[day]=(syllabusByDay[day]||0)+1}});
   var syllabusDays=Object.keys(syllabusByDay).sort().slice(-7);
-  $('perfSyllabusProgress').innerHTML='<div class="kpi" style="margin:0 0 12px"><div><small>Topics completed</small><b>'+completedRows.length+'</b></div><div><small>Topics tracked</small><b>'+syllabusRows.length+'</b></div><div><small>Last completion</small><b>'+(syllabusDays.length?new Date(syllabusDays[syllabusDays.length-1]+'T00:00:00').toLocaleDateString():'—')+'</b></div></div>'+(syllabusDays.length?syllabusDays.map(function(day){return '<div class="srow"><span>'+new Date(day+'T00:00:00').toLocaleDateString()+'</span><span>'+syllabusByDay[day]+' topic(s) completed</span></div>'}).join(''):'<div class="empty">Your completed syllabus topics will appear here as you mark them done.</div>');
+  $('perfSyllabusProgress').innerHTML='<div class="kpi" style="margin:0 0 12px"><div><small>Topics completed</small><b>'+completedRows.length+'</b></div><div><small>Topics tracked</small><b>'+((syllabusNodes||[]).length)+'</b></div><div><small>Last completion</small><b>'+(syllabusDays.length?new Date(syllabusDays[syllabusDays.length-1]+'T00:00:00').toLocaleDateString():'—')+'</b></div></div>'+(syllabusDays.length?syllabusDays.map(function(day){return '<div class="srow"><span>'+new Date(day+'T00:00:00').toLocaleDateString()+'</span><span>'+syllabusByDay[day]+' topic(s) completed</span></div>'}).join(''):'<div class="empty">Your completed syllabus topics will appear here as you mark them done.</div>');
   if(syllabusRes.error){$('perfSyllabusProgress').innerHTML='<div class="empty">Syllabus progress is temporarily unavailable.</div>';}
   var ar=await sb.from('mock_attempts').select('score,accuracy,correct,incorrect,unattempted,time_taken_sec,subject_stats,submitted_at,test_id').eq('user_id',uid).not('submitted_at','is',null).order('submitted_at',{ascending:true}).limit(200);
   var attempts=ar.data||[];
