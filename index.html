@@ -26,7 +26,7 @@ h1,h2,.logo,.cd b{font-family:Sora,Inter,sans-serif;letter-spacing:-.02em}
 .glass>*{position:relative}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;flex-wrap:wrap}
 .logo{font-weight:800;font-size:21px}
-.logo span{color:var(--ac)}
+
 .who{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;color:var(--mu)}
 .plan-tag{padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid var(--edge);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:#fff}
 .hero{text-align:center;padding:30px 22px 26px}
@@ -73,10 +73,23 @@ textarea:focus{border-color:rgba(255,255,255,.6);box-shadow:0 0 0 3px rgba(255,2
   .hero h1{font-size:38px}
   .cd b{font-size:40px}
 }
+.dgrid{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+.dgrid label{font-size:12.5px;color:var(--mu);display:flex;flex-direction:column;gap:6px}
+.dgrid input,.dgrid select{padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font:14px Inter;outline:0;color-scheme:dark}
+.dgrid .full{grid-column:1/-1}
+.dgrid option{background:#0c1236;color:#fff}
+@media(max-width:600px){.dgrid{grid-template-columns:1fr}}
+@media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:24px;color:#000;background:#fff;font:14px/1.5 Inter,Arial,sans-serif}#printArea h1{font-size:22px;margin-bottom:6px}#printArea h2{font-size:16px;margin:14px 0 4px}}
 @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,30px) scale(1.08)}}
 @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(124,255,178,.6)}70%{box-shadow:0 0 0 10px rgba(124,255,178,0)}100%{box-shadow:0 0 0 0 rgba(124,255,178,0)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.brand{display:inline-flex;align-items:baseline;font-family:Sora,Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1;color:inherit;white-space:nowrap}
+.brand .bx{display:inline-block;width:.9em;height:.9em;margin:0 .05em 0 .03em;vertical-align:-.02em}
+.brand .xs{width:100%;height:100%;overflow:visible;display:block}
+.brand .ba{margin-left:.34em;background:linear-gradient(135deg,var(--a,#8b5cf6),var(--b,#22d3ee));-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:760px){.top{background:#0c1236!important}}
 </style>
 </head>
 <body>
@@ -87,7 +100,7 @@ textarea:focus{border-color:rgba(255,255,255,.6);box-shadow:0 0 0 3px rgba(255,2
 <div id="app" class="wrap" hidden>
 
   <header class="glass top">
-    <div class="logo">PrepX<span>AI</span></div>
+    <a class="logo" href="https://prepxai.online/" aria-label="PrepX AI home"><span class="brand"><span class="bp">Prep</span><span class="bx"><svg class="xs" viewBox="0 0 56 56" aria-hidden="true"><defs><linearGradient id="pxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g stroke="url(#pxg)" stroke-width="7" stroke-linecap="round" fill="none"><path d="M9 9 L47 47"/><path d="M47 9 L9 47"/><path d="M44 12 L58 -2" stroke-width="4.5"/></g></svg></span><span class="ba">Ai</span></span></a>
     <div class="who">
       <span id="userName"></span>
       <span class="plan-tag" id="planTag">Free</span>
@@ -111,6 +124,19 @@ textarea:focus{border-color:rgba(255,255,255,.6);box-shadow:0 0 0 3px rgba(255,2
     </div>
   </section>
 
+  <section class="glass wide" id="detailsCard">
+    <h2>Your study details</h2>
+    <p class="sub">These come from your plan builder. Change them any time, and your plan updates.</p>
+    <div class="dgrid">
+      <label>Exam <select id="dExam"></select></label>
+      <label>Exam date <input id="dDate" type="date"></label>
+      <label>Preparation stage <select id="dStage"></select></label>
+      <label>Daily study hours <input id="dHours" type="text" maxlength="10" placeholder="e.g. 8"></label>
+      <label class="full">Weak subjects (comma separated) <input id="dWeak" type="text" maxlength="200" placeholder="e.g. Polity, Maths"></label>
+    </div>
+    <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn primary" id="dSave" type="button">Save details</button></div>
+  </section>
+
   <div class="grid">
 
     <section class="glass">
@@ -118,6 +144,7 @@ textarea:focus{border-color:rgba(255,255,255,.6);box-shadow:0 0 0 3px rgba(255,2
       <p class="sub" id="planNote"></p>
       <div class="big" id="hours">—</div>
       <ul class="list" id="todayList"></ul>
+      <div class="actions" style="justify-content:flex-start;margin-top:12px"><button class="btn o sm" id="pdfBtn" type="button">Save plan as PDF</button><button class="btn o sm" id="shareBtn" type="button">Share plan</button></div>
     </section>
 
     <section class="glass">
@@ -163,6 +190,7 @@ textarea:focus{border-color:rgba(255,255,255,.6);box-shadow:0 0 0 3px rgba(255,2
   </div>
 </div>
 
+<div id="printArea" hidden></div>
 <div id="toast" class="toast" role="status"></div>
 
 <script>
@@ -189,7 +217,7 @@ function setBusy(on){$('askBtn').disabled=on;$('askBtn').textContent=on?'Thinkin
   var pr=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
   var prof=(pr.data)||{};
   st.profile=prof;
-  st.stage=prof.stage||'';
+  st.stage=P.normalizeStage(prof.stage);
   st.weak=(prof.weakness||'').split(/[,;]+/).map(function(x){return x.trim()}).filter(Boolean);
 
   var exp=prof.plan_expires_at?new Date(prof.plan_expires_at):null;
@@ -202,6 +230,7 @@ function setBusy(on){$('askBtn').disabled=on;$('askBtn').textContent=on?'Thinkin
   $('app').hidden=false;
 
   setupExam();
+  populateDetails(prof);
   renderPlan();
   renderRoadmap();
   renderLock();
@@ -213,14 +242,19 @@ function setupExam(){
   var key=st.profile.target_exam;
   var ex=P.findExam(key);
   if(!ex){
-    $('examName').textContent='Choose your exam';
-    $('examMeta').textContent='Your target exam is not set yet. Update it from your profile to see the countdown.';
+    $('examName').textContent='Exam not matched';
+    $('examMeta').textContent='We could not match your saved exam ("'+(key||'empty')+'"). Please contact support at ask.prepai@zohomail.in so we can fix it.';
     ['cd-d','cd-h','cd-m','cd-s'].forEach(function(id){$(id).textContent='--'});
     return;
   }
   var y=new Date().getFullYear();
-  var info=P.examDateFor(key,y);
-  if(!info||P.daysLeft(info.date)<0) info=P.examDateFor(key,y+1);
+  var info=null;
+  // Prefer the date the student chose at signup, if it is still in the future
+  if(st.profile.exam_date && P.daysLeft(st.profile.exam_date)>=0){
+    info={date:st.profile.exam_date,status:'your date',note:'Exam date from your signup.'};
+  }
+  if(!info) info=P.examDateFor(ex.key,y);
+  if(!info||P.daysLeft(info.date)<0) info=P.examDateFor(ex.key,y+1);
   st.ex=ex;
   st.days=P.daysLeft(info.date);
   $('examName').textContent=ex.label;
@@ -322,6 +356,61 @@ $('askBtn').onclick=async function(){
   }finally{
     setBusy(false);
   }
+};
+
+/* ---------- study details (edit) ---------- */
+function q(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function populateDetails(prof){
+  $('dExam').innerHTML='<option value="">Choose exam</option>'+P.EXAMS.map(function(e){return '<option value="'+q(e.key)+'">'+q(e.label)+'</option>'}).join('');
+  $('dStage').innerHTML='<option value="">Choose stage</option><option value="beginner">Just starting (0-30%)</option><option value="midway">Midway (30-70%)</option><option value="advanced">Almost done, revision and mocks</option>';
+  var canon=P.findExam(prof.target_exam);
+  $('dExam').value=canon?canon.key:'';
+  $('dDate').value=prof.exam_date||'';
+  $('dStage').value=P.normalizeStage(prof.stage);
+  $('dHours').value=prof.daily_hours||'';
+  $('dWeak').value=prof.weakness||'';
+}
+$('dSave').onclick=async function(){
+  var b=$('dSave');b.disabled=true;
+  var u={
+    target_exam:$('dExam').value||null,
+    exam_date:$('dDate').value||null,
+    stage:$('dStage').value||null,
+    daily_hours:$('dHours').value.trim().slice(0,10)||null,
+    weakness:$('dWeak').value.trim().slice(0,200)||null
+  };
+  var r=await sb.from('profiles').update(u).eq('id',st.profile.id);
+  b.disabled=false;
+  if(r.error){toast('Could not save: '+r.error.message);return}
+  toast('Saved. Updating your plan...');
+  setTimeout(function(){location.reload()},900);
+};
+
+/* ---------- plan as PDF (browser print) and share ---------- */
+function buildPrint(){
+  var pa=$('printArea');pa.innerHTML='';
+  function el(tag,text){var e=document.createElement(tag);e.textContent=text;return e}
+  pa.appendChild(el('h1','PrepX AI · Daily plan'));
+  pa.appendChild(el('p',(st.ex?st.ex.label:'Exam not set')+' · '+st.days+' days left'));
+  pa.appendChild(el('p','Study time: '+$('hours').textContent));
+  pa.appendChild(el('h2','Today'));
+  var ul=document.createElement('ul');
+  Array.prototype.forEach.call($('todayList').children,function(li){ul.appendChild(el('li',li.textContent))});
+  pa.appendChild(ul);
+  pa.appendChild(el('h2','This week'));
+  var ul2=document.createElement('ul');
+  Array.prototype.forEach.call($('week').children,function(d){ul2.appendChild(el('li',d.textContent))});
+  pa.appendChild(ul2);
+  pa.appendChild(el('p','Generated by prepxai.online. Check official notices before acting on any exam date.'));
+  pa.hidden=false;
+}
+$('pdfBtn').onclick=function(){buildPrint();window.print();setTimeout(function(){$('printArea').hidden=true},500)};
+$('shareBtn').onclick=async function(){
+  var txt='My PrepX AI plan: '+$('hours').textContent+' a day, '+st.days+' days left'+(st.ex?' for '+st.ex.label:'')+'.';
+  try{
+    if(navigator.share){await navigator.share({title:'PrepX AI plan',text:txt})}
+    else{await navigator.clipboard.writeText(txt);toast('Plan copied')}
+  }catch(e){}
 };
 
 /* ---------- exam change, sign out ---------- */
