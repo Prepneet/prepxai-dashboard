@@ -9,6 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='7' fill='%238b5cf6'/%3E%3Cpath d='M12 5l7 3.5-7 3.5-7-3.5z' fill='white'/%3E%3C/svg%3E">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+<script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 <script src="prepai-config.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -293,6 +294,18 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
               <div><b id="cd-m">--</b><small>Min</small></div>
               <div><b id="cd-s">--</b><small>Sec</small></div>
             </div>
+          </section>
+          <section class="glass" id="billingCard">
+            <h2>Choose your PrepX plan</h2>
+            <p class="sub">Secure Cashfree checkout · UPI, cards and supported payment methods</p>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
+              <div class="glass" style="padding:15px"><span class="tag">PLUS</span><h2 style="font-size:24px;margin:10px 0">₹9 <small style="font-size:12px;color:var(--mu)">first month</small></h2><p class="sub">Then ₹39 for each 30-day manual renewal.</p><button class="btn primary" type="button" data-buy-plan="plus">Choose Plus</button></div>
+              <div class="glass" style="padding:15px"><span class="tag">PRO</span><h2 style="font-size:24px;margin:10px 0">₹9 <small style="font-size:12px;color:var(--mu)">first month</small></h2><p class="sub">Then ₹69 for each 30-day manual renewal.</p><button class="btn primary" type="button" data-buy-plan="pro">Choose Pro</button></div>
+            </div>
+            <label for="payPhone" style="display:block;font-size:12px;color:var(--mu);margin:14px 0 6px">Mobile number for payment</label>
+            <input id="payPhone" class="field" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel-national">
+            <p class="sub" style="margin:8px 0 0">No UPI AutoPay. You approve every renewal yourself. Access activates only after Cashfree confirms payment.</p>
+            <p id="payStatus" class="sub" role="status" aria-live="polite" style="margin-top:8px"></p>
           </section>
           <section class="glass">
             <h2>Quick actions</h2>
@@ -620,7 +633,46 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderFeedbackState();
   await loadTasks();
   route();
+  document.querySelectorAll('[data-buy-plan]').forEach(function(btn){
+    btn.addEventListener('click',function(){ startCashfreeCheckout(btn.getAttribute('data-buy-plan'),btn); });
+  });
+  var returnedOrder=new URLSearchParams(location.search).get('order_id');
+  if(returnedOrder && new URLSearchParams(location.search).get('payment')==='return') verifyCashfreePayment(returnedOrder);
+
 })();
+
+/* ---------- Cashfree manual payments ---------- */
+async function startCashfreeCheckout(plan, button){
+  var status=$('payStatus');
+  var phone=String($('payPhone')?.value||'').replace(/\D/g,'');
+  if(!/^[6-9]\d{9}$/.test(phone)){status.textContent='Enter a valid 10-digit Indian mobile number.';return}
+  if(typeof window.Cashfree!=='function'){status.textContent='Payment service did not load. Refresh and try again.';return}
+  button.disabled=true;status.textContent='Creating secure payment…';
+  try{
+    var session=(await sb.auth.getSession()).data.session;
+    if(!session)throw new Error('Please log in again.');
+    var r=await fetch('/api/cashfree-create-order',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({plan:plan,phone:phone})});
+    var data=await r.json();
+    if(!r.ok)throw new Error(data.error||'Could not start payment.');
+    var cashfree=window.Cashfree({mode:data.mode});
+    status.textContent='Opening Cashfree checkout…';
+    await cashfree.checkout({paymentSessionId:data.payment_session_id,redirectTarget:'_self'});
+  }catch(e){status.textContent=e.message||'Payment could not be started.';button.disabled=false}
+}
+async function verifyCashfreePayment(orderId){
+  var status=$('payStatus');
+  status.textContent='Verifying your payment securely…';
+  try{
+    var session=(await sb.auth.getSession()).data.session;
+    if(!session)throw new Error('Log in again to verify your payment.');
+    var r=await fetch('/api/cashfree-verify-order',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify({order_id:orderId})});
+    var data=await r.json();
+    if(data.ok){
+      status.textContent='Payment confirmed! Your plan is active. Refreshing dashboard…';
+      setTimeout(function(){location.href=location.pathname+'#home';location.reload()},1200);
+    }else status.textContent=data.message||data.error||'Payment is not confirmed yet. Please wait and refresh.';
+  }catch(e){status.textContent=e.message||'Could not verify payment. Please refresh.'}
+}
 
 /* ---------- exam + countdown ---------- */
 function setupExam(){
