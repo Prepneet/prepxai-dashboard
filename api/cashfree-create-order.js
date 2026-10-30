@@ -45,6 +45,8 @@ export default async function handler(req, res) {
   if (insertError || !pending) return json(res, 500, { error: 'Could not start payment. Please try again.' });
 
   const origin = String(req.headers.origin || '').replace(/\/$/, '');
+  const returnPath = String(req.body?.return_path || '/').trim();
+  if (!returnPath.startsWith('/') || returnPath.startsWith('//') || returnPath.includes('\\')) return json(res, 400, { error: 'Invalid return path.' });
   const forwardedHost = String(req.headers['x-forwarded-host'] || req.headers.host || '');
   const forwardedProto = String(req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim();
   const baseUrl = process.env.APP_BASE_URL || origin || (forwardedHost ? forwardedProto + '://' + forwardedHost : '');
@@ -65,7 +67,7 @@ export default async function handler(req, res) {
           customer_phone: phone,
         },
         order_note: 'PrepX Ai ' + plan.toUpperCase() + ' plan',
-        order_meta: { return_url: baseUrl + '/?payment=return&order_id=' + encodeURIComponent(orderId) },
+        order_meta: { return_url: baseUrl + returnPath + (returnPath.includes('?') ? '&' : '?') + 'payment=return&order_id=' + encodeURIComponent(orderId) },
       }),
     });
 
