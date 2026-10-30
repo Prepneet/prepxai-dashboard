@@ -24,7 +24,8 @@ export default async function handler(req, res) {
     .eq('id', user.id).maybeSingle();
   if (profileError) return json(res, 500, { error: 'Could not load your account.' });
 
-  const phone = String(req.body?.phone || user.phone || '').replace(/\D/g, '');
+  let phone = String(req.body?.phone || user.phone || '').replace(/\D/g, '');
+  if (phone.length === 12 && phone.startsWith('91')) phone = phone.slice(2);
   if (phone.length !== 10 && phone.length !== 12) {
     return json(res, 400, { error: 'Please add a valid 10-digit mobile number to your account before paying.' });
   }
