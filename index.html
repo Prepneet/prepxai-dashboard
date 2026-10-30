@@ -299,8 +299,8 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
             <h2>Choose your PrepX plan</h2>
             <p class="sub">Secure Cashfree checkout · UPI, cards and supported payment methods</p>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px">
-              <div class="glass" style="padding:15px"><span class="tag">PLUS</span><h2 style="font-size:24px;margin:10px 0">₹9 <small style="font-size:12px;color:var(--mu)">first month</small></h2><p class="sub">Then ₹39 for each 30-day manual renewal.</p><button class="btn primary" type="button" data-buy-plan="plus">Choose Plus</button></div>
-              <div class="glass" style="padding:15px"><span class="tag">PRO</span><h2 style="font-size:24px;margin:10px 0">₹9 <small style="font-size:12px;color:var(--mu)">first month</small></h2><p class="sub">Then ₹69 for each 30-day manual renewal.</p><button class="btn primary" type="button" data-buy-plan="pro">Choose Pro</button></div>
+              <div class="glass" style="padding:15px"><span class="tag">PLUS</span><h2 style="font-size:24px;margin:10px 0"><span id="plusPrice">₹9 first month</span></h2><p class="sub">Manual 30-day renewal.</p><button class="btn primary" type="button" data-buy-plan="plus">Choose Plus</button></div>
+              <div class="glass" style="padding:15px"><span class="tag">PRO</span><h2 style="font-size:24px;margin:10px 0"><span id="proPrice">₹9 first month</span></h2><p class="sub">Manual 30-day renewal.</p><button class="btn primary" type="button" data-buy-plan="pro">Choose Pro</button></div>
             </div>
             <label for="payPhone" style="display:block;font-size:12px;color:var(--mu);margin:14px 0 6px">Mobile number for payment</label>
             <input id="payPhone" class="field" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel-national">
@@ -616,6 +616,8 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   $('userName').textContent=name;
   $('avatar').textContent=name.charAt(0).toUpperCase();
   $('planTag').textContent=st.paid?String(prof.plan).toUpperCase():'FREE';
+  $('plusPrice').textContent=prof.plan&&prof.plan!=='free'?'₹39 / 30 days':'₹9 first month';
+  $('proPrice').textContent=prof.plan&&prof.plan!=='free'?'₹69 / 30 days':'₹9 first month';
   $('accEmail').textContent='Signed in as '+(user.email||'');
   $('sideFoot').textContent=st.paid?'Plan: '+String(prof.plan).toUpperCase():'Free plan';
   var h=new Date().getHours();
