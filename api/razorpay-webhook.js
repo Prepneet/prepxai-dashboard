@@ -4,12 +4,20 @@ import { createClient } from '@supabase/supabase-js';
 // Raw body is needed to verify Razorpay's signature, so Vercel must not parse it.
 export const config = { api: { bodyParser: false } };
 
-const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
-  auth: { persistSession: false }
-});
+// Create the client inside the handler, so a missing env var returns a clear error
+// instead of crashing the whole function at load time.
+function getAdmin() {
+  const url = process.env.SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !key) return null;
+  return createClient(url, key, { auth: { persistSession: false } });
+}
 
 // Amounts are in paise. Only these exact amounts activate a plan.
-const PLANS = { 3900: 'plus', 6900: 'pro' };
+// Amounts in paise. Renewals: ₹39 = Plus, ₹69 = Pro.
+// First month for both plans is ₹9, so the plan comes from the link's reference_id ('plus' or 'pro').
+const RENEWAL_PLANS = { 3900: 'plus', 6900: 'pro' };
+const FIRST_MONTH_AMOUNT = 900;
 const DAYS = 30;
 
 function readRaw(req) {
@@ -25,7 +33,10 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
-  if (!secret) return res.status(500).json({ error: 'Webhook not configured' });
+  if (!secret) return res.status(500).json({ error: 'RAZORPAY_WEBHOOK_SECRET missing' });
+
+  const admin = getAdmin();
+  if (!admin) return res.status(500).json({ error: 'SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY missing' });
 
   const raw = await readRaw(req);
   const sig = String(req.headers['x-razorpay-signature'] || '');
@@ -48,7 +59,11 @@ export default async function handler(req, res) {
   const payment = event.payload?.payment?.entity || {};
   const link = event.payload?.payment_link?.entity || {};
   const email = String(payment.email || link.customer?.email || '').trim().toLowerCase();
-  const plan = PLANS[payment.amount];
+  let plan = RENEWAL_PLANS[payment.amount] || null;
+  if (payment.amount === FIRST_MONTH_AMOUNT) {
+    const ref = String(link.reference_id || '').trim().toLowerCase();
+    plan = ref === 'plus' || ref === 'pro' ? ref : null;
+  }
 
   // 200 so Razorpay does not retry for something we cannot match.
   if (!email || !plan) {
