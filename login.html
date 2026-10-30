@@ -57,6 +57,14 @@ input:focus{border-color:rgba(255,255,255,.7);box-shadow:0 0 0 3px rgba(255,255,
 @keyframes rise{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:none}}
 @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,30px) scale(1.08)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+.brand{display:inline-flex;align-items:baseline;font-family:Sora,Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1;color:inherit;white-space:nowrap}
+.brand .bx{display:inline-block;width:.9em;height:.9em;margin:0 .05em 0 .03em;vertical-align:-.02em}
+.brand .xs{width:100%;height:100%;overflow:visible;display:block}
+.brand .ba{margin-left:.34em;background:linear-gradient(135deg,var(--a,#8b5cf6),var(--b,#22d3ee));-webkit-background-clip:text;background-clip:text;color:transparent}
+@media(max-width:760px){.top{background:#0c1236!important}}
+.consent{display:flex;gap:8px;align-items:flex-start;font-size:12.5px;color:rgba(255,255,255,.82);margin-top:14px;line-height:1.5}
+.consent a{color:#fff}
 </style>
 </head>
 <body>
@@ -64,7 +72,7 @@ input:focus{border-color:rgba(255,255,255,.7);box-shadow:0 0 0 3px rgba(255,255,
 
 <div class="card" role="main">
   <section class="left" aria-label="Welcome">
-    <div class="logo">PrepX<span class="o">AI</span></div>
+    <a class="logo" href="https://prepxai.online/" aria-label="PrepX AI home" style="text-decoration:none;color:#fff"><span class="brand"><span class="bp">Prep</span><span class="bx"><svg class="xs" viewBox="0 0 56 56" aria-hidden="true"><defs><linearGradient id="pxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g stroke="url(#pxg)" stroke-width="7" stroke-linecap="round" fill="none"><path d="M9 9 L47 47"/><path d="M47 9 L9 47"/><path d="M44 12 L58 -2" stroke-width="4.5"/></g></svg></span><span class="ba">Ai</span></span></a>
     <h1>Welcome<br>Back.</h1>
     <p>Your journey to a higher score starts here. Log in to continue your plan with AI-powered guidance.</p>
   </section>
@@ -89,7 +97,8 @@ input:focus{border-color:rgba(255,255,255,.7);box-shadow:0 0 0 3px rgba(255,255,
         <button type="button" class="eye" id="eye" aria-label="Show password">👁</button>
       </div>
 
-      <button class="submit" id="sb" type="submit">Log in</button>
+      <label id="consentRow" class="consent" hidden><input type="checkbox" id="consent"> I am 18 or older, or my parent or guardian has agreed to this account. I have read the <a href="https://prepxai.online/legal/privacy.html" target="_blank" rel="noopener">privacy policy</a>.</label>
+  <button class="submit" id="sb" type="submit">Log in</button>
       <p class="msg" id="msg" role="status"></p>
     </form>
 
@@ -135,6 +144,7 @@ function setMode(s){
   $('pw').setAttribute('autocomplete',s?'new-password':'current-password');
   $('su').textContent=s?'Back to log in':'Create account';
   msg(s?'Set a password to save your plan.':'','ok');
+  $('consentRow').hidden=!s;
 }
 $('su').onclick=function(){setMode(!signupMode)};
 if(!recovering&&/mode=signup/.test(location.search)&&readDraft())setMode(true);
@@ -156,6 +166,7 @@ $('lf').onsubmit=async function(e){
   if(!pw)return msg('Please enter your password.','err');
   if(signupMode){
     if(pw.length<8)return msg('Password must be at least 8 characters.','err');
+    if(!$('consent').checked)return msg('Please confirm your age or parental consent to continue.','err');
     var d=readDraft()||{};
     busy(true);msg('');
     var su=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:DASH_HOME,data:{
