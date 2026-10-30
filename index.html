@@ -344,6 +344,11 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
           <div class="tasks" id="taskList"></div>
           <div class="actions" style="margin-top:14px"><button class="btn" id="pdfBtn" type="button">Save as PDF</button><button class="btn" id="shareBtn" type="button">Share plan</button></div>
         </section>
+        <section class="glass" style="grid-column:1/-1">
+          <h2>My syllabus tracker</h2>
+          <p class="sub">Tick off subjects as you complete them. Your progress is saved to your account.</p>
+          <div id="syllabusTracker"><div class="empty">Loading your syllabus…</div></div>
+        </section>
         <section class="glass">
           <h2>Weekly roadmap</h2>
           <p class="sub">Weak subjects get more time. Sunday is for a full mock and review.</p>
@@ -615,6 +620,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   populateDetails(prof);
   renderPlan();
   renderRoadmap();
+  await loadSyllabus();
   renderLock();
   renderSunday();
   renderChatIntro();
@@ -676,6 +682,58 @@ function renderPlan(){
   $('planNote2').textContent='Tasks below are planned for today. Mark them as you go.';
 }
 
+var syllabusNodes=[],syllabusDone={};
+async function loadSyllabus(){
+  var box=$('syllabusTracker');
+  if(!box||!st.profile||!st.profile.id)return;
+  box.innerHTML='<div class="empty">Loading syllabus…</div>';
+  if(!st.ex){box.innerHTML='<div class="empty">Set a supported target exam in Profile to view its syllabus.</div>';return}
+  var er=await sb.from('exams').select('id,slug,name').eq('is_active',true);
+  if(er.error){box.innerHTML='<div class="empty">Could not load exam list. Please try again later.</div>';return}
+  var key=String(st.profile.target_exam||'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+  var exam=(er.data||[]).find(function(x){
+    var slug=x.slug.toLowerCase().replace(/[^a-z0-9]+/g,'');
+    var name=x.name.toLowerCase().replace(/[^a-z0-9]+/g,'');
+    return slug===key||name===key||slug.indexOf(key)>=0||key.indexOf(slug)>=0||name.indexOf(key)>=0||key.indexOf(name)>=0;
+  });
+  if(!exam){box.innerHTML='<div class="empty">A syllabus for '+esc(st.ex.label)+' is not available yet.</div>';return}
+  var nr=await sb.from('syllabus_nodes').select('id,title,level,sort_order').eq('exam_id',exam.id).order('sort_order',{ascending:true});
+  if(nr.error){box.innerHTML='<div class="empty">Syllabus could not be loaded right now.</div>';return}
+  syllabusNodes=nr.data||[];
+  var pr=await sb.from('student_syllabus_progress').select('node_id,completed').eq('user_id',st.profile.id);
+  if(pr.error){box.innerHTML='<div class="empty">Progress could not be loaded. Please refresh and try again.</div>';return}
+  syllabusDone={};
+  (pr.data||[]).forEach(function(x){syllabusDone[x.node_id]=x.completed===true});
+  renderSyllabus();
+}
+function renderSyllabus(){
+  var box=$('syllabusTracker');if(!box)return;
+  if(!syllabusNodes.length){box.innerHTML='<div class="empty">Detailed syllabus topics for this exam are being added. Check back soon.</div>';return}
+  var done=syllabusNodes.filter(function(n){return syllabusDone[n.id]}).length;
+  var pct=Math.round(done/syllabusNodes.length*100);
+  var html='<div class="kpi" style="margin:0 0 14px"><div><small>Completed</small><b>'+done+' / '+syllabusNodes.length+'</b></div><div><small>Overall progress</small><b>'+pct+'%</b></div></div><div style="height:8px;border-radius:99px;background:rgba(148,163,184,.18);overflow:hidden;margin-bottom:14px"><div style="height:100%;width:'+pct+'%;background:linear-gradient(90deg,#8b5cf6,#38bdf8);border-radius:99px"></div></div><div style="display:grid;gap:8px">';
+  syllabusNodes.forEach(function(n){
+    html+='<label style="display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line,rgba(148,163,184,.2));border-radius:12px;cursor:pointer"><input type="checkbox" data-syllabus-id="'+esc(n.id)+'" '+(syllabusDone[n.id]?'checked':'')+' style="width:18px;height:18px;accent-color:#8b5cf6"><span style="flex:1">'+esc(n.title)+'</span><small class="sub">'+esc(n.level)+'</small></label>';
+  });
+  html+='</div>';
+  box.innerHTML=html;
+  box.querySelectorAll('[data-syllabus-id]').forEach(function(input){
+    input.addEventListener('change',function(){setSyllabusProgress(input.getAttribute('data-syllabus-id'),input.checked,input)});
+  });
+}
+async function setSyllabusProgress(nodeId,completed,input){
+  var uid=st.profile&&st.profile.id;
+  if(!uid)return;
+  input.disabled=true;
+  var payload={user_id:uid,node_id:nodeId,completed:completed,completed_at:completed?new Date().toISOString():null};
+  var res=await sb.from('student_syllabus_progress').upsert(payload,{onConflict:'user_id,node_id'});
+  input.disabled=false;
+  if(res.error){input.checked=!completed;toast('Progress was not saved. Please try again.');return}
+  syllabusDone[nodeId]=completed;
+  renderSyllabus();
+  toast(completed?'Subject marked complete.':'Completion mark removed.');
+  if(location.hash==='#performance')renderPerformance();
+}
 function renderRoadmap(){
   var wk=$('week');
   wk.innerHTML='';
