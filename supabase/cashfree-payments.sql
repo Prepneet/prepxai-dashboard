@@ -49,7 +49,10 @@ begin
     raise exception 'Payment already used';
   end if;
 
-  next_expiry := now() + interval '30 days';
+  select greatest(now(), coalesce(plan_expires_at, now())) + interval '30 days'
+  into next_expiry
+  from public.profiles
+  where id = payment_row.user_id;
 
   update public.profiles
   set plan = payment_row.plan,
