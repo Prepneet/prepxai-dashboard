@@ -93,23 +93,109 @@ export default async function handler(req, res) {
   if (!me) return json(res, 401, { error: 'Please log in again.' });
   if (!me.paid) return json(res, 403, { error: 'Mock tests are part of the Plus and Pro plans.', code: 'plan_required' });
 
+  if (body.action === 'generate_sunday') {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).formatToParts(new Date());
+    const part = (type) => parts.find(x => x.type === type)?.value;
+    const year = Number(part('year')), month = Number(part('month')), day = Number(part('day'));
+    const localDay = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+    if (![0, 5, 6].includes(localDay)) {
+      return json(res, 200, { status: 'not_yet', message: 'Sunday mock ka syllabus aur strategy Friday ko unlock hogi.' });
+    }
+    const daysToSunday = (7 - localDay) % 7;
+    const sundayDate = new Date(Date.UTC(year, month - 1, day + daysToSunday)).toISOString().slice(0, 10);
+    const { data: existing } = await adm.from('mock_tests')
+      .select('id,title,scheduled_for,strategy_text,duration_min,total_marks')
+      .eq('assigned_user_id', me.uid).eq('exam_id', me.exam.id)
+      .eq('scheduled_for', sundayDate).maybeSingle();
+    if (existing) return json(res, 200, { status: 'existing', test: existing });
+
+    const { data: progress, error: progressError } = await adm.from('student_syllabus_progress')
+      .select('node_id').eq('user_id', me.uid).eq('completed', true).limit(2000);
+    if (progressError) return json(res, 500, { error: 'Could not read your completed syllabus.' });
+    const nodeIds = [...new Set((progress || []).map(x => x.node_id).filter(Boolean))];
+    if (!nodeIds.length) return json(res, 200, { status: 'not_ready', message: 'Pehle Notes & Revision ya Today’s Plan mein apne completed topics tick karo. Sunday mock unhi topics se banega.' });
+
+    const { data: pool, error: poolError } = await adm.from('questions')
+      .select('id,node_id,body,options,correct_option,explanation')
+      .eq('exam_id', me.exam.id).is('mock_test_id', null).in('node_id', nodeIds).limit(300);
+    if (poolError) return json(res, 500, { error: 'Could not build your completed-syllabus question pool.' });
+    const valid = (pool || []).filter(q => Array.isArray(q.options) && q.options.length >= 2 &&
+      Number.isInteger(q.correct_option) && q.correct_option >= 0 && q.correct_option < q.options.length);
+    if (valid.length < 5) {
+      return json(res, 200, { status: 'not_ready', message: 'Tumhare completed syllabus se abhi 5 verified questions available nahi hain. Academic team PYQs upload karte hi mock unlock hoga.' });
+    }
+    for (let i = valid.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [valid[i], valid[j]] = [valid[j], valid[i]];
+    }
+    const selected = valid.slice(0, Math.min(20, valid.length));
+    const { data: nodes } = await adm.from('syllabus_nodes')
+      .select('id,title,level,parent_id').eq('exam_id', me.exam.id);
+    const byId = Object.fromEntries((nodes || []).map(n => [n.id, n]));
+    const completedTitles = nodeIds.map(id => {
+      const topic = byId[id], chapter = topic && byId[topic.parent_id];
+      return chapter ? chapter.title : (topic ? topic.title : '');
+    }).filter(Boolean);
+    const chapters = [...new Set(completedTitles)].slice(0, 10);
+    const title = 'Sunday Diagnostic · ' + me.target_exam + ' · ' + sundayDate;
+    const strategy = 'PrepX Ai weekly diagnostic pattern: ' + selected.length +
+      ' MCQs · ' + (selected.length * 2) + ' minutes · 1 mark per correct answer · no negative marking. ' +
+      'Syllabus sirf tumhare completed topics se: ' + chapters.join(', ') +
+      '. Strategy: pehle easy questions solve karo, phir lengthy questions; last 5 minutes answers review karo. ' +
+      'Ye personalised practice test hai, official full-length exam pattern nahi.';
+    const { data: test, error: testError } = await adm.from('mock_tests').insert({
+      exam_id: me.exam.id, exam: me.target_exam, assigned_user_id: me.uid,
+      title, duration_min: selected.length * 2, total_marks: selected.length,
+      negative_marks: 0, is_premium: true, published: false, is_active: true,
+      scheduled_for: sundayDate, strategy_text: strategy, publish_at: new Date().toISOString()
+    }).select().single();
+    if (testError) return json(res, 500, { error: 'Could not create your Sunday mock.' });
+    const questionRows = selected.map((q, index) => {
+      const topic = byId[q.node_id], chapter = topic && byId[topic.parent_id];
+      const subject = chapter && byId[chapter.parent_id];
+      return {
+        test_id: test.id, position: index + 1,
+        subject: subject ? subject.title : 'General',
+        topic: (chapter ? chapter.title + ' — ' : '') + (topic ? topic.title : 'Completed syllabus'),
+        question: q.body, options: q.options, correct_index: q.correct_option,
+        explanation: q.explanation || null, marks: 1
+      };
+    });
+    const { error: insertError } = await adm.from('mock_questions').insert(questionRows);
+    if (insertError) {
+      await adm.from('mock_tests').delete().eq('id', test.id);
+      return json(res, 500, { error: 'Sunday mock questions could not be saved.' });
+    }
+    return json(res, 200, { status: 'created', test: {
+      id: test.id, title: test.title, scheduled_for: test.scheduled_for,
+      strategy_text: test.strategy_text, duration_min: test.duration_min,
+      total_marks: test.total_marks, exam: test.exam
+    }});
+  }
+
   if (body.action === 'list') {
-    const { data, error } = await adm.from('mock_tests')
-      .select('id, exam, title, duration_min, total_marks, negative_marks, scheduled_for, strategy_text, publish_at')
-      .eq('exam_id', me.exam.id).eq('exam', me.target_exam)
-      .eq('published', true).eq('is_active', true)
-      .order('scheduled_for', { ascending: true, nullsFirst: false }).order('created_at', { ascending: false }).limit(100);
-    if (error) return json(res, 500, { error: 'Could not load tests.' });
-    return json(res, 200, { tests: data || [] });
+    const columns = 'id, exam, title, duration_min, total_marks, negative_marks, scheduled_for, strategy_text, publish_at';
+    const [published, assigned] = await Promise.all([
+      adm.from('mock_tests').select(columns).eq('exam_id', me.exam.id).eq('exam', me.target_exam)
+        .eq('published', true).eq('is_active', true).order('scheduled_for', { ascending: true, nullsFirst: false }).limit(100),
+      adm.from('mock_tests').select(columns).eq('exam_id', me.exam.id).eq('exam', me.target_exam)
+        .eq('assigned_user_id', me.uid).eq('published', false).eq('is_active', true).limit(20)
+    ]);
+    if (published.error || assigned.error) return json(res, 500, { error: 'Could not load tests.' });
+    const data = [...(assigned.data || []), ...(published.data || [])];
+    return json(res, 200, { tests: data });
   }
 
   if (body.action === 'start') {
     const testId = String(body.test_id || '');
     if (!/^[0-9a-f-]{36}$/i.test(testId)) return json(res, 400, { error: 'Invalid test.' });
     const { data: test } = await adm.from('mock_tests').select('*').eq('id', testId)
-      .eq('exam_id', me.exam.id).eq('exam', me.target_exam)
-      .eq('published', true).eq('is_active', true).maybeSingle();
-    if (!test) return json(res, 404, { error: 'Test not found for your active exam, or it has not been published yet.' });
+      .eq('exam_id', me.exam.id).eq('exam', me.target_exam).eq('is_active', true).maybeSingle();
+    if (!test || (!test.published && test.assigned_user_id !== me.uid)) {
+      return json(res, 404, { error: 'Test not found for your active exam, or it has not been published for you.' });
+    }
 
     const now = Date.now();
     let attempt = null;
