@@ -1371,8 +1371,10 @@ function renderNotifications(){
     var summary=document.createElement('div');summary.textContent=i.text;content.appendChild(summary);
     d.appendChild(document.createElement('span'));d.firstChild.className='d';d.appendChild(content);
     d.onclick=function(){
-      var reads=readSet();reads.add(i.id);saveReadSet(reads);d.classList.add('read');renderNotifications();
-      if(i.type==='notice'){
+      var reads=readSet();reads.add(i.id);saveReadSet(reads);d.classList.add('read');
+      var unread=items.filter(function(x){return !reads.has(x.id)}).length;
+      $('bellCount').textContent=unread;$('bellCount').hidden=unread===0;
+      if(i.type==='notice'&&!content.querySelector('.rv')){
         var detail=document.createElement('div');detail.className='rv';detail.style.marginTop='8px';
         var body=Array.isArray(i.body)?i.body:[];
         body.forEach(function(line){var p=document.createElement('p');p.textContent='• '+line;detail.appendChild(p)});
