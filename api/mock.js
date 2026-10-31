@@ -12,7 +12,20 @@ Needs migration 003_mock_tests.sql
 import { createClient } from '@supabase/supabase-js';
 
 const GRACE_SEC = 90;
-const EXAM_SLUGS = {'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','Bihar Police':'bihar-police','JEE Main':'jee-main','JEE Advanced':'jee-advanced','NEET UG':'neet-ug','CUET UG':'cuet-ug','SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA':'nda','CDS':'cds','Banking Exams':'ibps-sbi-banking'};
+const EXAM_SLUGS = {
+  'BPSC':'bpsc','bpsc':'bpsc',
+  'Railways (RRB)':'rrb-ntpc','rrb-ntpc':'rrb-ntpc',
+  'Bihar Police':'bihar-police','bihar-police':'bihar-police',
+  'JEE Main':'jee-main','jee-main':'jee-main',
+  'JEE Advanced':'jee-advanced','jee-advanced':'jee-advanced',
+  'NEET UG':'neet-ug','neet-ug':'neet-ug',
+  'CUET UG':'cuet-ug','cuet-ug':'cuet-ug',
+  'SSC Exams':'ssc-cgl','ssc-cgl':'ssc-cgl',
+  'UPSC CSE':'upsc-cse','upsc-cse':'upsc-cse',
+  'NDA':'nda','nda':'nda','NDA / CDS':'nda','nda-cds':'nda',
+  'CDS':'cds','cds':'cds',
+  'Banking Exams':'ibps-sbi-banking','ibps-sbi-banking':'ibps-sbi-banking'
+};
 
 function json(res, code, body) {
   res.status(code).setHeader('Content-Type', 'application/json').send(JSON.stringify(body));
