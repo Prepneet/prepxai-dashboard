@@ -115,13 +115,22 @@
       "source": "https://jeeadv.ac.in/documents/jee-advanced-2026-syllabus.pdf",
       "status": "2026_topics_mapped_and_verified",
       "note": "Separate JEE Advanced database curriculum created: 3 subjects, 52 chapter groups and 226 topic entries mapped from the official 2026 syllabus PDF. Recheck when 2027 syllabus is published."
+    },
+    {
+      "slug": "cds",
+      "name": "Combined Defence Services (CDS)",
+      "authority": "UPSC",
+      "syllabusYear": 2026,
+      "source": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
+      "status": "source_found_review_pending",
+      "note": "Separate CDS syllabus curriculum created with English, General Knowledge and Elementary Mathematics. Confirm the exact 2026 notification document and paper-specific scope before marking topics official."
     }
   ],
   "coverageNotes": [
     "JEE Advanced now has a separate database curriculum mapped from the official 2026 syllabus PDF; the 2027 syllabus still needs checking when the organizing IIT publishes it.",
     "Bihar Police curriculum was present in the database and has now been added to the student-facing exam selector; exact recruitment-advertisement mapping still needs review.",
-    "NDA and CDS are currently combined in the student-facing selector, although UPSC publishes separate exam papers and syllabi. Split the curriculum mapping before claiming full coverage.",
-    "GATE, BITSAT, VITEEE and state CETs are not currently in the dashboard's supported exam selector; do not imply they are supported until their exam records and syllabi are added."
+    "GATE, BITSAT, VITEEE and state CETs are not currently in the dashboard's supported exam selector; do not imply they are supported until their exam records and syllabi are added.",
+    "NDA and CDS now have separate exam selector entries and separate database curriculum mappings. CDS topic-level verification remains pending against the 2026 UPSC notification."
   ],
   "verificationResults": {
     "checkedAt": "2026-10-31",
