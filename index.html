@@ -880,7 +880,32 @@ function renderRoadmap(){
   var dayNow=st.dayNumber||dayNumber();
   var weekStart=Math.floor((dayNow-1)/7)*7+1;
   var startIndex=(weekStart-1)*4;
-  var topics=SYLLABUS_TOPICS.slice(startIndex,startIndex+28);
+  // Interleave subjects so the roadmap never assigns a whole week to one subject.
+  // SYLLABUS_TOPICS is already weak-subject-prioritized; retain that priority
+  // within each subject while rotating fairly between available subjects.
+  var subjectBuckets=[];
+  var subjectMap={};
+  SYLLABUS_TOPICS.forEach(function(topic){
+    var key=String(topic.subject||'General');
+    if(!subjectMap[key]){
+      subjectMap[key]=[];
+      subjectBuckets.push({name:key,items:subjectMap[key]});
+    }
+    subjectMap[key].push(topic);
+  });
+  var balancedTopics=[];
+  var cursor=0,remaining=true;
+  while(remaining){
+    remaining=false;
+    subjectBuckets.forEach(function(bucket){
+      if(cursor<bucket.items.length){
+        balancedTopics.push(bucket.items[cursor]);
+        remaining=true;
+      }
+    });
+    cursor++;
+  }
+  var topics=balancedTopics.slice(startIndex,startIndex+28);
   var joined=st.profile&&st.profile.created_at?new Date(st.profile.created_at):new Date();
   for(var day=0;day<7;day++){
     var dayNo=weekStart+day;
