@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#080B18"><title>Payment status · PrepX Ai</title><style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:#080b18;color:#f8fafc;font:15px Inter,system-ui,sans-serif}.card{width:min(460px,100%);padding:28px;border:1px solid #ffffff20;border-radius:24px;background:linear-gradient(145deg,#ffffff12,#ffffff05);backdrop-filter:blur(20px);text-align:center;box-shadow:0 24px 70px #0008}h1{font-size:23px}p{color:#aab5cb;line-height:1.6}.status{margin:18px 0;padding:13px;border-radius:14px;background:#ffffff0c;color:#cbd5e1}.btn{display:inline-flex;margin-top:12px;padding:12px 18px;border-radius:12px;background:linear-gradient(120deg,#8b5cf6,#3b82f6);color:white;text-decoration:none;font-weight:700}.small{font-size:12px}
+</style><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script></head>
+<body><main class="card"><h1 id="title">Verifying your payment</h1><p id="desc">Please wait while we confirm your payment securely with Cashfree.</p><div class="status" id="status">Checking payment status…</div><p class="small">Do not make another payment while this page is checking.</p><a class="btn" href="/" id="home" hidden>Go to dashboard</a></main>
+<script>
+(function(){
+var url='https://artcffpfotgrmbhtrtsb.supabase.co',key='sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB',sb=supabase.createClient(url,key);
+var orderId=new URLSearchParams(location.search).get('order_id'),status=document.getElementById('status'),title=document.getElementById('title'),desc=document.getElementById('desc'),home=document.getElementById('home');
+async function check(){
+ try{
+  var s=await sb.auth.getSession(),token=s.data&&s.data.session&&s.data.session.access_token;
+  if(!token){status.textContent='Payment received? Please log in to view your account.';home.hidden=false;return true}
+  if(!orderId){status.textContent='Order reference is missing. Contact support if money was deducted.';return true}
+  var q=await sb.from('payment_orders').select('status,plan,amount').eq('order_id',orderId).maybeSingle();
+  if(q.error)throw q.error;
+  if(q.data&&q.data.status==='paid'){
+   title.textContent='Payment successful';desc.textContent='Your '+q.data.plan.toUpperCase()+' plan is active for 30 days.';status.textContent='₹'+q.data.amount+' payment verified. Your paid access is ready.';home.hidden=false;return true;
+  }
+  if(q.data&&q.data.status==='failed'){title.textContent='Payment not completed';status.textContent='Cashfree did not confirm this payment. You can try again from Plans.';home.hidden=false;return true}
+  status.textContent='Payment confirmation is still pending. This page will check again automatically.';return false;
+ }catch(e){status.textContent='We could not check the status yet. Please refresh in a moment or contact support.';return false}
+}
+var tries=0;async function poll(){var done=await check();tries++;if(!done&&tries<20)setTimeout(poll,2500)}
+poll();
+})();
+</script></body></html>
