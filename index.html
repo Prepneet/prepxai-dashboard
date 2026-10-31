@@ -619,6 +619,8 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderChatIntro();
   renderFeedbackState();
   await loadTasks();
+  await loadExamNotices();
+  renderNotifications();
   renderPlan();
   renderRoadmap();
   route();
@@ -1306,6 +1308,25 @@ function readSet(){
   try{return new Set(JSON.parse(localStorage.getItem('prepx_notif_read_'+st.profile.id)||'[]'))}catch(e){return new Set()}
 }
 function saveReadSet(set){localStorage.setItem('prepx_notif_read_'+st.profile.id,JSON.stringify(Array.from(set).slice(-200)))}
+var examNotices=[];
+async function loadExamNotices(){
+  examNotices=[];
+  if(!st.ex)return;
+  var r=await sb.from('exam_updates').select('id,tag,type,title,summary,body,link,link_text,src_name,src_url,published_at,created_at').eq('status','approved').order('published_at',{ascending:false}).limit(100);
+  if(r.error)return;
+  var aliases={
+    'BPSC':['bpsc'],'Railways (RRB)':['rrb','railway','ntpc'],
+    'JEE Main':['jee'],'JEE Advanced':['jee advanced','jee'],
+    'NEET UG':['neet'],'CUET UG':['cuet'],'SSC Exams':['ssc'],
+    'UPSC CSE':['upsc'],'NDA / CDS':['nda','cds'],
+    'Banking Exams':['banking','ibps','sbi']
+  };
+  var terms=aliases[st.ex.key]||[st.ex.key.toLowerCase()];
+  examNotices=(r.data||[]).filter(function(x){
+    var tag=String(x.tag||'').toLowerCase();
+    return terms.some(function(term){return tag.indexOf(term)>=0});
+  }).slice(0,20);
+}
 function buildNotifications(){
   var out=[],pr=notifPrefs(),t=localISO();
   var list=todayTasks().filter(function(x){return x.status!=='rescheduled'});
@@ -1316,6 +1337,10 @@ function buildNotifications(){
   if(pr.tasks&&pending>0) out.push({id:'tasks-'+t,type:'tasks',title:pending+' task'+(pending>1?'s':'')+' pending today',text:'Open Study to start or mark them complete.'});
   if(pr.tasks&&missed>0) out.push({id:'missed-'+t,type:'tasks',title:missed+' missed task'+(missed>1?'s':''),text:'A catch-up task was added to today\'s plan.'});
   if(pr.streak&&list.length&&!done) out.push({id:'streak-'+t,type:'streak',title:'Keep your streak alive',text:'Complete one study task today to count toward your streak.'});
+  examNotices.forEach(function(n){
+    var summary=n.summary||((Array.isArray(n.body)?n.body:[]).join(' · '))||'Tap to read this exam update.';
+    out.push({id:'notice-'+n.id,type:'notice',title:n.title,text:summary,body:n.body,link:n.link,link_text:n.link_text,source:n.src_name,source_url:n.src_url});
+  });
   var sun=addDays(t,(7-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]).getDay())%7||7);
   var toSun=Math.round((new Date(+sun.split('-')[0],+sun.split('-')[1]-1,+sun.split('-')[2])-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]))/86400000);
   if(pr.mock&&st.paid&&toSun<=1) out.push({id:'mock-'+sun,type:'mock',title:toSun===0?'Sunday mock is today':'Sunday mock is tomorrow',text:'Plan a full timed test in Tests.'});
@@ -1340,7 +1365,22 @@ function renderNotifications(){
   if(!items.length){box.innerHTML='<div class="empty">Nothing new right now.</div>';return}
   items.forEach(function(i){
     var d=document.createElement('div');d.className='nitem'+(read.has(i.id)?' read':'');
-    d.innerHTML='<span class="d"></span><div><b>'+esc(i.title)+'</b>'+esc(i.text)+'</div>';
+    d.style.cursor='pointer';
+    var content=document.createElement('div');
+    var title=document.createElement('b');title.textContent=i.title;content.appendChild(title);
+    var summary=document.createElement('div');summary.textContent=i.text;content.appendChild(summary);
+    d.appendChild(document.createElement('span'));d.firstChild.className='d';d.appendChild(content);
+    d.onclick=function(){
+      var reads=readSet();reads.add(i.id);saveReadSet(reads);d.classList.add('read');renderNotifications();
+      if(i.type==='notice'){
+        var detail=document.createElement('div');detail.className='rv';detail.style.marginTop='8px';
+        var body=Array.isArray(i.body)?i.body:[];
+        body.forEach(function(line){var p=document.createElement('p');p.textContent='• '+line;detail.appendChild(p)});
+        if(i.source){var src=document.createElement('p');src.textContent='Source: '+i.source;detail.appendChild(src)}
+        if(i.link&&/^https:\/\//i.test(i.link)){var a=document.createElement('a');a.href=i.link;a.target='_blank';a.rel='noopener noreferrer';a.textContent=i.link_text||'Official link';detail.appendChild(a)}
+        content.appendChild(detail);
+      }else if(i.type==='mock'||i.type==='tasks'){location.hash='#tests'}
+    };
     box.appendChild(d);
   });
 }
