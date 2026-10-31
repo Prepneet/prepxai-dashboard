@@ -62,9 +62,15 @@
       }
     },
     {
-      key: 'NDA / CDS', label: 'NDA / CDS', icon: '🛡️', sub: 'Defence Services', factor: 0.5,
+      key: 'NDA', label: 'NDA', icon: '🛡️', sub: 'National Defence Academy', factor: 0.5,
       calendar: {
-        2027: { date: '2027-04-11', status: 'official', note: 'UPSC calendar 2027: NDA & NA (I) and CDS (I) exam 11 Apr 2027. Cycle II: 19 Sep 2027.' }
+        2027: { date: '2027-04-11', status: 'official', note: 'UPSC calendar 2027: NDA & NA (I) exam 11 Apr 2027. Cycle II: 19 Sep 2027.' }
+      }
+    },
+    {
+      key: 'CDS', label: 'CDS', icon: '🎖️', sub: 'Combined Defence Services', factor: 0.5,
+      calendar: {
+        2027: { date: '2027-04-11', status: 'official', note: 'UPSC calendar 2027: CDS (I) exam 11 Apr 2027. Cycle II: 19 Sep 2027.' }
       }
     },
     {
@@ -94,7 +100,7 @@
     'cuet': 'CUET UG', 'cuet ug': 'CUET UG', 'cuet-ug': 'CUET UG',
     'ssc': 'SSC Exams', 'ssc exams': 'SSC Exams', 'ssc cgl': 'SSC Exams', 'ssc-cgl': 'SSC Exams',
     'rrb': 'Railways (RRB)', 'railways': 'Railways (RRB)', 'railway': 'Railways (RRB)',
-    'nda': 'NDA / CDS', 'cds': 'NDA / CDS', 'nda-cds': 'NDA / CDS',
+    'nda': 'NDA', 'cds': 'CDS', 'nda-cds': 'NDA', 'nda / cds': 'NDA',
     'banking': 'Banking Exams', 'ibps': 'Banking Exams', 'sbi': 'Banking Exams', 'bank': 'Banking Exams',
     'jeem': 'JEE Main', 'jeea': 'JEE Advanced',
     'bpsc': 'BPSC'
