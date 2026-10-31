@@ -1618,7 +1618,7 @@ function buildNotifications(){
   if(pr.streak&&list.length&&!done) out.push({id:'streak-'+t,type:'streak',title:'Keep your streak alive',text:'Complete one study task today to count toward your streak.'});
   examNotices.forEach(function(n){
     var summary=n.summary||((Array.isArray(n.body)?n.body:[]).join(' · '))||'Tap to read this exam update.';
-    out.push({id:'notice-'+n.id,type:'notice',title:n.title,text:summary,body:n.body,link:n.link,link_text:n.link_text,source:n.src_name,source_url:n.src_url});
+    out.push({id:'notice-'+n.id,type:'notice',kind:n.type||'exam_update',title:n.title,text:summary,body:n.body,link:n.link,link_text:n.link_text,source:n.src_name,source_url:n.src_url});
   });
   var toSun=(7-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]).getDay())%7;
   var sun=addDays(t,toSun);
@@ -1659,6 +1659,7 @@ function renderNotifications(){
         body.forEach(function(line){var p=document.createElement('p');p.textContent='• '+line;detail.appendChild(p)});
         if(i.source){var src=document.createElement('p');src.textContent='Source: '+i.source;detail.appendChild(src)}
         if(i.link&&/^https:\/\//i.test(i.link)){var a=document.createElement('a');a.href=i.link;a.target='_blank';a.rel='noopener noreferrer';a.textContent=i.link_text||'Official link';detail.appendChild(a)}
+        if(i.kind==='mock'){var go=document.createElement('button');go.type='button';go.className='btn primary';go.style.marginTop='8px';go.textContent='Open Sunday mock';go.onclick=function(e){e.stopPropagation();location.hash='#tests'};detail.appendChild(go)}
         content.appendChild(detail);
       }else if(i.type==='mock'||i.type==='tasks'){location.hash='#tests'}
     };
