@@ -1877,6 +1877,11 @@ async function setNoteComplete(n,done){
     if(p.error){toast('Note complete hua, lekin syllabus tick sync nahi hua: '+p.error.message);return false}
     var topic=SYLLABUS_TOPICS.find(function(x){return x.id===n.syllabus_node_id});
     if(topic)topic.completed=!!done;
+    if(done){
+      var taskUpdate=await sb.from('study_tasks').update({status:'completed',completed_at:now}).eq('user_id',st.profile.id).eq('node_id',n.syllabus_node_id).eq('status','pending');
+      if(!taskUpdate.error)allTasks.forEach(function(task){if(task.node_id===n.syllabus_node_id&&task.status==='pending'){task.status='completed';task.completed_at=now}});
+      renderTasks();renderDayRoutine();
+    }
     renderRoadmap();renderHomeProgress();
   }
   NOTE_PROGRESS[n.id]=patch;renderNoteList();return true;
