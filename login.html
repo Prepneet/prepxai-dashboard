@@ -133,7 +133,7 @@ if(recovering){
 }
 (async function(){
   if(!sb||recovering)return;
-  try{var r=await sb.auth.getSession();if(r.data&&r.data.session)location.replace(DASH_HOME)}catch(e){}
+  try{var r=await sb.auth.getSession();if(r.data&&r.data.session)location.replace(POST_AUTH_URL)}catch(e){}
 })();
 
 function readDraft(){var m=document.cookie.match(/(?:^|; )prepx_draft=([^;]*)/);if(!m)return null;try{return JSON.parse(decodeURIComponent(m[1]))}catch(e){return null}}
