@@ -60,7 +60,7 @@
       "syllabusYear": 2025,
       "source": "https://csbc.bihar.gov.in/Syllabus.htm",
       "status": "source_found_review_pending",
-      "note": "Official syllabus portal is advertisement-specific; select the exact recruitment advertisement before validating topics."
+      "note": "English and Social Science branches have now been added alongside GK, Science, Mathematics and Hindi. Reasoning remains pending confirmation against the exact CSBC recruitment advertisement."
     },
     {
       "slug": "ibps-sbi-banking",
@@ -69,7 +69,7 @@
       "syllabusYear": 2026,
       "source": "https://www.ibps.in/index.php/management-trainees-xvi/",
       "status": "source_found_review_pending",
-      "note": "IBPS PO/MT XVI official recruitment page located; IBPS and SBI are separate exams and need separate paper-pattern mapping."
+      "note": "Quantitative Aptitude, Reasoning, English and General/Financial Awareness are represented; a Computer Aptitude branch has now been added for the combined Reasoning & Computer Aptitude scope. Exact bank-specific patterns remain pending."
     },
     {
       "slug": "rrb-ntpc",
@@ -87,7 +87,7 @@
       "syllabusYear": 2026,
       "source": "https://ssc.gov.in/api/attachment/uploads/masterData/NoticeBoards/Notice_of_adv_cgl_2026.pdf",
       "status": "source_found_review_pending",
-      "note": "Official CGL 2026 notice contains indicative syllabus; reconcile both tiers and paper sections."
+      "note": "The core Tier-I areas are represented; a Computer Knowledge (Tier-II) branch has now been added. Topic-level mapping remains pending against the 2026 notice."
     },
     {
       "slug": "upsc-cse",
@@ -130,15 +130,14 @@
     "JEE Advanced now has a separate database curriculum mapped from the official 2026 syllabus PDF; the 2027 syllabus still needs checking when the organizing IIT publishes it.",
     "Bihar Police curriculum was present in the database and has now been added to the student-facing exam selector; exact recruitment-advertisement mapping still needs review.",
     "GATE, BITSAT, VITEEE and state CETs are not currently in the dashboard's supported exam selector; do not imply they are supported until their exam records and syllabi are added.",
-    "NDA and CDS now have separate exam selector entries and separate database curriculum mappings. CDS topic-level verification remains pending against the 2026 UPSC notification."
+    "NDA and CDS now have separate exam selector entries and separate database curriculum mappings. CDS topic-level verification remains pending against the 2026 UPSC notification.",
+    "SSC CGL now includes a Computer Knowledge (Tier-II) branch; exact Tier-II mapping remains pending.",
+    "Banking preparation now includes a Computer Aptitude branch; IBPS and SBI-specific exam patterns are not yet separated.",
+    "Bihar Police now includes English and Social Science branches; the current CSBC advertisement must be checked to decide whether the existing reasoning branch is official or supplementary.",
+    "UPSC CSE optional-subject syllabi are not yet represented as selectable subject-specific curricula. RRB ALP/Group D are not included; the current railway curriculum is NTPC only."
   ],
   "verificationResults": {
     "checkedAt": "2026-10-31",
-    "totalTopicNodes": 3130,
-    "sourceLinkedTopicNodes": 3130,
-    "officialTopics": 814,
-    "supplementaryTopics": 7,
-    "pendingTopicReviews": 2309,
     "neet": {
       "officialTopics": 555,
       "supplementaryTopics": 7,
@@ -170,6 +169,7 @@
       "pendingTopics": 45,
       "syllabusYear": 2026
     },
-    "otherExams": "All remaining topic-level records are source-linked but remain pending review; do not label them verified."
+    "otherExams": "All remaining topic-level records are source-linked but remain pending review; do not label them verified.",
+    "note": "Recompute aggregate counts after the new syllabus branches are inserted; topic-level review remains incomplete for most exams."
   }
 }
