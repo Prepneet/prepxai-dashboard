@@ -28,7 +28,21 @@
       "syllabusYear": 2026,
       "source": "https://cuet.nta.nic.in/cuetug-2026-syllabus/",
       "status": "source_found_review_pending",
-      "note": "Official subject catalogue lists 37 language/domain/aptitude options; database has three domain subjects with zero topics."
+      "note": "Official 2026 subject catalogue lists 37 subjects. The previously empty Business Studies, Economics and Physics branches now have 12, 12 and 9 official units mapped respectively; remaining topic-level checks are pending.",
+      "subjectDocuments": [
+        {
+          "subject": "Business Studies (305)",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2025/12/20251227259182286.pdf"
+        },
+        {
+          "subject": "Economics / Business Economics (309)",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2025/12/202512271366341541.pdf"
+        },
+        {
+          "subject": "Physics (322)",
+          "source": "https://cdnbbsr.s3waas.gov.in/s3d1a21da7bca4abff8b0b61b87597de73/uploads/2025/12/202512271334142557.pdf"
+        }
+      ]
     },
     {
       "slug": "bpsc",
