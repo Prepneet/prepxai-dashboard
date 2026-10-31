@@ -27,6 +27,21 @@ const EXAM_SLUGS = {
   'Banking Exams':'ibps-sbi-banking','ibps-sbi-banking':'ibps-sbi-banking','banking':'ibps-sbi-banking','ibps':'ibps-sbi-banking','sbi':'ibps-sbi-banking','bank':'ibps-sbi-banking'
 };
 
+const EXAM_KEY_BY_SLUG = {
+  'bpsc':'BPSC',
+  'rrb-ntpc':'Railways (RRB)',
+  'bihar-police':'Bihar Police',
+  'jee-main':'JEE Main',
+  'jee-advanced':'JEE Advanced',
+  'neet-ug':'NEET UG',
+  'cuet-ug':'CUET UG',
+  'ssc-cgl':'SSC Exams',
+  'upsc-cse':'UPSC CSE',
+  'nda':'NDA',
+  'cds':'CDS',
+  'ibps-sbi-banking':'Banking Exams'
+};
+
 function json(res, code, body) {
   res.status(code).setHeader('Content-Type', 'application/json').send(JSON.stringify(body));
 }
@@ -51,7 +66,7 @@ async function who(req, adm) {
   if (!slug) return null;
   const { data: exam } = await adm.from('exams').select('id,name,slug').eq('slug', slug).eq('is_active', true).maybeSingle();
   if (!exam) return null;
-  return { uid, paid: plan !== 'free', target_exam: prof.target_exam, exam };
+  return { uid, paid: plan !== 'free', target_exam: EXAM_KEY_BY_SLUG[slug] || prof.target_exam, exam };
 }
 
 // Scores one attempt. Only server-side answers are trusted.
