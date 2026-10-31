@@ -61,7 +61,7 @@ const MAX_QUESTION_CHARS = 600;
 const MAX_HISTORY_TURNS = 8;          // last messages kept as context (keeps replies fast and cheap)
 const MAX_IMAGE_BASE64 = 4_000_000;   // about 3 MB image
 const ALLOWED_IMAGE = ['image/jpeg', 'image/png', 'image/webp'];
-const MODEL = 'claude-haiku-5-5';
+const MODEL = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
 const MAX_TOKENS = 700;
 
 /* ---------------- SYSTEM PROMPT (the tutor's rules) ---------------- */
@@ -266,6 +266,7 @@ export default async function handler(req, res) {
     if (sent === 0) throw new Error('empty');
     return res.end();
   } catch (err) {
+    console.error('Prep Ai stream failed', err?.name || 'Error', err?.message || 'Unknown error');
     if (!started || sent === 0) {
       await admin.rpc('refund_doubt', { uid });
       if (!started) return json(res, 502, { error: 'The doubt engine is busy. Please try again in a minute.' });

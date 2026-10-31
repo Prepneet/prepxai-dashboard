@@ -13,7 +13,7 @@ export default function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store, max-age=0');
   return res.status(200).json({
     ready,
-    model: 'claude-haiku-5-5',
+    model: process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001',
     message: ready ? 'Tutor configuration is present.' : 'Tutor server configuration is incomplete.'
   });
 }
