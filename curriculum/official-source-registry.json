@@ -104,8 +104,8 @@
     }
   ],
   "coverageNotes": [
-    "The dashboard configuration currently exposes JEE Main and JEE Advanced separately, but the database only has a JEE Main syllabus row. JEE Advanced requires its own exam row and curriculum.",
-    "The database contains Bihar Police syllabus data, but the student-facing exam selector configuration does not yet include Bihar Police.",
+    "JEE Advanced now has a separate database curriculum mapped from the official 2026 syllabus PDF; the 2027 syllabus still needs checking when the organizing IIT publishes it.",
+    "Bihar Police curriculum was present in the database and has now been added to the student-facing exam selector; exact recruitment-advertisement mapping still needs review.",
     "NDA and CDS are currently combined in the student-facing selector, although UPSC publishes separate exam papers and syllabi. Split the curriculum mapping before claiming full coverage.",
     "GATE, BITSAT, VITEEE and state CETs are not currently in the dashboard's supported exam selector; do not imply they are supported until their exam records and syllabi are added."
   ]
