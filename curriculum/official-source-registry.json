@@ -134,25 +134,41 @@
   ],
   "verificationResults": {
     "checkedAt": "2026-10-31",
+    "totalTopicNodes": 3130,
+    "sourceLinkedTopicNodes": 3130,
+    "officialTopics": 814,
+    "supplementaryTopics": 7,
+    "pendingTopicReviews": 2309,
     "neet": {
       "officialTopics": 555,
       "supplementaryTopics": 7,
-      "pendingTopics": 0
+      "pendingTopics": 0,
+      "syllabusYear": 2026,
+      "activeOfficialUnits": {
+        "physics": 20,
+        "chemistry": 20,
+        "biology": 10
+      }
     },
     "jeeAdvanced": {
       "officialTopics": 226,
       "pendingTopics": 0,
       "syllabusYear": 2026
     },
-    "cuet": {
-      "officialTopics": 33,
-      "pendingTopics": 235,
-      "syllabusYear": 2026
-    },
     "jeeMain": {
       "officialUnitStructure": "20 Physics + 20 Chemistry + 14 Mathematics",
       "pendingTopicReviews": 407,
       "syllabusYear": 2027
+    },
+    "cuet": {
+      "officialTopics": 33,
+      "pendingTopics": 235,
+      "syllabusYear": 2026,
+      "officialSubjectCount": 37
+    },
+    "cds": {
+      "pendingTopics": 45,
+      "syllabusYear": 2026
     },
     "otherExams": "All remaining topic-level records are source-linked but remain pending review; do not label them verified."
   }
