@@ -12,6 +12,7 @@ Needs migration 003_mock_tests.sql
 import { createClient } from '@supabase/supabase-js';
 
 const GRACE_SEC = 90;
+const EXAM_SLUGS = {'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','JEE Main':'jee-main','JEE Advanced':'jee-main','NEET UG':'neet-ug','CUET UG':'cuet-ug','SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA / CDS':'nda','Banking Exams':'ibps-sbi-banking'};
 
 function json(res, code, body) {
   res.status(code).setHeader('Content-Type', 'application/json').send(JSON.stringify(body));
@@ -30,10 +31,14 @@ async function who(req, adm) {
   const { data, error } = await adm.auth.getUser(token);
   if (error || !data?.user) return null;
   const uid = data.user.id;
-  const { data: prof } = await adm.from('profiles').select('plan, plan_expires_at').eq('id', uid).maybeSingle();
+  const { data: prof } = await adm.from('profiles').select('plan, plan_expires_at, target_exam').eq('id', uid).maybeSingle();
   let plan = prof?.plan || 'free';
   if (plan !== 'free' && prof?.plan_expires_at && new Date(prof.plan_expires_at) < new Date()) plan = 'free';
-  return { uid, paid: plan !== 'free' };
+  const slug = EXAM_SLUGS[prof?.target_exam || ''];
+  if (!slug) return null;
+  const { data: exam } = await adm.from('exams').select('id,name,slug').eq('slug', slug).eq('is_active', true).maybeSingle();
+  if (!exam) return null;
+  return { uid, paid: plan !== 'free', target_exam: prof.target_exam, exam };
 }
 
 // Scores one attempt. Only server-side answers are trusted.
@@ -90,8 +95,10 @@ export default async function handler(req, res) {
 
   if (body.action === 'list') {
     const { data, error } = await adm.from('mock_tests')
-      .select('id, exam, title, duration_min, total_marks, negative_marks')
-      .eq('is_active', true).order('created_at', { ascending: false }).limit(100);
+      .select('id, exam, title, duration_min, total_marks, negative_marks, scheduled_for, strategy_text, publish_at')
+      .eq('exam_id', me.exam.id).eq('exam', me.target_exam)
+      .eq('published', true).eq('is_active', true)
+      .order('scheduled_for', { ascending: true, nullsFirst: false }).order('created_at', { ascending: false }).limit(100);
     if (error) return json(res, 500, { error: 'Could not load tests.' });
     return json(res, 200, { tests: data || [] });
   }
@@ -99,8 +106,10 @@ export default async function handler(req, res) {
   if (body.action === 'start') {
     const testId = String(body.test_id || '');
     if (!/^[0-9a-f-]{36}$/i.test(testId)) return json(res, 400, { error: 'Invalid test.' });
-    const { data: test } = await adm.from('mock_tests').select('*').eq('id', testId).eq('is_active', true).maybeSingle();
-    if (!test) return json(res, 404, { error: 'Test not found.' });
+    const { data: test } = await adm.from('mock_tests').select('*').eq('id', testId)
+      .eq('exam_id', me.exam.id).eq('exam', me.target_exam)
+      .eq('published', true).eq('is_active', true).maybeSingle();
+    if (!test) return json(res, 404, { error: 'Test not found for your active exam, or it has not been published yet.' });
 
     const now = Date.now();
     let attempt = null;
