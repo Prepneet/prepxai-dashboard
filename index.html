@@ -1005,7 +1005,8 @@ async function renderTests(){
   var list=document.createElement('div');list.className='tasks';
   tests.forEach(function(t){
     var c=document.createElement('div');c.className='tcard';
-    c.innerHTML='<div class="trow"><span class="badge">'+esc(t.exam)+'</span><span class="tmeta">'+t.duration_min+' min · '+t.total_marks+' marks'+(Number(t.negative_marks)>0?' · −'+t.negative_marks+' per wrong':'')+'</span></div><div class="tt">'+esc(t.title)+'</div><div class="tact"><button class="btn primary" type="button">Start test</button></div>';
+    var dateLabel=t.scheduled_for?' · '+new Date(t.scheduled_for+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'';
+    c.innerHTML='<div class="trow"><span class="badge">'+esc(t.exam)+'</span><span class="tmeta">'+t.duration_min+' min · '+t.total_marks+' marks'+(Number(t.negative_marks)>0?' · −'+t.negative_marks+' per wrong':'')+esc(dateLabel)+'</span></div><div class="tt">'+esc(t.title)+'</div>'+(t.strategy_text?'<p class="tmeta">'+esc(t.strategy_text)+'</p>':'')+'<div class="tact"><button class="btn primary" type="button">Start test</button></div>';
     c.querySelector('button').onclick=function(){startMock(t.id)};
     list.appendChild(c);
   });
