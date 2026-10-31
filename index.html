@@ -1698,8 +1698,11 @@ async function renderNotes(){
     BOOKS=new Set((bk.data||[]).map(function(x){return x.note_id}));
     var ex=$('nExam');
     ex.innerHTML='<option value="">All exams</option>'+P.EXAMS.map(function(e){return '<option value="'+esc(e.key)+'">'+esc(e.label)+'</option>'}).join('');
+    if(!NFILTER.exam&&st.ex)NFILTER.exam=st.ex.key;
+    ex.value=NFILTER.exam;
   }
-  var subs=Array.from(new Set(NOTES.map(function(n){return n.subject}))).sort();
+  var scoped=NOTES.filter(function(n){return !NFILTER.exam||n.exam===NFILTER.exam});
+  var subs=Array.from(new Set(scoped.map(function(n){return n.subject}))).sort();
   var sel=$('nSubject');var cur=sel.value;
   sel.innerHTML='<option value="">All subjects</option>'+subs.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+'</option>'}).join('');
   sel.value=subs.indexOf(cur)>=0?cur:'';
