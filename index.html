@@ -1190,7 +1190,7 @@ async function loadAnalysis(){
   if(!mocks.length)history.innerHTML='<div class="empty">No mock attempts yet.</div>';
   mocks.slice(-10).reverse().forEach(function(m){
     var t=testMap[m.test_id]||{},row=document.createElement('div');row.className='srow';
-    var left=document.createElement('span');left.textContent=t.title||'Mock test';
+    var left=document.createElement('span');left.textContent=(t.title||'Mock test')+' · '+new Date(m.submitted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
     var right=document.createElement('b');right.textContent=Number(m.score||0)+' marks · '+Number(m.accuracy||0)+'%';
     row.appendChild(left);row.appendChild(right);history.appendChild(row);
   });
