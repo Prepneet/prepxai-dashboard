@@ -2256,6 +2256,7 @@ $('dExam').addEventListener('change',function(){
     if(previous&&previousDate)st.profile.exam_dates[previous]=previousDate;
     if(next&&pTargets.indexOf(next)<0)pTargets.push(next);
     $('dDate').value=next&&st.profile.exam_dates[next]?st.profile.exam_dates[next]:'';
+    st.profile.target_exam=next;
     renderTargets(st.profile);
   }
   updateCompletion();
