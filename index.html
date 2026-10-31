@@ -943,13 +943,13 @@ async function loadSyllabusForStudent(){
   var done={};(pr.data||[]).forEach(function(x){if(x.completed)done[x.node_id]=true});
   SYLLABUS_TOPICS=nodes.filter(function(n){return n.level==='topic'&&byId[n.parent_id]&&byId[n.parent_id].level==='chapter'}).map(function(n){
     var chapter=byId[n.parent_id],subject=byId[chapter.parent_id];
-    return {id:n.id,title:n.title,chapter:chapter.title,subject:subject?subject.title:'General',sort_order:n.sort_order,completed:!!done[n.id]};
+    return {id:n.id,title:n.title,chapter:chapter.title,subject:subject?subject.title:'General',subject_order:subject?subject.sort_order:0,chapter_order:chapter.sort_order,sort_order:n.sort_order,completed:!!done[n.id]};
   });
   var weak=st.weak.map(function(x){return x.toLowerCase().trim()});
   SYLLABUS_TOPICS.sort(function(a,b){
     var aw=weak.some(function(w){return a.subject.toLowerCase().indexOf(w)>=0||w.indexOf(a.subject.toLowerCase())>=0})?0:1;
     var bw=weak.some(function(w){return b.subject.toLowerCase().indexOf(w)>=0||w.indexOf(b.subject.toLowerCase())>=0})?0:1;
-    return aw-bw||a.sort_order-b.sort_order;
+    return aw-bw||a.subject_order-b.subject_order||a.chapter_order-b.chapter_order||a.sort_order-b.sort_order;
   });
   st.dayNumber=dayNumber();
 }
@@ -967,7 +967,8 @@ function planFor(){
     var upcoming=SYLLABUS_TOPICS.slice(dayStart+4).filter(function(x){return !x.completed});
     chosen=chosen.concat(upcoming.slice(0,4-chosen.length));
   }
-  if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(0,4);
+  var syllabusComplete=SYLLABUS_TOPICS.length>0&&SYLLABUS_TOPICS.every(function(x){return x.completed});
+  if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(-4);
   if(!chosen.length){
     var fallback=st.weak.length?st.weak:['Core topics'];
     var legacy=[['learn','Naya concept samjho'],['practice','Practice questions solve karo'],['revision','Aaj ka revision'],['analysis','Mistakes analyse karo']];
@@ -977,8 +978,8 @@ function planFor(){
       duration_min:Math.max(30,Math.round(total/4/5)*5),scheduled_time:clock(390+i*120),position:i
     }});
   }
-  var types=['learn','practice','revision','analysis'];
-  var labels=['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
+  var types=syllabusComplete?['revision','practice','revision','analysis']:['learn','practice','revision','analysis'];
+  var labels=syllabusComplete?['Spaced revision karo','Mixed questions solve karo','Formula / facts recall karo','Mistakes analyse karo']:['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
   var cur=6*60+30,out=[];
   chosen.forEach(function(topic,i){
     var mins=Math.max(30,Math.round(total/chosen.length/5)*5);
