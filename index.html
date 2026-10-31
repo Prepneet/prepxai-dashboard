@@ -619,6 +619,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderChatIntro();
   renderFeedbackState();
   await loadTasks();
+  renderRoadmap();
   route();
 })();
 
@@ -676,18 +677,24 @@ function renderPlan(){
 }
 
 function renderRoadmap(){
-  var wk=$('week');
-  wk.innerHTML='';
+  var wk=$('week');wk.innerHTML='';
   var names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var subs=st.weak.length?st.weak:['Core topics'];
-  names.forEach(function(n,i){
-    var focus=i===6?'Mock + review':subs[i%subs.length];
+  var topics=SYLLABUS_TOPICS.slice();
+  var start=0;
+  for(var day=0;day<7;day++){
     var d=document.createElement('div');
-    var b=document.createElement('b');b.textContent=n;
+    var b=document.createElement('b');b.textContent=names[day];
     d.appendChild(b);
-    d.appendChild(document.createTextNode(focus));
+    var chosen=topics.slice(start,start+4);start+=4;
+    var lines=chosen.map(function(x){return x.subject+' · '+x.chapter+' / '+x.title});
+    if(!lines.length)lines=['Syllabus revision'];
+    d.appendChild(document.createTextNode(lines.join(' • ')));
+    if(chosen.length&&chosen.every(function(x){return x.completed})){
+      d.classList.add('hit');
+      d.appendChild(document.createTextNode(' ✓'));
+    }
     wk.appendChild(d);
-  });
+  }
 }
 function renderLock(){$('mockCard').classList.toggle('is-open',st.paid)}
 function renderSunday(){
@@ -717,25 +724,70 @@ function todayTasks(){
   return allTasks.filter(function(x){return x.task_date===t}).sort(function(a,b){return a.position-b.position});
 }
 
+var SYLLABUS_TOPICS=[];
+var SYLLABUS_EXAM_ID=null;
+var EXAM_SLUG_MAP={
+  'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','JEE Main':'jee-main',
+  'JEE Advanced':'jee-main','NEET UG':'neet-ug','CUET UG':'cuet-ug',
+  'SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA / CDS':'nda',
+  'Banking Exams':'ibps-sbi-banking'
+};
+function dayNumber(){
+  var created=st.profile&&st.profile.created_at?new Date(st.profile.created_at):new Date();
+  var today=new Date();today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  var joined=new Date(created.getFullYear(),created.getMonth(),created.getDate());
+  return Math.max(1,Math.floor((today-joined)/86400000)+1);
+}
+async function loadSyllabusForStudent(){
+  SYLLABUS_TOPICS=[];SYLLABUS_EXAM_ID=null;
+  if(!st.ex)return;
+  var slug=EXAM_SLUG_MAP[st.ex.key];
+  if(!slug)return;
+  var er=await sb.from('exams').select('id,slug,name').eq('slug',slug).eq('is_active',true).maybeSingle();
+  if(er.error||!er.data){toast('Selected exam ka syllabus database mein map nahi hua.');return}
+  SYLLABUS_EXAM_ID=er.data.id;
+  var nr=await sb.from('syllabus_nodes').select('id,title,level,parent_id,sort_order,est_hours').eq('exam_id',er.data.id).order('sort_order');
+  if(nr.error){toast('Syllabus load nahi hua: '+nr.error.message);return}
+  var nodes=nr.data||[],byId={};
+  nodes.forEach(function(n){byId[n.id]=n});
+  var pr=await sb.from('student_syllabus_progress').select('node_id,completed').eq('user_id',st.profile.id);
+  var done={};(pr.data||[]).forEach(function(x){if(x.completed)done[x.node_id]=true});
+  SYLLABUS_TOPICS=nodes.filter(function(n){return n.level==='topic'&&byId[n.parent_id]&&byId[n.parent_id].level==='chapter'}).map(function(n){
+    var chapter=byId[n.parent_id],subject=byId[chapter.parent_id];
+    return {id:n.id,title:n.title,chapter:chapter.title,subject:subject?subject.title:'General',sort_order:n.sort_order,completed:!!done[n.id]};
+  });
+  var weak=st.weak.map(function(x){return x.toLowerCase().trim()});
+  SYLLABUS_TOPICS.sort(function(a,b){
+    var aw=weak.some(function(w){return a.subject.toLowerCase().indexOf(w)>=0||w.indexOf(a.subject.toLowerCase())>=0})?0:1;
+    var bw=weak.some(function(w){return b.subject.toLowerCase().indexOf(w)>=0||w.indexOf(b.subject.toLowerCase())>=0})?0:1;
+    return aw-bw||a.sort_order-b.sort_order;
+  });
+  st.dayNumber=dayNumber();
+}
 function planFor(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
   var total=Math.round(h.mid*60/5)*5;
-  var subs=st.weak.length?st.weak:['Core topics'];
-  var shares=[['learn',.4],['practice',.25],['revision',.2],['analysis',.15]];
-  var sum=shares.reduce(function(a,b){return a+b[1]},0);
-  var cur=6*60+30; // first block at 06:30
-  var out=[];
-  shares.forEach(function(sh,i){
-    var mins=Math.max(15,Math.round(total*sh[1]/sum/5)*5);
-    var subj=sh[0]==='learn'||sh[0]==='revision'?subs[0]:subs[1%subs.length];
-    out.push({subject:subj,topic:(sh[0]==='learn'?'New concepts: ':sh[0]==='practice'?'Practice set: ':sh[0]==='revision'?'Revise: ':'Review mistakes: ')+subj,
-      description:DESC[sh[0]],task_type:sh[0],duration_min:mins,scheduled_time:clock(cur),position:i});
-    cur+=mins+15; // 15-minute break after each block
+  var pending=SYLLABUS_TOPICS.filter(function(x){return !x.completed});
+  var chosen=pending.slice(0,4);
+  if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(0,4);
+  var types=['learn','practice','revision','analysis'];
+  var labels=['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
+  var cur=6*60+30,out=[];
+  chosen.forEach(function(topic,i){
+    var mins=Math.max(30,Math.round(total/chosen.length/5)*5);
+    out.push({
+      node_id:topic.id,subject:topic.subject,
+      topic:topic.chapter+' — '+topic.title,
+      description:'Day '+(st.dayNumber||1)+' · '+labels[i]+' · Chapter: '+topic.chapter,
+      task_type:types[i],duration_min:mins,scheduled_time:clock(cur),position:i
+    });
+    cur+=mins+15;
   });
   return out;
 }
 
 async function loadTasks(){
+  await loadSyllabusForStudent();
   var r=await sb.from('study_tasks').select('*').eq('user_id',st.profile.id).order('task_date',{ascending:true}).limit(2000);
   if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];}
   else allTasks=r.data||[];
@@ -748,7 +800,14 @@ async function loadTasks(){
       await sb.from('study_tasks').update({status:'missed'}).in('id',ids).eq('user_id',st.profile.id);
       missed.forEach(function(x){x.status='missed'});
     }
-    // 2. create today's plan once, and add a catch-up task for the most recent missed topic
+    // 2. Replace only an untouched legacy generic plan; never erase student-completed work.
+    var todayRows=allTasks.filter(function(x){return x.task_date===t});
+    if(todayRows.length&&todayRows.every(function(x){return !x.node_id&&x.status==='pending'})&&SYLLABUS_TOPICS.length){
+      var oldIds=todayRows.map(function(x){return x.id});
+      var del=await sb.from('study_tasks').delete().in('id',oldIds).eq('user_id',st.profile.id);
+      if(!del.error)allTasks=allTasks.filter(function(x){return x.task_date!==t});
+    }
+    // 3. Create today's topic-level plan once.
     if(!allTasks.some(function(x){return x.task_date===t})){
       var rows=planFor();
       if(missed.length){
@@ -823,18 +882,29 @@ async function setStatus(id,status){
   var patch={status:status,completed_at:status==='completed'?new Date().toISOString():null};
   var r=await sb.from('study_tasks').update(patch).eq('id',id).eq('user_id',st.profile.id);
   if(r.error){toast('Could not update task: '+r.error.message);return}
-  delete running[id];
   var t=allTasks.find(function(x){return x.id===id});
+  if(t&&t.node_id){
+    var progress=await sb.from('student_syllabus_progress').upsert({
+      user_id:st.profile.id,node_id:t.node_id,completed:status==='completed',
+      completed_at:status==='completed'?new Date().toISOString():null,updated_at:new Date().toISOString()
+    },{onConflict:'user_id,node_id'});
+    if(progress.error){toast('Task saved, but syllabus progress sync failed: '+progress.error.message)}
+    else{
+      var node=SYLLABUS_TOPICS.find(function(x){return x.id===t.node_id});
+      if(node)node.completed=status==='completed';
+    }
+  }
+  delete running[id];
   if(t){t.status=status;t.completed_at=patch.completed_at}
-  toast(status==='completed'?'Nice. Task completed.':'Task updated.');
-  renderTasks();renderStreak();renderHomeProgress();
+  toast(status==='completed'?'Shabash! Topic complete hua.':'Task updated.');
+  renderTasks();renderStreak();renderHomeProgress();renderRoadmap();
 }
 
 async function rescheduleTask(id){
   var t=allTasks.find(function(x){return x.id===id});
   if(!t)return;
   var tomorrow=addDays(localISO(),1);
-  var copy={user_id:st.profile.id,task_date:tomorrow,position:t.position+100,subject:t.subject,topic:t.topic,description:t.description,task_type:t.task_type,duration_min:t.duration_min,scheduled_time:t.scheduled_time,status:'pending'};
+  var copy={user_id:st.profile.id,node_id:t.node_id||null,task_date:tomorrow,position:t.position+100,subject:t.subject,topic:t.topic,description:t.description,task_type:t.task_type,duration_min:t.duration_min,scheduled_time:t.scheduled_time,status:'pending'};
   var ins=await sb.from('study_tasks').insert(copy).select();
   if(ins.error){toast('Could not reschedule: '+ins.error.message);return}
   var up=await sb.from('study_tasks').update({status:'rescheduled'}).eq('id',id).eq('user_id',st.profile.id);
