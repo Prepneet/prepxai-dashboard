@@ -869,7 +869,7 @@ async function loadSyllabusForStudent(){
   var er=await sb.from('exams').select('id,slug,name').eq('slug',slug).eq('is_active',true).maybeSingle();
   if(er.error||!er.data){toast('Selected exam ka syllabus database mein map nahi hua.');return}
   SYLLABUS_EXAM_ID=er.data.id;
-  var nr=await sb.from('syllabus_nodes').select('id,title,level,parent_id,sort_order,est_hours').eq('exam_id',er.data.id).order('sort_order');
+  var nr=await sb.from('syllabus_nodes').select('id,title,level,parent_id,sort_order,est_hours').eq('exam_id',er.data.id).eq('is_active',true).order('sort_order');
   if(nr.error){toast('Syllabus load nahi hua: '+nr.error.message);return}
   var nodes=nr.data||[],byId={};
   nodes.forEach(function(n){byId[n.id]=n});
