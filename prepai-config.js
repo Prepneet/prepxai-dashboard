@@ -22,6 +22,10 @@
       }
     },
     {
+      key: 'Bihar Police', label: 'Bihar Police', icon: '🚔', sub: 'Constable recruitment', factor: 0,
+      calendar: {}
+    },
+    {
       key: 'JEE Main', label: 'JEE Main', icon: '⚙️', sub: 'Engineering Entrance', factor: 1,
       calendar: {
         2027: { date: '2027-01-22', status: 'official', note: 'NTA exam calendar (16 Sep 2026): Session 1 22–30 Jan 2027. Session 2 (April 2027) ki date alag se aayegi.' }
