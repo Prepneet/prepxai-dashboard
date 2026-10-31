@@ -99,9 +99,10 @@
     'upsc': 'UPSC CSE', 'upsc cse': 'UPSC CSE', 'upsc-cse': 'UPSC CSE', 'ias': 'UPSC CSE',
     'cuet': 'CUET UG', 'cuet ug': 'CUET UG', 'cuet-ug': 'CUET UG',
     'ssc': 'SSC Exams', 'ssc exams': 'SSC Exams', 'ssc cgl': 'SSC Exams', 'ssc-cgl': 'SSC Exams',
-    'rrb': 'Railways (RRB)', 'railways': 'Railways (RRB)', 'railway': 'Railways (RRB)',
+    'rrb': 'Railways (RRB)', 'rrb-ntpc': 'Railways (RRB)', 'railways': 'Railways (RRB)', 'railway': 'Railways (RRB)',
+    'bihar-police': 'Bihar Police',
     'nda': 'NDA', 'cds': 'CDS', 'nda-cds': 'NDA', 'nda / cds': 'NDA',
-    'banking': 'Banking Exams', 'ibps': 'Banking Exams', 'sbi': 'Banking Exams', 'bank': 'Banking Exams',
+    'banking': 'Banking Exams', 'ibps': 'Banking Exams', 'sbi': 'Banking Exams', 'bank': 'Banking Exams', 'ibps-sbi-banking': 'Banking Exams',
     'jeem': 'JEE Main', 'jeea': 'JEE Advanced',
     'bpsc': 'BPSC'
   };
