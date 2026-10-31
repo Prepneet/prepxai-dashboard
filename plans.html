@@ -54,12 +54,12 @@ document.getElementById('payNow').addEventListener('click',async function(){
  button.disabled=true;button.textContent='Preparing secure checkout…';message('');
  try{
   var session=await sb.auth.getSession(),access=session.data&&session.data.session&&session.data.session.access_token;
-  if(!access){message('Please log in first, then choose your plan again.');button.disabled=false;button.textContent='Continue to Cashfree';return}
+  if(!access){location.href='/login.html?plan='+(chosen===plans.plus?'plus':'pro');return}
   var response=await fetch(fnUrl,{method:'POST',headers:{'Authorization':'Bearer '+access,'apikey':SB_KEY,'Content-Type':'application/json'},body:JSON.stringify({plan:chosen===plans.plus?'plus':'pro',phone:phone})});
   var data=await response.json();
   if(!response.ok)throw new Error(data.error||'Could not start payment.');
   if(!data.payment_session_id)throw new Error('Cashfree did not return a payment session.');
-  var cashfree=Cashfree({mode:'production'});
+  var cashfree=Cashfree({mode:data.mode||'sandbox'});
   await cashfree.checkout({paymentSessionId:data.payment_session_id,redirectTarget:'_self'});
  }catch(err){message(err.message||'Payment could not be started. Please try again.');button.disabled=false;button.textContent='Continue to Cashfree'}
 });
