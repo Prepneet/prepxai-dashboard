@@ -1161,7 +1161,8 @@ async function renderPerformance(){
 /* ---------- notifications (built from real data only) ---------- */
 function notifPrefs(){
   var d={tasks:true,exam:true,mock:true,streak:true,sub:true};
-  try{var o=JSON.parse(localStorage.getItem('prepx_notif_prefs')||'{}');return Object.assign(d,o)}catch(e){return d}
+  var saved=st.profile&&st.profile.notify_prefs;
+  return Object.assign(d,saved&&typeof saved==='object'?saved:{});
 }
 function readSet(){
   try{return new Set(JSON.parse(localStorage.getItem('prepx_notif_read_'+st.profile.id)||'[]'))}catch(e){return new Set()}
@@ -1378,32 +1379,45 @@ function renderSettings(){
   $('langSel').value=(st.profile.preferred_language)||'en';
 }
 document.querySelectorAll('[data-np]').forEach(function(c){
-  c.addEventListener('change',function(){
+  c.addEventListener('change',async function(){
     var p=notifPrefs();p[c.getAttribute('data-np')]=c.checked;
-    localStorage.setItem('prepx_notif_prefs',JSON.stringify(p));
-    renderNotifications();
-    toast('Notification settings saved');
+    c.disabled=true;
+    try{
+      var r=await sb.from('profiles').update({notify_prefs:p}).eq('id',st.profile.id).select('id').maybeSingle();
+      if(r.error||!r.data){c.checked=!c.checked;toast('Could not save notification settings. Please sign in again and retry.');return}
+      st.profile.notify_prefs=p;
+      renderNotifications();
+      toast('Notification settings saved');
+    }catch(e){c.checked=!c.checked;toast('Network error while saving settings.')}
+    finally{c.disabled=false}
   });
 });
 $('langSave').onclick=async function(){
-  var r=await sb.from('profiles').update({preferred_language:$('langSel').value}).eq('id',st.profile.id);
-  if(r.error){toast('Could not save language: '+r.error.message);return}
-  st.profile.preferred_language=$('langSel').value;
-  toast('Language saved');
+  var b=$('langSave'),value=$('langSel').value;b.disabled=true;
+  try{
+    var r=await sb.from('profiles').update({preferred_language:value}).eq('id',st.profile.id).select('id').maybeSingle();
+    if(r.error||!r.data){toast('Language save nahi hua. Session refresh karke dobara try karein.');return}
+    st.profile.preferred_language=value;
+    toast('Language saved');
+  }catch(e){toast('Network error while saving language.')}
+  finally{b.disabled=false}
 };
 $('pwSave').onclick=async function(){
   var a=$('pw1').value,b=$('pw2').value;
   var err=a.length<8?'Password must be at least 8 characters.':a!==b?'Passwords do not match.':'';
   $('pwErr').textContent=err;
   if(err)return;
-  var btn=$('pwSave');btn.disabled=true;
-  var r=await sb.auth.updateUser({password:a});
-  btn.disabled=false;
-  if(r.error){$('pwErr').textContent=r.error.message;return}
-  $('pwSave').textContent='Updated';
-  setTimeout(function(){$('pwSave').textContent='Update password'},1500);
-  $('pw1').value='';$('pw2').value='';
-  toast('Password updated');
+  var btn=$('pwSave');btn.disabled=true;btn.textContent='Updating…';
+  try{
+    var session=await sb.auth.getSession();
+    if(!session.data||!session.data.session){$('pwErr').textContent='Session expired. Please sign in again.';return}
+    var r=await sb.auth.updateUser({password:a});
+    if(r.error){$('pwErr').textContent=r.error.message;return}
+    $('pw1').value='';$('pw2').value='';
+    $('pwErr').textContent='Password successfully updated.';
+    toast('Password updated');
+  }catch(e){$('pwErr').textContent='Network error. Check your connection and try again.'}
+  finally{btn.disabled=false;btn.textContent='Update password'}
 };
 
 /* ---------- AI tutor: conversation, photo, voice ---------- */
@@ -1671,7 +1685,7 @@ $('dSave').onclick=async function(){
   var dates={};
   document.querySelectorAll('[data-ed]').forEach(function(inp){if(inp.value)dates[inp.getAttribute('data-ed')]=inp.value});
   var u={
-    name:$('pName').value.trim().slice(0,80)||null,
+    name:$('pName').value.trim().slice(0,80)||st.profile.name||'Student',
     phone:$('pPhone').value.trim()||null,
     age:$('pAge').value.trim()?+$('pAge').value.trim():null,
     preferred_language:$('pLang').value||null,
@@ -1684,10 +1698,13 @@ $('dSave').onclick=async function(){
     daily_hours:$('dHours').value.trim().slice(0,4)||null,
     weakness:$('dWeak').value.trim().slice(0,200)||null
   };
-  var r=await sb.from('profiles').update(u).eq('id',st.profile.id);
+  var r;
+  try{r=await sb.from('profiles').update(u).eq('id',st.profile.id).select('id').maybeSingle()}
+  catch(e){b.disabled=false;b.textContent='Save profile';toast('Network error while saving profile.');return}
   b.disabled=false;b.textContent='Save profile';
-  if(r.error){toast('Could not save: '+r.error.message);return}
-  toast('Saved. Updating your plan…');
+  if(r.error||!r.data){toast('Profile save nahi hua. Session/RLS issue ho sakta hai; please sign in again.');return}
+  st.profile=Object.assign({},st.profile,u);
+  toast('Profile saved. Updating your plan…');
   setTimeout(function(){location.reload()},900);
 };
 
