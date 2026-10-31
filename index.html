@@ -253,7 +253,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 
   <!-- desktop sidebar -->
   <aside class="side" aria-label="Main navigation">
-    <div class="logo-wrap"><a href="#home" class="logo" aria-label="PrepX Ai home" style="padding:0;background:none"><span class="brand"><span>Prep</span><span class="bx"><svg class="xs" viewBox="0 0 56 56" aria-hidden="true"><defs><linearGradient id="pxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g stroke="url(#pxg)" stroke-width="7" stroke-linecap="round" fill="none"><path d="M9 9 L47 47"/><path d="M47 9 L9 47"/><path d="M44 12 L58 -2" stroke-width="4.5"/></g></svg></span><span class="ba">Ai</span></span></a></div>
+    <div class="logo-wrap"><a href="https://prepxai.online" class="logo" aria-label="PrepX Ai home" style="padding:0;background:none"><span class="brand"><span>Prep</span><span class="bx"><svg class="xs" viewBox="0 0 56 56" aria-hidden="true"><defs><linearGradient id="pxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g stroke="url(#pxg)" stroke-width="7" stroke-linecap="round" fill="none"><path d="M9 9 L47 47"/><path d="M47 9 L9 47"/><path d="M44 12 L58 -2" stroke-width="4.5"/></g></svg></span><span class="ba">Ai</span></span></a></div>
     <a href="#home" data-r="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Overview</a>
     <a href="#plan" data-r="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Study Plan</a>
     <a href="#tutor" data-r="tutor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>AI Tutor</a>
@@ -445,7 +445,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
       </section>
       <section class="glass">
         <h2>Exam change</h2>
-        <p class="sub">Changing your exam is handled by our team after payment confirmation.</p>
+        <p class="sub">Choose a different active exam from your saved exam list. Your dashboard will reload with the selected exam.</p>
         <div class="actions"><button class="btn" id="exBtn" type="button">Request exam change</button></div>
       </section>
     </section>
@@ -1222,7 +1222,7 @@ document.addEventListener('click',function(e){
 /* ---------- feedback (WhatsApp, user sends manually) ---------- */
 // Set your support WhatsApp number in full international format, digits only, e.g. '919999999999'.
 // It is used only inside the link, never printed on the page.
-var FEEDBACK_WA_NUMBER='';
+var FEEDBACK_WA_NUMBER='919473124215';
 var FB_LABEL={very_good:'Very Good',okay:'Okay',not_good:'Not Good',bug:'Problem / Bug',custom:'Own feedback'};
 var fbChoice=null;
 function renderFeedbackState(){
@@ -1719,13 +1719,13 @@ $('shareBtn').onclick=async function(){
 };
 
 /* ---------- exam change request (saved to database) ---------- */
-$('exBtn').onclick=async function(){
-  if(!confirm('Changing your exam is done after payment confirmation. Do you want to request a change?'))return;
-  var b=$('exBtn');b.disabled=true;
-  var r=await sb.from('exam_change_requests').insert({user_id:st.profile.id,current_exam:st.profile.target_exam||null});
-  b.disabled=false;
-  if(r.error){toast('Could not send request. Please try again.');return}
-  toast('Request saved. Our team will contact you after payment confirmation.');
+$('exBtn').onclick=function(){
+  location.hash='#profile';
+  setTimeout(function(){
+    var select=$('dExam');
+    if(select){select.focus();select.scrollIntoView({behavior:'smooth',block:'center'});}
+    toast('Select your new active exam, then tap Save profile.');
+  },120);
 };
 
 $('bellBtn').onclick=function(){toast('Notifications will appear here soon.')};
