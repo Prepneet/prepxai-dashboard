@@ -1579,7 +1579,7 @@ function bars(el,items,max){
   el.appendChild(wrap);
 }
 
-async function renderPerformance(){
+async async function renderPerformance(){
   var uid=st.profile&&st.profile.id;
   if(!uid)return;
   var ar=await sb.from('mock_attempts').select('score,accuracy,correct,incorrect,unattempted,time_taken_sec,subject_stats,submitted_at,test_id').eq('user_id',uid).not('submitted_at','is',null).order('submitted_at',{ascending:true}).limit(200);
