@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#080B18">
 <title>Dashboard · PrepX Ai</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='7' fill='%238b5cf6'/%3E%3Cpath d='M12 5l7 3.5-7 3.5-7-3.5z' fill='white'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
 <script src="prepai-config.js"></script>
 <style>
@@ -184,6 +184,8 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 .note{padding:14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--edge);display:flex;flex-direction:column;gap:6px;text-align:left;width:100%}
 .note:hover{border-color:rgba(255,255,255,.25)}
 
+.handnote{margin-top:14px;padding:18px 18px 22px 26px;border-radius:14px;border:1px solid rgba(255,255,255,.14);border-left:3px solid rgba(255,120,140,.65);background:repeating-linear-gradient(to bottom,rgba(255,255,255,.045) 0,rgba(255,255,255,.045) 30px,rgba(34,211,238,.17) 31px,rgba(255,255,255,.045) 32px);font-family:Caveat,"Comic Sans MS",cursive;font-size:21px;line-height:32px;white-space:pre-wrap;color:#f5f3ff;letter-spacing:.01em}
+.note-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 /* ---------- mock lock ---------- */
 .lockwrap{position:relative}
 .lockwrap .inner{filter:blur(6px);opacity:.45;pointer-events:none;user-select:none}
@@ -1692,7 +1694,10 @@ function openNote(id){
   $('nReader').hidden=false;
   $('nReadBody').innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><button class="btn '+(saved?'primary':'')+'" id="nBook" type="button" style="min-height:36px;padding:6px 12px;font-size:12.5px">'+(saved?'Saved ★':'Bookmark')+'</button></div>'+
     '<h2 style="margin-top:10px">'+esc(n.title)+'</h2><div class="tmeta" style="margin-bottom:10px">'+esc(n.subject)+' · '+esc(n.topic)+'</div>'+
-    '<div style="white-space:pre-wrap;font-size:14.5px;line-height:1.7">'+esc(n.body)+'</div>';
+    '<div class="handnote" id="noteHandBody">'+esc(n.body)+'</div>'+
+    '<div class="note-actions"><button class="btn" id="notePdf" type="button">Download PDF</button><button class="btn" id="noteShare" type="button">Share story</button></div>';
+  $('notePdf').onclick=function(){buildNotePrint(n)};
+  $('noteShare').onclick=function(){shareNoteStory(n)};
   $('nBook').onclick=async function(){
     if(BOOKS.has(n.id)){
       var d=await sb.from('note_bookmarks').delete().eq('user_id',st.profile.id).eq('note_id',n.id);
