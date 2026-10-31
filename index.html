@@ -702,11 +702,11 @@ function renderRoadmap(){
 function renderLock(){$('mockCard').classList.toggle('is-open',st.paid)}
 function renderSunday(){
   var t=new Date();
-  var add=(7-t.getDay())%7; if(add===0) add=7;
+  var add=(7-t.getDay())%7;
   var d=new Date(t.getFullYear(),t.getMonth(),t.getDate()+add);
-  $('sunDays').textContent=add+(add===1?' day to go':' days to go');
+  $('sunDays').textContent=add===0?'Today':add+(add===1?' day to go':' days to go');
   $('sunDate').textContent=d.toDateString();
-  $('sunInfo').textContent='Next Sunday mock is on:';
+  $('sunInfo').textContent=add===0?'Sunday mock is today:':'Next Sunday mock is on:';
 }
 
 /* ---------- study tasks: generate, complete, skip, reschedule, streak ---------- */
@@ -1353,8 +1353,8 @@ function buildNotifications(){
     var summary=n.summary||((Array.isArray(n.body)?n.body:[]).join(' · '))||'Tap to read this exam update.';
     out.push({id:'notice-'+n.id,type:'notice',title:n.title,text:summary,body:n.body,link:n.link,link_text:n.link_text,source:n.src_name,source_url:n.src_url});
   });
-  var sun=addDays(t,(7-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]).getDay())%7||7);
-  var toSun=Math.round((new Date(+sun.split('-')[0],+sun.split('-')[1]-1,+sun.split('-')[2])-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]))/86400000);
+  var toSun=(7-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]).getDay())%7;
+  var sun=addDays(t,toSun);
   if(pr.mock&&st.paid&&toSun<=1) out.push({id:'mock-'+sun,type:'mock',title:toSun===0?'Sunday mock is today':'Sunday mock is tomorrow',text:'Plan a full timed test in Tests.'});
   if(pr.sub){
     if(!st.paid) out.push({id:'sub-free',type:'sub',title:'You are on the Free plan',text:'Mock tests and PYQs are part of Plus and Pro.'});
