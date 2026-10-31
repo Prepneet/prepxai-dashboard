@@ -2,17 +2,17 @@ import { createClient } from '@supabase/supabase-js';
 
 const EXAM_SLUGS = {
   'BPSC':'bpsc','bpsc':'bpsc',
-  'Railways (RRB)':'rrb-ntpc','rrb-ntpc':'rrb-ntpc',
+  'Railways (RRB)':'rrb-ntpc','rrb-ntpc':'rrb-ntpc','rrb':'rrb-ntpc','railways':'rrb-ntpc','railway':'rrb-ntpc','ntpc':'rrb-ntpc',
   'Bihar Police':'bihar-police','bihar-police':'bihar-police',
-  'JEE Main':'jee-main','jee-main':'jee-main',
-  'JEE Advanced':'jee-advanced','jee-advanced':'jee-advanced',
-  'NEET UG':'neet-ug','neet-ug':'neet-ug',
-  'CUET UG':'cuet-ug','cuet-ug':'cuet-ug',
-  'SSC Exams':'ssc-cgl','ssc-cgl':'ssc-cgl',
-  'UPSC CSE':'upsc-cse','upsc-cse':'upsc-cse',
+  'JEE Main':'jee-main','jee-main':'jee-main','jee':'jee-main','jee main':'jee-main','jee mains':'jee-main','jeem':'jee-main',
+  'JEE Advanced':'jee-advanced','jee-advanced':'jee-advanced','jee advanced':'jee-advanced','jeea':'jee-advanced',
+  'NEET UG':'neet-ug','neet-ug':'neet-ug','neet':'neet-ug','neet ug':'neet-ug',
+  'CUET UG':'cuet-ug','cuet-ug':'cuet-ug','cuet':'cuet-ug','cuet ug':'cuet-ug',
+  'SSC Exams':'ssc-cgl','ssc-cgl':'ssc-cgl','ssc':'ssc-cgl','ssc exams':'ssc-cgl','ssc cgl':'ssc-cgl',
+  'UPSC CSE':'upsc-cse','upsc-cse':'upsc-cse','upsc':'upsc-cse','upsc cse':'upsc-cse','ias':'upsc-cse',
   'NDA':'nda','nda':'nda','NDA / CDS':'nda','nda-cds':'nda',
   'CDS':'cds','cds':'cds',
-  'Banking Exams':'ibps-sbi-banking','ibps-sbi-banking':'ibps-sbi-banking'
+  'Banking Exams':'ibps-sbi-banking','ibps-sbi-banking':'ibps-sbi-banking','banking':'ibps-sbi-banking','ibps':'ibps-sbi-banking','sbi':'ibps-sbi-banking','bank':'ibps-sbi-banking'
 };
 
 function json(res, code, body) {
