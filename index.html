@@ -724,6 +724,47 @@ function renderPlan(){
   $('planNote2').textContent='Day '+(st.dayNumber||dayNumber())+' · Aaj ke subject, chapter aur topic tasks neeche hain. Complete karte hi tick/strike-through ho jayega.';
 }
 
+function humanTime(min){
+  var h=Math.floor(min/60)%24,m=min%60,amp=h>=12?'PM':'AM',hh=h%12||12;
+  return hh+':'+pad(m)+' '+amp;
+}
+function renderDayRoutine(){
+  var box=$('dayRoutine');if(!box)return;box.innerHTML='';
+  var tasks=todayTasks(),cur=5*60+45,blocks=[];
+  blocks.push({time:cur,title:'Wake up + fresh start',desc:'Paani piyo, fresh ho, 10 minute stretching. Phone scrolling avoid karo.'});
+  cur=6*60+15;
+  blocks.push({time:cur,title:'Morning setup',desc:'Aaj ke 4 topics dekho, desk ready karo aur kal ki mistakes ek baar scan karo.'});
+  cur=6*60+30;
+  tasks.forEach(function(t,i){
+    var duration=Number(t.duration_min||60);
+    blocks.push({time:cur,title:'Study block '+(i+1)+' · '+t.subject,desc:t.topic+' — '+(t.description||DESC[t.task_type]||'Focused study')+' ('+duration+' min)'});
+    cur+=duration;
+    if(i===1){
+      blocks.push({time:cur,title:'Lunch + rest',desc:'Proper lunch lo, 20 minute rest karo. Screen break zaroor lo.'});cur+=60;
+    }else if(i===2){
+      blocks.push({time:cur,title:'Walk + refresh',desc:'30 minute walk, snack aur thoda relax.'});cur+=30;
+    }else if(i<tasks.length-1){
+      blocks.push({time:cur,title:'Short break',desc:'15 minute break. Paani piyo aur aankhon ko rest do.'});cur+=15;
+    }
+  });
+  if(cur<20*60){
+    blocks.push({time:cur,title:'Light revision / PYQ practice',desc:'Aaj ke topics ke 10–20 questions solve karo aur wrong answers note karo.'});
+    cur+=45;
+  }
+  blocks.push({time:cur,title:'Daily review + tomorrow setup',desc:'Completed topics tick karo, pending work note karo aur kal ka target set karo.'});
+  blocks.push({time:Math.max(cur+30,22*60),title:'Sleep',desc:'7–8 hours ki sleep lo. Late-night scrolling avoid karo.'});
+  blocks.forEach(function(x){
+    var d=document.createElement('div');d.className='tcard';
+    var row=document.createElement('div');row.className='trow';
+    var time=document.createElement('span');time.className='badge';time.textContent=humanTime(x.time);
+    var title=document.createElement('b');title.className='tt';title.textContent=x.title;
+    row.appendChild(time);row.appendChild(title);d.appendChild(row);
+    var desc=document.createElement('div');desc.className='tmeta';desc.textContent=x.desc;d.appendChild(desc);
+    box.appendChild(d);
+  });
+  var priority=st.weak.length?st.weak.join(', '):'all subjects';
+  $('dayStrategy').textContent='Aaj ki strategy: '+(st.days<=30?'New theory kam, timed practice + revision zyada. ':'Concept clear karo, phir practice set solve karo. ')+'Priority subjects: '+priority+'. Har block ke baad 5 minute mein mistakes note karo.';
+}
 function renderRoadmap(){
   var wk=$('week');wk.innerHTML='';
   var names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
@@ -954,7 +995,7 @@ async function setStatus(id,status){
   delete running[id];
   if(t){t.status=status;t.completed_at=patch.completed_at}
   toast(status==='completed'?'Shabash! Topic complete hua.':'Task updated.');
-  renderTasks();renderStreak();renderHomeProgress();renderRoadmap();
+  renderTasks();renderStreak();renderHomeProgress();renderRoadmap();renderDayRoutine();
 }
 
 async function rescheduleTask(id){
