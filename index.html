@@ -998,7 +998,7 @@ function planFor(){
 async function loadTasks(){
   await loadSyllabusForStudent();
   var r=await sb.from('study_tasks').select('*').eq('user_id',st.profile.id).order('task_date',{ascending:true}).limit(2000);
-  if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];}
+  if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];return;}
   else allTasks=r.data||[];
   if(st.ex){
     var t=localISO();
@@ -1126,7 +1126,11 @@ async function rescheduleTask(id){
   var ins=await sb.from('study_tasks').insert(copy).select();
   if(ins.error){toast('Could not reschedule: '+ins.error.message);return}
   var up=await sb.from('study_tasks').update({status:'rescheduled'}).eq('id',id).eq('user_id',st.profile.id);
-  if(up.error){toast('Could not reschedule: '+up.error.message);return}
+  if(up.error){
+    // Roll back the newly inserted copy so a failed source update does not leave duplicates.
+    if(ins.data&&ins.data[0])await sb.from('study_tasks').delete().eq('id',ins.data[0].id).eq('user_id',st.profile.id);
+    toast('Could not reschedule: '+up.error.message);return
+  }
   t.status='rescheduled';
   if(ins.data) allTasks=allTasks.concat(ins.data);
   delete running[id];
