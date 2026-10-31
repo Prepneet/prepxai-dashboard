@@ -147,7 +147,7 @@ export default async function handler(req, res) {
 
     const { data: pool, error: poolError } = await adm.from('questions')
       .select('id,node_id,body,options,correct_option,explanation')
-      .eq('exam_id', me.exam.id).is('mock_test_id', null).in('node_id', nodeIds).limit(300);
+      .eq('exam_id', me.exam.id).eq('is_pyq', false).is('mock_test_id', null).in('node_id', nodeIds).limit(300);
     if (poolError) return json(res, 500, { error: 'Could not build your completed-syllabus question pool.' });
     const valid = (pool || []).filter(q => Array.isArray(q.options) && q.options.length >= 2 &&
       Number.isInteger(q.correct_option) && q.correct_option >= 0 && q.correct_option < q.options.length);
