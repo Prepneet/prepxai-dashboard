@@ -3,13 +3,15 @@ import { createClient } from '@supabase/supabase-js';
 const EXAM_SLUGS = {
   'BPSC': 'bpsc',
   'Railways (RRB)': 'rrb-ntpc',
+  'Bihar Police': 'bihar-police',
   'JEE Main': 'jee-main',
-  'JEE Advanced': 'jee-main',
+  'JEE Advanced': 'jee-advanced',
   'NEET UG': 'neet-ug',
   'CUET UG': 'cuet-ug',
   'SSC Exams': 'ssc-cgl',
   'UPSC CSE': 'upsc-cse',
-  'NDA / CDS': 'nda',
+  'NDA': 'nda',
+  'CDS': 'cds',
   'Banking Exams': 'ibps-sbi-banking'
 };
 
