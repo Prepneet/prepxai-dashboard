@@ -114,6 +114,8 @@ input:focus{border-color:rgba(255,255,255,.7);box-shadow:0 0 0 3px rgba(255,255,
 'use strict';
 var SB_URL='https://artcffpfotgrmbhtrtsb.supabase.co',SB_KEY='sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB';
 var DASH_HOME=location.origin+'/';
+var selectedPlan=(new URLSearchParams(location.search).get('plan')||'free').toLowerCase();
+var POST_AUTH_URL=(selectedPlan==='plus'||selectedPlan==='pro')?location.origin+'/plans?checkout='+selectedPlan:DASH_HOME;
 var ER=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 var $=function(i){return document.getElementById(i)};
 var recovering=/type=recovery/.test(location.hash);
@@ -169,7 +171,7 @@ $('lf').onsubmit=async function(e){
     if(!$('consent').checked)return msg('Please confirm your age or parental consent to continue.','err');
     var d=readDraft()||{};
     busy(true);msg('');
-    var su=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:DASH_HOME,data:{
+    var su=await sb.auth.signUp({email:em,password:pw,options:{emailRedirectTo:POST_AUTH_URL,data:{
       target_exam:d.e||'',exam_date:d.d||'',student_status:d.st||'',stage:d.sg||'',
       weakness:(d.w||[]).join(', '),daily_hours:String(d.h||''),language:d.lang||'en'}}});
     if(su.error){busy(false);return msg(su.error.message,'err')}
@@ -187,13 +189,13 @@ $('lf').onsubmit=async function(e){
     msg(/confirm/i.test(t)?'Please confirm your email first. Check your inbox.':'Incorrect email or password.','err');
     busy(false);return;
   }
-  msg('Logged in. Opening your dashboard…','ok');
-  location.replace(DASH_HOME);
+  msg('Logged in. Opening your account…','ok');
+  location.replace(POST_AUTH_URL);
 };
 
 $('gbtn').onclick=async function(){
   if(!sb)return msg('Service did not load. Refresh the page.','err');
-  var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:DASH_HOME}});
+  var r=await sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:POST_AUTH_URL}});
   if(r.error)msg(r.error.message,'err');
 };
 
