@@ -149,7 +149,7 @@ function setMode(s){
   $('consentRow').hidden=!s;
 }
 $('su').onclick=function(){setMode(!signupMode)};
-if(!recovering&&/mode=signup/.test(location.search)&&readDraft())setMode(true);
+if(!recovering&&/mode=signup/.test(location.search))setMode(true);
 $('eye').onclick=function(){var i=$('pw');i.type=i.type==='password'?'text':'password'};
 
 $('lf').onsubmit=async function(e){
