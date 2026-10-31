@@ -16,10 +16,14 @@
       }
     },
     {
-      key: 'Railways (RRB)', label: 'Railways (RRB)', icon: '🚆', sub: 'NTPC, ALP, Group D', factor: 0,
+      key: 'Railways (RRB)', label: 'RRB NTPC', icon: '🚆', sub: 'NTPC CBT 1 and CBT 2', factor: 0,
       calendar: {
         2027: { date: '2027-06-15', status: 'estimated', note: 'RRB 2027 CEN abhi notify nahi hua. Graduate CEN 06/2026 ka CBT Dec 2026 mein expected hai.' }
       }
+    },
+    {
+      key: 'Bihar Police', label: 'Bihar Police', icon: '🚔', sub: 'Constable recruitment', factor: 0,
+      calendar: {}
     },
     {
       key: 'JEE Main', label: 'JEE Main', icon: '⚙️', sub: 'Engineering Entrance', factor: 1,
@@ -58,13 +62,19 @@
       }
     },
     {
-      key: 'NDA / CDS', label: 'NDA / CDS', icon: '🛡️', sub: 'Defence Services', factor: 0.5,
+      key: 'NDA', label: 'NDA', icon: '🛡️', sub: 'National Defence Academy', factor: 0.5,
       calendar: {
-        2027: { date: '2027-04-11', status: 'official', note: 'UPSC calendar 2027: NDA & NA (I) and CDS (I) exam 11 Apr 2027. Cycle II: 19 Sep 2027.' }
+        2027: { date: '2027-04-11', status: 'official', note: 'UPSC calendar 2027: NDA & NA (I) exam 11 Apr 2027. Cycle II: 19 Sep 2027.' }
       }
     },
     {
-      key: 'Banking Exams', label: 'Banking (IBPS / SBI)', icon: '🏦', sub: 'IBPS PO, SBI PO / Clerk', factor: 0,
+      key: 'CDS', label: 'CDS', icon: '🎖️', sub: 'Combined Defence Services', factor: 0.5,
+      calendar: {
+        2027: { date: '2027-04-11', status: 'official', note: 'UPSC calendar 2027: CDS (I) exam 11 Apr 2027. Cycle II: 19 Sep 2027.' }
+      }
+    },
+    {
+      key: 'Banking Exams', label: 'Banking Exams', icon: '🏦', sub: 'Common IBPS / SBI preparation', factor: 0,
       calendar: {
         2027: { date: '2027-08-22', status: 'estimated', note: 'IBPS PO 2027 prelims Aug–Sep 2027 expected. SBI PO 2027 prelims Nov 2027 expected. ibps.in aur sbi.co.in par verify karein.' }
       }
@@ -90,7 +100,7 @@
     'cuet': 'CUET UG', 'cuet ug': 'CUET UG', 'cuet-ug': 'CUET UG',
     'ssc': 'SSC Exams', 'ssc exams': 'SSC Exams', 'ssc cgl': 'SSC Exams', 'ssc-cgl': 'SSC Exams',
     'rrb': 'Railways (RRB)', 'railways': 'Railways (RRB)', 'railway': 'Railways (RRB)',
-    'nda': 'NDA / CDS', 'cds': 'NDA / CDS', 'nda-cds': 'NDA / CDS',
+    'nda': 'NDA', 'cds': 'CDS', 'nda-cds': 'NDA', 'nda / cds': 'NDA',
     'banking': 'Banking Exams', 'ibps': 'Banking Exams', 'sbi': 'Banking Exams', 'bank': 'Banking Exams',
     'jeem': 'JEE Main', 'jeea': 'JEE Advanced',
     'bpsc': 'BPSC'

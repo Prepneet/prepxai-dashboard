@@ -158,7 +158,7 @@ export default async function handler(req, res) {
     return json(res, 503, { error: 'AI tutor server configuration is incomplete. Please contact PrepX Ai support.', code: 'server_config' });
   }
   if (!process.env.ANTHROPIC_API_KEY) {
-    return json(res, 503, { error: 'AI tutor is temporarily unavailable. The team has been notified.', code: 'ai_config' });
+    return json(res, 503, { error: 'Prep Ai is not configured on the server yet. Please try again later.', code: 'ai_config' });
   }
   const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },

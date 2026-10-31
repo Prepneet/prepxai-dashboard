@@ -185,6 +185,49 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 .note:hover{border-color:rgba(255,255,255,.25)}
 
 .handnote{margin-top:14px;padding:18px 18px 22px 26px;border-radius:14px;border:1px solid rgba(255,255,255,.14);border-left:3px solid rgba(255,120,140,.65);background:repeating-linear-gradient(to bottom,rgba(255,255,255,.045) 0,rgba(255,255,255,.045) 30px,rgba(34,211,238,.17) 31px,rgba(255,255,255,.045) 32px);font-family:Caveat,"Comic Sans MS",cursive;font-size:21px;line-height:32px;white-space:pre-wrap;color:#f5f3ff;letter-spacing:.01em}
+.note-blocks{white-space:normal;font-size:20px;line-height:1.55;padding:22px 22px 26px 30px}
+.note-blocks p{margin:8px 0 14px}
+.note-blocks h3{font:700 27px Caveat,cursive;color:#c4b5fd;margin:18px 0 6px}
+.note-blocks ul,.note-blocks ol{padding-left:25px;margin:8px 0 16px}
+.note-blocks li{padding:2px 0}
+.note-equation{display:block;margin:12px 0;padding:12px 16px;border-radius:12px;background:rgba(139,92,246,.16);border:1px solid rgba(167,139,250,.3);font:700 23px Caveat,cursive;text-align:center;color:#e9ddff}
+.note-callout{margin:14px 0;padding:12px 15px;border-radius:12px;background:rgba(34,211,238,.09);border:1px solid rgba(34,211,238,.28)}
+.note-callout b{display:block;font:700 23px Caveat,cursive;color:#a5f3fc}
+.note-callout p{margin:4px 0 0}
+.note-callout.memory{background:rgba(139,92,246,.12);border-color:rgba(167,139,250,.3)}
+.note-callout.warning{background:rgba(255,184,107,.1);border-color:rgba(255,184,107,.3)}
+.note-table-wrap{overflow-x:auto;margin:14px 0}
+.note-table{width:100%;border-collapse:collapse;font:16px/1.45 Inter,sans-serif}
+.note-table th,.note-table td{padding:9px 10px;border:1px solid rgba(255,255,255,.16);text-align:left}
+.note-table th{background:rgba(139,92,246,.2);color:#e9ddff}
+.note-diagram{margin:16px 0;padding:14px;border:1px dashed rgba(34,211,238,.4);border-radius:14px;background:rgba(34,211,238,.05)}
+.note-diagram>b{display:block;text-align:center;color:#a5f3fc;font:700 23px Caveat,cursive;margin-bottom:10px}
+.note-svg{display:block;width:100%;max-height:340px;margin:auto;overflow:visible}
+.note-svg .orbit{fill:none;stroke:rgba(167,139,250,.8);stroke-width:2;stroke-dasharray:7 6}
+.note-svg .nucleus{fill:rgba(139,92,246,.55);stroke:#c4b5fd;stroke-width:2}
+.note-svg .nucleus-core{fill:#f0abfc}
+.note-svg .electron{fill:#67e8f9;stroke:#cffafe;stroke-width:2}
+.note-svg .svg-label{fill:#e8eaff;font:15px Inter,Arial,sans-serif}
+.note-svg .axis{stroke:rgba(226,232,240,.65);stroke-width:2;fill:none}
+.note-svg .trajectory{stroke:#67e8f9;stroke-width:4;stroke-dasharray:10 8;fill:none;animation:noteDash 7s linear infinite}
+.note-svg .vector-arrow{stroke:#c4b5fd;stroke-width:3;fill:none}
+.note-svg .guide{stroke:rgba(196,181,253,.65);stroke-width:2;stroke-dasharray:5 5;fill:none}
+.note-svg .launch-dot{fill:#f0abfc}
+.note-svg .cell-membrane{fill:rgba(34,211,238,.08);stroke:#67e8f9;stroke-width:5}
+.note-svg .cell-cytoplasm{fill:rgba(139,92,246,.08);stroke:rgba(167,139,250,.4);stroke-width:2}
+.note-svg .cell-nucleus{fill:rgba(139,92,246,.32);stroke:#c4b5fd;stroke-width:3;animation:notePulse 3s ease-in-out infinite}
+.note-svg .cell-nucleolus{fill:#f0abfc}
+.note-svg .cell-mito{fill:rgba(251,191,36,.18);stroke:#fbbf24;stroke-width:3}
+.note-svg .cell-detail{fill:none;stroke:#fbbf24;stroke-width:2}
+.note-svg .cell-er,.note-svg .cell-golgi{fill:none;stroke:#67e8f9;stroke-width:4;stroke-linecap:round}
+.note-svg .cell-golgi{stroke:#c4b5fd}
+.note-svg .cell-ribosomes circle{fill:#f0abfc}
+.diagram-caption{margin:8px 4px 0;color:var(--mu);font:12px/1.5 Inter,sans-serif;text-align:center}
+@keyframes noteDash{to{stroke-dashoffset:-90}}
+@keyframes notePulse{50%{filter:drop-shadow(0 0 9px rgba(196,181,253,.75))}}
+.diagram-flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.diagram-flow span{padding:8px 12px;border-radius:11px;background:rgba(139,92,246,.2);border:1px solid rgba(167,139,250,.4);font:700 19px Caveat,cursive;text-align:center}
+.diagram-flow i{font-style:normal;color:var(--cy);font-weight:800}
 .note-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 /* ---------- mock lock ---------- */
 .lockwrap{position:relative}
@@ -416,7 +459,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
     <section class="view" id="v-tutor" aria-label="AI Tutor">
       <section class="glass chat">
         <div class="chat-head">
-          <div><h2 style="margin:0">Prep Ai</h2><div class="sub" style="margin:0">Ask by typing, speaking, or a photo</div></div>
+          <div><h2 style="margin:0">Prep Ai</h2><div class="sub" style="margin:0">Ask by typing, speaking, or a photo</div><div class="sub" id="tutorStatus" style="margin:4px 0 0">Checking tutor connection…</div></div>
           <button class="btn ghost" id="newChat" type="button" style="min-height:38px;padding:6px 12px;font-size:13px">New chat</button>
         </div>
         <div class="msgs" id="msgs" role="log" aria-live="polite"></div>
@@ -617,7 +660,7 @@ var SB_KEY='sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB';
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
 var P=window.PREP;
 var $=function(i){return document.getElementById(i)};
-var st={profile:null,paid:false,ex:null,days:0,stage:'',weak:[],examDate:'',chat:[],photo:null,busyChat:false};
+var st={profile:null,userId:null,userEmail:'',paid:false,ex:null,days:0,stage:'',weak:[],examDate:'',chat:[],photo:null,busyChat:false};
 var ROUTES=['home','plan','tests','tutor','profile','performance','notes','market','settings','analysis'];
 
 function pad(n){return String(n).padStart(2,'0')}
@@ -642,7 +685,7 @@ function route(){
   if(r==='settings') renderSettings();
   if(r==='profile') renderFeedbackState();
   if(r==='tests') renderTests();
-  if(r==='tutor') setTimeout(function(){$('msgs').scrollTop=$('msgs').scrollHeight},50);
+  if(r==='tutor'){checkTutorStatus();setTimeout(function(){$('msgs').scrollTop=$('msgs').scrollHeight},50);}
 }
 window.addEventListener('hashchange',route);
 document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){location.hash=b.getAttribute('data-go')})});
@@ -652,6 +695,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   var s=await sb.auth.getSession();
   if(!s.data||!s.data.session){location.replace('login.html');return}
   var user=s.data.session.user;
+  st.userId=user.id;st.userEmail=user.email||'';
   var pr=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
   var prof=(pr.data)||{};
   st.profile=prof;
@@ -669,8 +713,9 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   var h=new Date().getHours();
   $('greetTxt').textContent=h<12?'Good Morning,':h<17?'Good Afternoon,':'Good Evening,';
 
-  $('loading').hidden=true;
-  $('app').hidden=false;
+  // Keep the app shell hidden until the first data pass is complete to avoid a compressed layout flash.
+  $('loading').hidden=false;
+  $('app').hidden=true;
   setupExam();
   populateDetails(prof);
   renderPlan();
@@ -681,25 +726,34 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderFeedbackState();
   await loadTasks();
   renderDayRoutine();
-  await loadExamNotices();
-  if(st.paid){
-    var sundayResult=await api('generate_sunday');
-    if(sundayResult.ok&&sundayResult.data&&sundayResult.data.test){
-      var mt=sundayResult.data.test;
-      examNotices.unshift({
-        id:'sunday-'+mt.id,tag:st.ex?st.ex.key:'',type:'mock',
-        title:'Sunday Mock unlocked · '+(mt.scheduled_for||'This Sunday'),
-        summary:mt.strategy_text||'Tumhara completed-syllabus mock ready hai.',
-        body:[mt.strategy_text||'Tumhara completed-syllabus mock ready hai.'],
-        link:null,link_text:null,src_name:'PrepX Ai',src_url:null
-      });
-    }
-  }
-  renderNotifications();
   renderPlan();
   renderRoadmap();
-  await loadLeaderboard();
+  renderNotifications();
+  // Show the usable dashboard as soon as core student data is ready.
+  $('loading').hidden=true;
+  $('app').hidden=false;
   route();
+  // Non-critical feeds load in the background and cannot delay the dashboard.
+  (async function(){
+    try{
+      await loadExamNotices();
+      if(st.paid){
+        var sundayResult=await api('generate_sunday');
+        if(sundayResult.ok&&sundayResult.data&&sundayResult.data.test){
+          var mt=sundayResult.data.test;
+          examNotices.unshift({
+            id:'sunday-'+mt.id,tag:st.ex?st.ex.key:'',type:'mock',
+            title:'Sunday Mock unlocked · '+(mt.scheduled_for||'This Sunday'),
+            summary:mt.strategy_text||'Tumhara completed-syllabus mock ready hai.',
+            body:[mt.strategy_text||'Tumhara completed-syllabus mock ready hai.'],
+            link:null,link_text:null,src_name:'PrepX Ai',src_url:null
+          });
+        }
+      }
+      renderNotifications();
+      await loadLeaderboard();
+    }catch(feedError){console.warn('Background dashboard feed failed',feedError)}
+  })();
 })();
 
 /* ---------- exam + countdown ---------- */
@@ -720,9 +774,15 @@ function setupExam(){
   if(!info) info=P.examDateFor(ex.key,y);
   if(!info||P.daysLeft(info.date)<0) info=P.examDateFor(ex.key,y+1);
   st.ex=ex;
+  $('examName').textContent=ex.label;
+  if(!info||!info.date){
+    st.days=365;st.examDate='';
+    $('examMeta').textContent='Official exam date is not available yet. Add the date in Profile when the authority announces it.';
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(function(id){$(id).textContent='--'});
+    return;
+  }
   st.days=P.daysLeft(info.date);
   st.examDate=info.date;
-  $('examName').textContent=ex.label;
   $('examMeta').textContent=info.date+'  ·  '+info.status.toUpperCase()+'  —  '+info.note;
   startTimer(info.date);
 }
@@ -742,6 +802,12 @@ function startTimer(iso){
 }
 
 /* ---------- plan: hours summary ---------- */
+function targetStudyHours(){
+  var chosen=Number(st.profile&&st.profile.daily_hours);
+  if(chosen>=1&&chosen<=14)return chosen;
+  if(!st.ex)return 4;
+  return P.recommendHours(st.ex.key,st.stage,st.days||365).mid;
+}
 function renderPlan(){
   if(!st.ex){
     $('hours').textContent='—';
@@ -749,9 +815,10 @@ function renderPlan(){
     $('planNote2').textContent='';
     return;
   }
-  var h=P.recommendHours(st.ex.key,st.stage,st.days);
-  $('hours').textContent=h.low+'–'+h.high+' hours a day';
-  $('planNote').textContent=st.days+' days left. Weak subjects get extra time.';
+  var h=P.recommendHours(st.ex.key,st.stage,st.days||365);
+  var chosen=Number(st.profile&&st.profile.daily_hours);
+  $('hours').textContent=chosen>=1&&chosen<=14?chosen+' hours a day (your target)':h.low+'–'+h.high+' hours a day';
+  $('planNote').textContent=st.examDate?st.days+' days left. Weak subjects get extra time.':'Exam date not announced. Your plan uses your daily study target and syllabus progress.';
   $('planNote2').textContent='Day '+(st.dayNumber||dayNumber())+' · Aaj ke subject, chapter aur topic tasks neeche hain. Complete karte hi tick/strike-through ho jayega.';
 }
 
@@ -850,9 +917,9 @@ function todayTasks(){
 var SYLLABUS_TOPICS=[];
 var SYLLABUS_EXAM_ID=null;
 var EXAM_SLUG_MAP={
-  'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','JEE Main':'jee-main',
-  'JEE Advanced':'jee-main','NEET UG':'neet-ug','CUET UG':'cuet-ug',
-  'SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA / CDS':'nda',
+  'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','Bihar Police':'bihar-police','JEE Main':'jee-main',
+  'JEE Advanced':'jee-advanced','NEET UG':'neet-ug','CUET UG':'cuet-ug',
+  'SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA':'nda','CDS':'cds',
   'Banking Exams':'ibps-sbi-banking'
 };
 function dayNumber(){
@@ -877,19 +944,19 @@ async function loadSyllabusForStudent(){
   var done={};(pr.data||[]).forEach(function(x){if(x.completed)done[x.node_id]=true});
   SYLLABUS_TOPICS=nodes.filter(function(n){return n.level==='topic'&&byId[n.parent_id]&&byId[n.parent_id].level==='chapter'}).map(function(n){
     var chapter=byId[n.parent_id],subject=byId[chapter.parent_id];
-    return {id:n.id,title:n.title,chapter:chapter.title,subject:subject?subject.title:'General',sort_order:n.sort_order,completed:!!done[n.id]};
+    return {id:n.id,title:n.title,chapter:chapter.title,subject:subject?subject.title:'General',subject_order:subject?subject.sort_order:0,chapter_order:chapter.sort_order,sort_order:n.sort_order,completed:!!done[n.id]};
   });
   var weak=st.weak.map(function(x){return x.toLowerCase().trim()});
   SYLLABUS_TOPICS.sort(function(a,b){
     var aw=weak.some(function(w){return a.subject.toLowerCase().indexOf(w)>=0||w.indexOf(a.subject.toLowerCase())>=0})?0:1;
     var bw=weak.some(function(w){return b.subject.toLowerCase().indexOf(w)>=0||w.indexOf(b.subject.toLowerCase())>=0})?0:1;
-    return aw-bw||a.sort_order-b.sort_order;
+    return aw-bw||a.subject_order-b.subject_order||a.chapter_order-b.chapter_order||a.sort_order-b.sort_order;
   });
   st.dayNumber=dayNumber();
 }
 function planFor(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
-  var total=Math.round(h.mid*60/5)*5;
+  var total=Math.round(targetStudyHours()*60/5)*5;
   var dayStart=Math.max(0,((st.dayNumber||dayNumber())-1)*4);
   var dayWindow=SYLLABUS_TOPICS.slice(dayStart,dayStart+4);
   var chosen=dayWindow.filter(function(x){return !x.completed});
@@ -901,7 +968,8 @@ function planFor(){
     var upcoming=SYLLABUS_TOPICS.slice(dayStart+4).filter(function(x){return !x.completed});
     chosen=chosen.concat(upcoming.slice(0,4-chosen.length));
   }
-  if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(0,4);
+  var syllabusComplete=SYLLABUS_TOPICS.length>0&&SYLLABUS_TOPICS.every(function(x){return x.completed});
+  if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(-4);
   if(!chosen.length){
     var fallback=st.weak.length?st.weak:['Core topics'];
     var legacy=[['learn','Naya concept samjho'],['practice','Practice questions solve karo'],['revision','Aaj ka revision'],['analysis','Mistakes analyse karo']];
@@ -911,8 +979,8 @@ function planFor(){
       duration_min:Math.max(30,Math.round(total/4/5)*5),scheduled_time:clock(390+i*120),position:i
     }});
   }
-  var types=['learn','practice','revision','analysis'];
-  var labels=['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
+  var types=syllabusComplete?['revision','practice','revision','analysis']:['learn','practice','revision','analysis'];
+  var labels=syllabusComplete?['Spaced revision karo','Mixed questions solve karo','Formula / facts recall karo','Mistakes analyse karo']:['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
   var cur=6*60+30,out=[];
   chosen.forEach(function(topic,i){
     var mins=Math.max(30,Math.round(total/chosen.length/5)*5);
@@ -948,17 +1016,25 @@ async function loadTasks(){
       var del=await sb.from('study_tasks').delete().in('id',oldIds).eq('user_id',st.profile.id);
       if(!del.error)allTasks=allTasks.filter(function(x){return x.task_date!==t});
     }
-    // 3. Create today's topic-level plan once.
-    if(!allTasks.some(function(x){return x.task_date===t})){
-      var rows=planFor();
+    // 3. Top up today's plan to four tasks without replacing completed or rescheduled work.
+    todayRows=allTasks.filter(function(x){return x.task_date===t});
+    if(todayRows.length<4){
+      var existingTitles=new Set(todayRows.map(function(x){return x.topic}));
+      var rows=planFor().filter(function(x){return !existingTitles.has(x.topic)});
       if(missed.length){
         var last=missed[missed.length-1];
-        rows.unshift({subject:last.subject,topic:'Catch up: '+last.topic,description:'You missed this earlier. Do it first.',task_type:'revision',duration_min:30,scheduled_time:clock(6*60),position:-1});
+        rows=rows.filter(function(x){return !last.node_id||x.node_id!==last.node_id});
+        rows.unshift({node_id:last.node_id||null,subject:last.subject,topic:'Catch up: '+last.topic,description:'You missed this earlier. Do it first.',task_type:'revision',duration_min:30,scheduled_time:clock(6*60),position:-1});
       }
-      var ins=rows.map(function(x,i){return Object.assign({user_id:st.profile.id,task_date:t,status:'pending'},x,{position:i})});
-      var ir=await sb.from('study_tasks').insert(ins).select();
-      if(ir.error){toast('Could not create today\'s tasks: '+ir.error.message)}
-      else allTasks=allTasks.concat(ir.data||[]);
+      var needed=4-todayRows.length;
+      rows=rows.slice(0,needed);
+      var nextPosition=todayRows.reduce(function(m,x){return Math.max(m,Number(x.position||0)+1)},0);
+      var ins=rows.map(function(x,i){return Object.assign({user_id:st.profile.id,task_date:t,status:'pending'},x,{position:nextPosition+i})});
+      if(ins.length){
+        var ir=await sb.from('study_tasks').insert(ins).select();
+        if(ir.error){toast('Could not complete today\'s plan: '+ir.error.message)}
+        else allTasks=allTasks.concat(ir.data||[]);
+      }
     }
   }
   renderTasks();
@@ -976,13 +1052,14 @@ function renderTasks(){
     var done=t.status==='completed';
     var card=document.createElement('div');
     card.className='tcard'+(done?' done':'');
-    var status=done?'Completed':t.status==='skipped'?'Skipped':t.status==='missed'?'Missed':'Pending';
+    var status=done?'Completed':t.status==='skipped'?'Skipped':t.status==='missed'?'Missed':t.status==='rescheduled'?'Moved to tomorrow':'Pending';
+    var actionable=t.status==='pending'||t.status==='missed';
     card.innerHTML=
       '<div class="trow"><span class="badge '+esc(t.task_type)+'">'+esc(TYPES[t.task_type]||t.task_type)+'</span><span class="tmeta">'+esc(t.scheduled_time||'')+' · '+t.duration_min+' min · '+esc(status)+'</span></div>'+
       '<div class="tt">'+esc(t.topic)+'</div>'+
       '<div class="tmeta">'+esc(t.subject)+(t.description?' — '+esc(t.description):'')+'</div>'+
       (running[t.id]?'<div class="countdown" data-run="'+t.id+'">--:--</div>':'')+
-      (done||t.status!=='pending'?'':'<div class="tact" data-id="'+t.id+'"><button class="btn primary" data-a="start" type="button">Start studying</button><button class="btn" data-a="complete" type="button">Mark complete</button><button class="btn ghost" data-a="reschedule" type="button">Reschedule</button><button class="btn ghost" data-a="skip" type="button">Skip</button></div>');
+      (done||!actionable?'':'<div class="tact" data-id="'+t.id+'"><button class="btn primary" data-a="start" type="button">Start studying</button><button class="btn" data-a="complete" type="button">Mark complete</button><button class="btn ghost" data-a="reschedule" type="button">Reschedule</button><button class="btn ghost" data-a="skip" type="button">Skip</button></div>');
     box.appendChild(card);
   });
   box.querySelectorAll('[data-a]').forEach(function(btn){
@@ -1053,8 +1130,8 @@ async function rescheduleTask(id){
   t.status='rescheduled';
   if(ins.data) allTasks=allTasks.concat(ins.data);
   delete running[id];
-  toast('Moved to tomorrow.');
-  renderTasks();renderStreak();renderHomeProgress();
+  toast('Moved to tomorrow. Tomorrow’s plan will fill the remaining study blocks automatically.');
+  renderTasks();renderStreak();renderHomeProgress();renderDayRoutine();
 }
 
 async function loadLeaderboard(){
@@ -1700,28 +1777,33 @@ $('fbSend').onclick=async function(){
   if(!fbChoice){$('fbErr').textContent='Choose one option first.';return}
   if(fbChoice==='custom'&&text.length<3){$('fbErr').textContent='Please write your feedback first.';return}
   var msg='PrepX Ai feedback\nType: '+FB_LABEL[fbChoice]+(text?'\n\n'+text:'')+(st.profile.name?'\nName: '+st.profile.name:'');
+  // Open the WhatsApp tab synchronously inside the click so popup blockers do not swallow it.
+  var waTab=window.open('about:blank','_blank');
   var b=$('fbSend');b.disabled=true;
   var r=await sb.from('feedback_submissions').insert({user_id:st.profile.id,category:fbChoice,message:text||null});
   b.disabled=false;
   if(r.error){toast('Could not save feedback log. Your WhatsApp message will still open.')}
   if(!FEEDBACK_WA_NUMBER){toast('Feedback WhatsApp number is not set yet. Please try again later.');return}
   var url='https://wa.me/'+FEEDBACK_WA_NUMBER+'?text='+encodeURIComponent(msg);
-  window.open(url,'_blank','noopener');
+  if(waTab)waTab.location.href=url;else location.href=url;
   toast('WhatsApp opened. Press send there to deliver your message.');
   $('fbText').value='';
 };
 
 /* ---------- notes & revision ---------- */
-var NOTES=[],BOOKS=new Set(),NFILTER={kind:'',exam:'',subject:'',q:''};
+var NOTES=[],BOOKS=new Set(),NOTE_PROGRESS={},NFILTER={kind:'',exam:'',subject:'',q:''};
 function recentKey(){return 'prepx_recent_'+st.profile.id}
 function recent(){try{return JSON.parse(localStorage.getItem(recentKey())||'[]')}catch(e){return []}}
 async function renderNotes(){
   if(!st.profile||!st.profile.id)return;
   if(!NOTES.length){
-    var r=await sb.from('notes').select('id,exam,subject,topic,kind,title,body').eq('is_active',true).order('created_at',{ascending:false}).limit(500);
+    var r=await sb.from('notes').select('id,exam,subject,topic,kind,title,body,syllabus_node_id,language,content_json,key_points,quick_revision,diagram_spec,reading_minutes,syllabus_year,source_name,source_url,is_original,content_version').eq('is_active',true).order('created_at',{ascending:false}).limit(500);
+    if(r.error){toast('Notes load nahi hue: '+r.error.message);NOTES=[];return}
     NOTES=r.data||[];
     var bk=await sb.from('note_bookmarks').select('note_id').eq('user_id',st.profile.id);
     BOOKS=new Set((bk.data||[]).map(function(x){return x.note_id}));
+    var np=await sb.from('note_progress').select('note_id,status,completed_at').eq('user_id',st.profile.id);
+    NOTE_PROGRESS={};(np.data||[]).forEach(function(x){NOTE_PROGRESS[x.note_id]=x});
     var ex=$('nExam');
     ex.innerHTML='<option value="">All exams</option>'+P.EXAMS.map(function(e){return '<option value="'+esc(e.key)+'">'+esc(e.label)+'</option>'}).join('');
     if(!NFILTER.exam&&st.ex)NFILTER.exam=st.ex.key;
@@ -1751,22 +1833,75 @@ function renderNoteList(){
   if(!items.length){list.innerHTML='<div class="empty">No notes match these filters.</div>';return}
   items.forEach(function(n){
     var b=document.createElement('button');b.type='button';b.className='note';
-    b.innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><span class="tmeta">'+(BOOKS.has(n.id)?'★ Saved':'')+'</span></div><div class="tt" style="font-size:14.5px">'+esc(n.title)+'</div><div class="tmeta">'+esc(n.subject)+' · '+esc(n.topic)+'</div>';
+    var completed=NOTE_PROGRESS[n.id]&&NOTE_PROGRESS[n.id].status==='completed';
+    b.innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><span class="tmeta">'+(completed?'✓ Completed · ':'')+(BOOKS.has(n.id)?'★ Saved':'')+'</span></div><div class="tt" style="font-size:14.5px">'+esc(n.title)+'</div><div class="tmeta">'+esc(n.subject)+' · '+esc(n.topic)+(n.reading_minutes?' · '+n.reading_minutes+' min':'')+'</div>';
     b.onclick=function(){openNote(n.id)};
     list.appendChild(b);
   });
 }
-function openNote(id){
+function notePlainText(n){
+  var blocks=Array.isArray(n.content_json)?n.content_json:[];
+  var out=[];
+  blocks.forEach(function(b){if(!b)return; if(b.text)out.push(b.text); if(b.items)out=out.concat(b.items); if(b.rows)b.rows.forEach(function(r){out=out.concat(r)});});
+  return out.join('\n\n')||n.body||'';
+}
+function renderNoteDiagram(b){
+  var title=esc(b.title||'Concept illustration');
+  if(b.layout==='atom')return '<div class="note-diagram"><b>'+title+'</b><svg class="note-svg" viewBox="0 0 520 300" role="img" aria-label="Original atom model illustration"><ellipse cx="260" cy="150" rx="190" ry="62" transform="rotate(-28 260 150)" class="orbit"/><ellipse cx="260" cy="150" rx="190" ry="62" transform="rotate(28 260 150)" class="orbit"/><ellipse cx="260" cy="150" rx="190" ry="62" class="orbit"/><circle cx="260" cy="150" r="27" class="nucleus"/><circle cx="260" cy="150" r="10" class="nucleus-core"/><g class="electron-spin"><circle cx="445" cy="150" r="8" class="electron"/><animateTransform attributeName="transform" type="rotate" from="0 260 150" to="360 260 150" dur="8s" repeatCount="indefinite"/></g><g class="electron-spin"><circle cx="260" cy="88" r="8" class="electron"/><animateTransform attributeName="transform" type="rotate" from="0 260 150" to="-360 260 150" dur="11s" repeatCount="indefinite"/></g><text x="260" y="205" text-anchor="middle" class="svg-label">Nucleus</text><text x="450" y="128" class="svg-label">e⁻</text></svg><p class="diagram-caption">Conceptual shell picture only — quantum orbitals are probability distributions, not fixed planetary paths.</p></div>';
+  if(b.layout==='projectile')return '<div class="note-diagram"><b>'+title+'</b><svg class="note-svg" viewBox="0 0 520 300" role="img" aria-label="Projectile motion path illustration"><path d="M55 245 H485 M55 245 V28" class="axis"/><path d="M70 228 Q260 -105 455 228" class="trajectory"/><path d="M70 228 L150 170" class="vector-arrow"/><path d="M150 170 L150 228" class="guide"/><path d="M150 170 L218 170" class="guide"/><circle cx="70" cy="228" r="7" class="launch-dot"/><circle cx="455" cy="228" r="7" class="launch-dot"/><text x="80" y="207" class="svg-label">u</text><text x="163" y="160" class="svg-label">uᵧ</text><text x="215" y="190" class="svg-label">uₓ</text><text x="465" y="262" class="svg-label">Range</text><text x="20" y="40" class="svg-label">y</text><text x="480" y="265" class="svg-label">x</text></svg><p class="diagram-caption">Horizontal motion is uniform; vertical motion has acceleration g downward (air resistance ignored).</p></div>';
+  if(b.layout==='cell')return '<div class="note-diagram"><b>'+title+'</b><svg class="note-svg" viewBox="0 0 560 340" role="img" aria-label="Original eukaryotic cell illustration"><ellipse cx="280" cy="170" rx="245" ry="135" class="cell-membrane"/><ellipse cx="280" cy="170" rx="235" ry="125" class="cell-cytoplasm"/><circle cx="280" cy="170" r="55" class="cell-nucleus"/><circle cx="280" cy="170" r="23" class="cell-nucleolus"/><ellipse cx="130" cy="125" rx="34" ry="17" class="cell-mito"/><path d="M105 125 q12 -16 25 0 t25 0" class="cell-detail"/><ellipse cx="410" cy="215" rx="34" ry="17" class="cell-mito"/><path d="M385 215 q12 -16 25 0 t25 0" class="cell-detail"/><path d="M175 75 q35 15 0 28 q-35 13 0 27 M185 75 q35 15 0 28 q-35 13 0 27" class="cell-er"/><path d="M350 85 q35 12 0 24 q-35 12 0 24" class="cell-golgi"/><g class="cell-ribosomes"><circle cx="220" cy="95" r="4"/><circle cx="235" cy="105" r="4"/><circle cx="205" cy="115" r="4"/><circle cx="360" cy="145" r="4"/><circle cx="380" cy="155" r="4"/></g><text x="280" y="178" text-anchor="middle" class="svg-label">Nucleus</text><text x="65" y="88" class="svg-label">ER</text><text x="370" y="65" class="svg-label">Golgi</text><text x="75" y="165" class="svg-label">Mitochondrion</text><text x="390" y="260" class="svg-label">Mitochondrion</text><text x="220" y="315" class="svg-label">Plasma membrane</text></svg><p class="diagram-caption">Schematic eukaryotic cell; organelle size and position are illustrative, not to scale.</p></div>';
+  return '<div class="note-diagram"><b>'+title+'</b><div class="diagram-flow">'+(b.nodes||[]).map(function(x,i){return '<span>'+esc(x)+'</span>'+(i<(b.nodes||[]).length-1?'<i>↓</i>':'')}).join('')+'</div></div>';
+}
+function renderNoteBlocks(n){
+  var blocks=Array.isArray(n.content_json)?n.content_json:[];
+  if(!blocks.length)return '<div class="handnote" id="noteHandBody">'+esc(n.body||'')+'</div>';
+  return '<div class="handnote note-blocks" id="noteHandBody">'+blocks.map(function(b){
+    if(!b)return '';
+    if(b.type==='heading')return '<h3>'+esc(b.text||'')+'</h3>';
+    if(b.type==='paragraph')return '<p>'+esc(b.text||'')+'</p>';
+    if(b.type==='equation')return '<div class="note-equation">'+esc(b.text||'')+'</div>';
+    if(b.type==='callout')return '<aside class="note-callout '+esc(b.tone||'tip')+'"><b>'+esc(b.title||'Remember')+'</b><p>'+esc(b.text||'')+'</p></aside>';
+    if(b.type==='bullets'||b.type==='steps')return (b.type==='steps'?'<ol>':'<ul>')+(b.items||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+(b.type==='steps'?'</ol>':'</ul>');
+    if(b.type==='table')return '<div class="note-table-wrap"><table class="note-table"><thead><tr>'+(b.headers||[]).map(function(x){return '<th>'+esc(x)+'</th>'}).join('')+'</tr></thead><tbody>'+(b.rows||[]).map(function(row){return '<tr>'+row.map(function(x){return '<td>'+esc(x)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>';
+    if(b.type==='diagram')return renderNoteDiagram(b);
+    return '';
+  }).join('')+'</div>';
+}
+async function setNoteComplete(n,done){
+  var now=new Date().toISOString();
+  var patch={user_id:st.profile.id,note_id:n.id,status:done?'completed':'in_progress',completed_at:done?now:null,last_opened_at:now,updated_at:now};
+  var r=await sb.from('note_progress').upsert(patch,{onConflict:'user_id,note_id'});
+  if(r.error){toast('Progress save nahi hua: '+r.error.message);return false}
+  if(n.syllabus_node_id){
+    var p=await sb.from('student_syllabus_progress').upsert({user_id:st.profile.id,node_id:n.syllabus_node_id,completed:!!done,completed_at:done?now:null,updated_at:now},{onConflict:'user_id,node_id'});
+    if(p.error){toast('Note complete hua, lekin syllabus tick sync nahi hua: '+p.error.message);return false}
+    var topic=SYLLABUS_TOPICS.find(function(x){return x.id===n.syllabus_node_id});
+    if(topic)topic.completed=!!done;
+    if(done){
+      var taskUpdate=await sb.from('study_tasks').update({status:'completed',completed_at:now}).eq('user_id',st.profile.id).eq('node_id',n.syllabus_node_id).eq('status','pending');
+      if(!taskUpdate.error)allTasks.forEach(function(task){if(task.node_id===n.syllabus_node_id&&task.status==='pending'){task.status='completed';task.completed_at=now}});
+      renderTasks();renderDayRoutine();
+    }
+    renderRoadmap();renderHomeProgress();
+  }
+  NOTE_PROGRESS[n.id]=patch;renderNoteList();return true;
+}
+async function openNote(id){
   var n=NOTES.find(function(x){return x.id===id});
   if(!n)return;
   var rc=recent().filter(function(x){return x!==id});rc.unshift(id);
   localStorage.setItem(recentKey(),JSON.stringify(rc.slice(0,8)));
   var saved=BOOKS.has(n.id);
   $('nReader').hidden=false;
-  $('nReadBody').innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><button class="btn '+(saved?'primary':'')+'" id="nBook" type="button" style="min-height:36px;padding:6px 12px;font-size:12.5px">'+(saved?'Saved ★':'Bookmark')+'</button></div>'+
-    '<h2 style="margin-top:10px">'+esc(n.title)+'</h2><div class="tmeta" style="margin-bottom:10px">'+esc(n.subject)+' · '+esc(n.topic)+'</div>'+
-    '<div class="handnote" id="noteHandBody">'+esc(n.body)+'</div>'+
+  var completed=NOTE_PROGRESS[n.id]&&NOTE_PROGRESS[n.id].status==='completed';
+  $('nReadBody').innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><div class="actions"><button class="btn '+(completed?'primary':'')+'" id="noteDone" type="button">'+(completed?'Completed ✓':'Mark complete')+'</button><button class="btn '+(saved?'primary':'')+'" id="nBook" type="button" style="min-height:36px;padding:6px 12px;font-size:12.5px">'+(saved?'Saved ★':'Bookmark')+'</button></div></div>'+
+    '<h2 style="margin-top:10px">'+esc(n.title)+'</h2><div class="tmeta" style="margin-bottom:10px">'+esc(n.subject)+' · '+esc(n.topic)+' · '+(n.reading_minutes||5)+' min read</div>'+
+    (n.quick_revision?'<aside class="note-callout memory"><b>Quick revision</b><p>'+esc(n.quick_revision)+'</p></aside>':'')+
+    renderNoteBlocks(n)+
+    (n.key_points&&n.key_points.length?'<h3>Key takeaways</h3><ul>'+n.key_points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
+    (n.source_name?'<p class="tmeta">Reference: '+esc(n.source_name)+(n.source_url?' · <a href="'+esc(n.source_url)+'" target="_blank" rel="noopener">Source</a>':'')+'</p>':'')+
     '<div class="note-actions"><button class="btn" id="notePdf" type="button">Download PDF</button><button class="btn" id="noteShare" type="button">Share story</button></div>';
+  $('noteDone').onclick=async function(){var ok=await setNoteComplete(n,!completed);if(ok){openNote(n.id);toast(!completed?'Chapter note completed!':'Completion mark removed.')}};
   $('notePdf').onclick=function(){buildNotePrint(n)};
   $('noteShare').onclick=function(){shareNoteStory(n)};
   $('nBook').onclick=async function(){
@@ -1977,6 +2112,16 @@ else{
   };
 }
 
+async function checkTutorStatus(){
+  var el=$('tutorStatus');if(!el)return;
+  el.textContent='Checking tutor connection…';el.style.color='var(--mu)';
+  try{
+    var r=await fetch('/api/tutor-health',{method:'GET',cache:'no-store'});
+    var j=await r.json().catch(function(){return {}});
+    if(r.ok&&j.ready){el.textContent='Prep Ai is ready';el.style.color='#86efac';}
+    else{el.textContent='Prep Ai server setup needs attention';el.style.color='#fbbf24';}
+  }catch(e){el.textContent='Could not check tutor connection';el.style.color='#fbbf24';}
+}
 function setSending(on){
   st.busyChat=on;
   $('sendBtn').disabled=on;
@@ -2035,10 +2180,10 @@ async function sendDoubt(){
     else bubble.textContent=full;
     st.chat.push({role:'assistant',content:full});
     var pl=r.headers.get('X-Plan')||'free';
-    $('usageNote').textContent=(pl!=='free')?'Plan: '+pl.toUpperCase():'Free plan · 3 doubts a day';
+    $('usageNote').textContent=(pl!=='free')?'Plan: '+pl.toUpperCase():'Free plan · 10 doubts a day';
   }catch(e){
     showTyping(false);
-    var nb=addBubble('ai','Network error. Please try again.');
+    var nb=addBubble('ai','Connection to Prep Ai was interrupted. Please check your internet and try again.');
     nb.classList.add('err');
     st.chat.pop();
   }finally{
@@ -2164,12 +2309,13 @@ $('dSave').onclick=async function(){
     daily_hours:$('dHours').value.trim().slice(0,4)||null,
     weakness:$('dWeak').value.trim().slice(0,200)||null
   };
-  var r;
-  try{r=await sb.from('profiles').update(u).eq('id',st.profile.id).select('id').maybeSingle()}
-  catch(e){b.disabled=false;b.textContent='Save profile';toast('Network error while saving profile.');return}
+  var r,profileId=st.profile.id||st.userId;
+  var payload=Object.assign({id:profileId,email:st.userEmail,name:u.name},u);
+  try{r=await sb.from('profiles').upsert(payload,{onConflict:'id'}).select('id').maybeSingle()}
+  catch(e){b.disabled=false;b.textContent='Save profile';toast('Profile save failed: '+(e.message||'network error'));return}
   b.disabled=false;b.textContent='Save profile';
-  if(r.error||!r.data){toast('Profile save nahi hua. Session/RLS issue ho sakta hai; please sign in again.');return}
-  st.profile=Object.assign({},st.profile,u);
+  if(r.error||!r.data){toast('Profile save failed: '+(r.error?r.error.message:'No profile row returned.'));return}
+  st.profile=Object.assign({id:profileId,email:st.userEmail},st.profile,u);
   toast('Profile saved. Updating your plan…');
   setTimeout(function(){location.reload()},900);
 };
@@ -2208,7 +2354,8 @@ function buildNotePrint(n){
   var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
   var title=document.createElement('div');title.className='pdf-title';title.textContent=n.title;head.appendChild(title);
   var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=n.subject+' · '+n.topic+' · '+(n.kind==='formula'?'Formula sheet':n.kind==='revision'?'Short revision':'Detailed notes');head.appendChild(meta);pa.appendChild(head);
-  var body=document.createElement('div');body.style.whiteSpace='pre-wrap';body.style.fontSize='13px';body.style.lineHeight='1.7';body.style.padding='8px 4px';body.textContent=n.body;pa.appendChild(body);
+  var quick=n.quick_revision?'<aside class="note-callout memory"><b>Quick revision</b><p>'+esc(n.quick_revision)+'</p></aside>':'';
+  var body=document.createElement('div');body.style.padding='8px 4px';body.innerHTML=quick+renderNoteBlocks(n)+(n.key_points&&n.key_points.length?'<h3>Key takeaways</h3><ul>'+n.key_points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'');pa.appendChild(body);
   var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Verify important facts with your official exam syllabus.';pa.appendChild(foot);
   pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
 }
@@ -2225,7 +2372,7 @@ async function shareNoteStory(n){
   c.fillStyle='#b9c2e4';c.font='30px Inter,Arial';c.fillText(n.subject+' · '+n.topic,98,570);
   c.fillStyle='rgba(255,255,255,.12)';c.fillRect(96,620,888,2);
   c.fillStyle='#fff';c.font='28px Inter,Arial';
-  var words=String(n.body||'').replace(/\s+/g,' ').split(' '),lines=[],current='';
+  var words=String(notePlainText(n)||'').replace(/\s+/g,' ').split(' '),lines=[],current='';
   words.forEach(function(w){var test=current?current+' '+w:w;if(c.measureText(test).width>850&&current){lines.push(current);current=w}else current=test});if(current)lines.push(current);
   c.fillStyle='#e7eaff';lines.slice(0,24).forEach(function(x,i){c.fillText(x,98,700+i*42)});
   c.fillStyle='#b9c2e4';c.font='28px Inter,Arial';c.fillText('Study smart · Revise daily · Stay consistent',98,1740);
@@ -2283,11 +2430,13 @@ $('shareBtn').onclick=async function(){
 /* ---------- exam change request (saved to database) ---------- */
 $('exBtn').onclick=function(){
   location.hash='#profile';
-  setTimeout(function(){
-    var select=$('dExam');
-    if(select){select.focus();select.scrollIntoView({behavior:'smooth',block:'center'});}
-    toast('Select your new active exam, then tap Save profile.');
-  },120);
+  var select=$('dExam');
+  if(select){
+    select.scrollIntoView({behavior:'smooth',block:'center'});
+    select.focus();
+    try{if(select.showPicker)select.showPicker()}catch(e){}
+  }
+  toast('Choose your new active exam, then tap Save profile.');
 };
 
 
