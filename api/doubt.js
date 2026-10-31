@@ -55,14 +55,14 @@ end $$;
 
 import { createClient } from '@supabase/supabase-js';
 
-const FREE_DAILY_LIMIT = 3;
+const FREE_DAILY_LIMIT = 10;
 const PAID_DAILY_LIMIT = 200;
 const MAX_QUESTION_CHARS = 600;
 const MAX_HISTORY_TURNS = 8;          // last messages kept as context (keeps replies fast and cheap)
 const MAX_IMAGE_BASE64 = 4_000_000;   // about 3 MB image
 const ALLOWED_IMAGE = ['image/jpeg', 'image/png', 'image/webp'];
-const MODEL = 'claude-haiku-5-5';
-const MAX_TOKENS = 500;
+const MODEL = 'claude-haiku-4-5-20251001';
+const MAX_TOKENS = 700;
 
 /* ---------------- SYSTEM PROMPT (the tutor's rules) ---------------- */
 const SYSTEM_PROMPT = `
