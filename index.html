@@ -669,8 +669,9 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   var h=new Date().getHours();
   $('greetTxt').textContent=h<12?'Good Morning,':h<17?'Good Afternoon,':'Good Evening,';
 
-  $('loading').hidden=true;
-  $('app').hidden=false;
+  // Keep the app shell hidden until the first data pass is complete to avoid a compressed layout flash.
+  $('loading').hidden=false;
+  $('app').hidden=true;
   setupExam();
   populateDetails(prof);
   renderPlan();
@@ -699,6 +700,10 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderPlan();
   renderRoadmap();
   await loadLeaderboard();
+  renderRoadmap();
+  renderPlan();
+  $('loading').hidden=true;
+  $('app').hidden=false;
   route();
 })();
 
@@ -1700,28 +1705,33 @@ $('fbSend').onclick=async function(){
   if(!fbChoice){$('fbErr').textContent='Choose one option first.';return}
   if(fbChoice==='custom'&&text.length<3){$('fbErr').textContent='Please write your feedback first.';return}
   var msg='PrepX Ai feedback\nType: '+FB_LABEL[fbChoice]+(text?'\n\n'+text:'')+(st.profile.name?'\nName: '+st.profile.name:'');
+  // Open the WhatsApp tab synchronously inside the click so popup blockers do not swallow it.
+  var waTab=window.open('about:blank','_blank');
   var b=$('fbSend');b.disabled=true;
   var r=await sb.from('feedback_submissions').insert({user_id:st.profile.id,category:fbChoice,message:text||null});
   b.disabled=false;
   if(r.error){toast('Could not save feedback log. Your WhatsApp message will still open.')}
   if(!FEEDBACK_WA_NUMBER){toast('Feedback WhatsApp number is not set yet. Please try again later.');return}
   var url='https://wa.me/'+FEEDBACK_WA_NUMBER+'?text='+encodeURIComponent(msg);
-  window.open(url,'_blank','noopener');
+  if(waTab)waTab.location.href=url;else location.href=url;
   toast('WhatsApp opened. Press send there to deliver your message.');
   $('fbText').value='';
 };
 
 /* ---------- notes & revision ---------- */
-var NOTES=[],BOOKS=new Set(),NFILTER={kind:'',exam:'',subject:'',q:''};
+var NOTES=[],BOOKS=new Set(),NOTE_PROGRESS={},NFILTER={kind:'',exam:'',subject:'',q:''};
 function recentKey(){return 'prepx_recent_'+st.profile.id}
 function recent(){try{return JSON.parse(localStorage.getItem(recentKey())||'[]')}catch(e){return []}}
 async function renderNotes(){
   if(!st.profile||!st.profile.id)return;
   if(!NOTES.length){
-    var r=await sb.from('notes').select('id,exam,subject,topic,kind,title,body').eq('is_active',true).order('created_at',{ascending:false}).limit(500);
+    var r=await sb.from('notes').select('id,exam,subject,topic,kind,title,body,syllabus_node_id,language,content_json,key_points,quick_revision,diagram_spec,reading_minutes,syllabus_year,source_name,source_url,is_original,content_version').eq('is_active',true).order('created_at',{ascending:false}).limit(500);
+    if(r.error){toast('Notes load nahi hue: '+r.error.message);NOTES=[];return}
     NOTES=r.data||[];
     var bk=await sb.from('note_bookmarks').select('note_id').eq('user_id',st.profile.id);
     BOOKS=new Set((bk.data||[]).map(function(x){return x.note_id}));
+    var np=await sb.from('note_progress').select('note_id,status,completed_at').eq('user_id',st.profile.id);
+    NOTE_PROGRESS={};(np.data||[]).forEach(function(x){NOTE_PROGRESS[x.note_id]=x});
     var ex=$('nExam');
     ex.innerHTML='<option value="">All exams</option>'+P.EXAMS.map(function(e){return '<option value="'+esc(e.key)+'">'+esc(e.label)+'</option>'}).join('');
     if(!NFILTER.exam&&st.ex)NFILTER.exam=st.ex.key;
@@ -1751,22 +1761,55 @@ function renderNoteList(){
   if(!items.length){list.innerHTML='<div class="empty">No notes match these filters.</div>';return}
   items.forEach(function(n){
     var b=document.createElement('button');b.type='button';b.className='note';
-    b.innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><span class="tmeta">'+(BOOKS.has(n.id)?'★ Saved':'')+'</span></div><div class="tt" style="font-size:14.5px">'+esc(n.title)+'</div><div class="tmeta">'+esc(n.subject)+' · '+esc(n.topic)+'</div>';
+    var completed=NOTE_PROGRESS[n.id]&&NOTE_PROGRESS[n.id].status==='completed';
+    b.innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><span class="tmeta">'+(completed?'✓ Completed · ':'')+(BOOKS.has(n.id)?'★ Saved':'')+'</span></div><div class="tt" style="font-size:14.5px">'+esc(n.title)+'</div><div class="tmeta">'+esc(n.subject)+' · '+esc(n.topic)+(n.reading_minutes?' · '+n.reading_minutes+' min':'')+'</div>';
     b.onclick=function(){openNote(n.id)};
     list.appendChild(b);
   });
 }
-function openNote(id){
+function notePlainText(n){
+  var blocks=Array.isArray(n.content_json)?n.content_json:[];
+  var out=[];
+  blocks.forEach(function(b){if(!b)return; if(b.text)out.push(b.text); if(b.items)out=out.concat(b.items); if(b.rows)b.rows.forEach(function(r){out=out.concat(r)});});
+  return out.join('\n\n')||n.body||'';
+}
+function renderNoteBlocks(n){
+  var blocks=Array.isArray(n.content_json)?n.content_json:[];
+  if(!blocks.length)return '<div class="handnote" id="noteHandBody">'+esc(n.body||'')+'</div>';
+  return '<div class="handnote note-blocks" id="noteHandBody">'+blocks.map(function(b){
+    if(!b)return '';
+    if(b.type==='heading')return '<h3>'+esc(b.text||'')+'</h3>';
+    if(b.type==='paragraph')return '<p>'+esc(b.text||'')+'</p>';
+    if(b.type==='equation')return '<div class="note-equation">'+esc(b.text||'')+'</div>';
+    if(b.type==='callout')return '<aside class="note-callout '+esc(b.tone||'tip')+'"><b>'+esc(b.title||'Remember')+'</b><p>'+esc(b.text||'')+'</p></aside>';
+    if(b.type==='bullets'||b.type==='steps')return (b.type==='steps'?'<ol>':'<ul>')+(b.items||[]).map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+(b.type==='steps'?'</ol>':'</ul>');
+    if(b.type==='table')return '<div class="note-table-wrap"><table class="note-table"><thead><tr>'+(b.headers||[]).map(function(x){return '<th>'+esc(x)+'</th>'}).join('')+'</tr></thead><tbody>'+(b.rows||[]).map(function(row){return '<tr>'+row.map(function(x){return '<td>'+esc(x)+'</td>'}).join('')+'</tr>'}).join('')+'</tbody></table></div>';
+    if(b.type==='diagram')return '<div class="note-diagram"><b>'+esc(b.title||'Concept map')+'</b><div class="diagram-flow">'+(b.nodes||[]).map(function(x,i){return '<span>'+esc(x)+'</span>'+(i<(b.nodes||[]).length-1?'<i>↓</i>':'')}).join('')+'</div></div>';
+    return '';
+  }).join('')+'</div>';
+}
+async function setNoteComplete(n,done){
+  var patch={user_id:st.profile.id,note_id:n.id,status:done?'completed':'in_progress',completed_at:done?new Date().toISOString():null,last_opened_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+  var r=await sb.from('note_progress').upsert(patch,{onConflict:'user_id,note_id'});
+  if(r.error){toast('Progress save nahi hua: '+r.error.message);return false}
+  NOTE_PROGRESS[n.id]=patch;renderNoteList();return true;
+}
+async function openNote(id){
   var n=NOTES.find(function(x){return x.id===id});
   if(!n)return;
   var rc=recent().filter(function(x){return x!==id});rc.unshift(id);
   localStorage.setItem(recentKey(),JSON.stringify(rc.slice(0,8)));
   var saved=BOOKS.has(n.id);
   $('nReader').hidden=false;
-  $('nReadBody').innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><button class="btn '+(saved?'primary':'')+'" id="nBook" type="button" style="min-height:36px;padding:6px 12px;font-size:12.5px">'+(saved?'Saved ★':'Bookmark')+'</button></div>'+
-    '<h2 style="margin-top:10px">'+esc(n.title)+'</h2><div class="tmeta" style="margin-bottom:10px">'+esc(n.subject)+' · '+esc(n.topic)+'</div>'+
-    '<div class="handnote" id="noteHandBody">'+esc(n.body)+'</div>'+
+  var completed=NOTE_PROGRESS[n.id]&&NOTE_PROGRESS[n.id].status==='completed';
+  $('nReadBody').innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><div class="actions"><button class="btn '+(completed?'primary':'')+'" id="noteDone" type="button">'+(completed?'Completed ✓':'Mark complete')+'</button><button class="btn '+(saved?'primary':'')+'" id="nBook" type="button" style="min-height:36px;padding:6px 12px;font-size:12.5px">'+(saved?'Saved ★':'Bookmark')+'</button></div></div>'+
+    '<h2 style="margin-top:10px">'+esc(n.title)+'</h2><div class="tmeta" style="margin-bottom:10px">'+esc(n.subject)+' · '+esc(n.topic)+' · '+(n.reading_minutes||5)+' min read</div>'+
+    (n.quick_revision?'<aside class="note-callout memory"><b>Quick revision</b><p>'+esc(n.quick_revision)+'</p></aside>':'')+
+    renderNoteBlocks(n)+
+    (n.key_points&&n.key_points.length?'<h3>Key takeaways</h3><ul>'+n.key_points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'')+
+    (n.source_name?'<p class="tmeta">Reference: '+esc(n.source_name)+(n.source_url?' · <a href="'+esc(n.source_url)+'" target="_blank" rel="noopener">Source</a>':'')+'</p>':'')+
     '<div class="note-actions"><button class="btn" id="notePdf" type="button">Download PDF</button><button class="btn" id="noteShare" type="button">Share story</button></div>';
+  $('noteDone').onclick=async function(){var ok=await setNoteComplete(n,!completed);if(ok){openNote(n.id);toast(!completed?'Chapter note completed!':'Completion mark removed.')}};
   $('notePdf').onclick=function(){buildNotePrint(n)};
   $('noteShare').onclick=function(){shareNoteStory(n)};
   $('nBook').onclick=async function(){
@@ -2208,7 +2251,7 @@ function buildNotePrint(n){
   var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
   var title=document.createElement('div');title.className='pdf-title';title.textContent=n.title;head.appendChild(title);
   var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=n.subject+' · '+n.topic+' · '+(n.kind==='formula'?'Formula sheet':n.kind==='revision'?'Short revision':'Detailed notes');head.appendChild(meta);pa.appendChild(head);
-  var body=document.createElement('div');body.style.whiteSpace='pre-wrap';body.style.fontSize='13px';body.style.lineHeight='1.7';body.style.padding='8px 4px';body.textContent=n.body;pa.appendChild(body);
+  var body=document.createElement('div');body.style.whiteSpace='pre-wrap';body.style.fontSize='13px';body.style.lineHeight='1.7';body.style.padding='8px 4px';body.textContent=notePlainText(n);pa.appendChild(body);
   var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Verify important facts with your official exam syllabus.';pa.appendChild(foot);
   pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
 }
@@ -2225,7 +2268,7 @@ async function shareNoteStory(n){
   c.fillStyle='#b9c2e4';c.font='30px Inter,Arial';c.fillText(n.subject+' · '+n.topic,98,570);
   c.fillStyle='rgba(255,255,255,.12)';c.fillRect(96,620,888,2);
   c.fillStyle='#fff';c.font='28px Inter,Arial';
-  var words=String(n.body||'').replace(/\s+/g,' ').split(' '),lines=[],current='';
+  var words=String(notePlainText(n)||'').replace(/\s+/g,' ').split(' '),lines=[],current='';
   words.forEach(function(w){var test=current?current+' '+w:w;if(c.measureText(test).width>850&&current){lines.push(current);current=w}else current=test});if(current)lines.push(current);
   c.fillStyle='#e7eaff';lines.slice(0,24).forEach(function(x,i){c.fillText(x,98,700+i*42)});
   c.fillStyle='#b9c2e4';c.font='28px Inter,Arial';c.fillText('Study smart · Revise daily · Stay consistent',98,1740);
