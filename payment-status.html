@@ -12,7 +12,7 @@ async function check(){
   var s=await sb.auth.getSession(),token=s.data&&s.data.session&&s.data.session.access_token;
   if(!token){status.textContent='Payment received? Please log in to view your account.';home.hidden=false;return true}
   if(!orderId){status.textContent='Order reference is missing. Contact support if money was deducted.';return true}
-  var q=await sb.from('payment_orders').select('status,plan,amount').eq('order_id',orderId).maybeSingle();
+  var q=await sb.from('payment_orders').select('status,plan,amount_paise').eq('order_id',orderId).maybeSingle();
   if(q.error)throw q.error;
   if(q.data&&String(q.data.status).toUpperCase()==='PAID'){
    title.textContent='Payment successful';desc.textContent='Your '+q.data.plan.toUpperCase()+' plan is active for 30 days.';status.textContent='₹'+(Number(q.data.amount_paise||0)/100).toFixed(2)+' payment verified. Your paid access is ready.';home.hidden=false;return true;
