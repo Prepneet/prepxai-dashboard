@@ -1,0 +1,1 @@
+create policy "academic staff manage notes" on public.notes for all to authenticated using (public.has_staff_role(array['owner','super_admin','academic'])) with check (public.has_staff_role(array['owner','super_admin','academic']));
