@@ -1814,9 +1814,17 @@ function renderNoteBlocks(n){
   }).join('')+'</div>';
 }
 async function setNoteComplete(n,done){
-  var patch={user_id:st.profile.id,note_id:n.id,status:done?'completed':'in_progress',completed_at:done?new Date().toISOString():null,last_opened_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+  var now=new Date().toISOString();
+  var patch={user_id:st.profile.id,note_id:n.id,status:done?'completed':'in_progress',completed_at:done?now:null,last_opened_at:now,updated_at:now};
   var r=await sb.from('note_progress').upsert(patch,{onConflict:'user_id,note_id'});
   if(r.error){toast('Progress save nahi hua: '+r.error.message);return false}
+  if(n.syllabus_node_id){
+    var p=await sb.from('student_syllabus_progress').upsert({user_id:st.profile.id,node_id:n.syllabus_node_id,completed:!!done,completed_at:done?now:null,updated_at:now},{onConflict:'user_id,node_id'});
+    if(p.error){toast('Note complete hua, lekin syllabus tick sync nahi hua: '+p.error.message);return false}
+    var topic=SYLLABUS_TOPICS.find(function(x){return x.id===n.syllabus_node_id});
+    if(topic)topic.completed=!!done;
+    renderRoadmap();renderHomeProgress();
+  }
   NOTE_PROGRESS[n.id]=patch;renderNoteList();return true;
 }
 async function openNote(id){
@@ -2276,7 +2284,8 @@ function buildNotePrint(n){
   var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
   var title=document.createElement('div');title.className='pdf-title';title.textContent=n.title;head.appendChild(title);
   var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=n.subject+' · '+n.topic+' · '+(n.kind==='formula'?'Formula sheet':n.kind==='revision'?'Short revision':'Detailed notes');head.appendChild(meta);pa.appendChild(head);
-  var body=document.createElement('div');body.style.whiteSpace='pre-wrap';body.style.fontSize='13px';body.style.lineHeight='1.7';body.style.padding='8px 4px';body.textContent=notePlainText(n);pa.appendChild(body);
+  var quick=n.quick_revision?'<aside class="note-callout memory"><b>Quick revision</b><p>'+esc(n.quick_revision)+'</p></aside>':'';
+  var body=document.createElement('div');body.style.padding='8px 4px';body.innerHTML=quick+renderNoteBlocks(n)+(n.key_points&&n.key_points.length?'<h3>Key takeaways</h3><ul>'+n.key_points.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>':'');pa.appendChild(body);
   var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Verify important facts with your official exam syllabus.';pa.appendChild(foot);
   pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
 }
