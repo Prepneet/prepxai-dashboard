@@ -1051,13 +1051,14 @@ function renderTasks(){
     var done=t.status==='completed';
     var card=document.createElement('div');
     card.className='tcard'+(done?' done':'');
-    var status=done?'Completed':t.status==='skipped'?'Skipped':t.status==='missed'?'Missed':'Pending';
+    var status=done?'Completed':t.status==='skipped'?'Skipped':t.status==='missed'?'Missed':t.status==='rescheduled'?'Moved to tomorrow':'Pending';
+    var actionable=t.status==='pending'||t.status==='missed';
     card.innerHTML=
       '<div class="trow"><span class="badge '+esc(t.task_type)+'">'+esc(TYPES[t.task_type]||t.task_type)+'</span><span class="tmeta">'+esc(t.scheduled_time||'')+' · '+t.duration_min+' min · '+esc(status)+'</span></div>'+
       '<div class="tt">'+esc(t.topic)+'</div>'+
       '<div class="tmeta">'+esc(t.subject)+(t.description?' — '+esc(t.description):'')+'</div>'+
       (running[t.id]?'<div class="countdown" data-run="'+t.id+'">--:--</div>':'')+
-      (done||t.status!=='pending'?'':'<div class="tact" data-id="'+t.id+'"><button class="btn primary" data-a="start" type="button">Start studying</button><button class="btn" data-a="complete" type="button">Mark complete</button><button class="btn ghost" data-a="reschedule" type="button">Reschedule</button><button class="btn ghost" data-a="skip" type="button">Skip</button></div>');
+      (done||!actionable?'':'<div class="tact" data-id="'+t.id+'"><button class="btn primary" data-a="start" type="button">Start studying</button><button class="btn" data-a="complete" type="button">Mark complete</button><button class="btn ghost" data-a="reschedule" type="button">Reschedule</button><button class="btn ghost" data-a="skip" type="button">Skip</button></div>');
     box.appendChild(card);
   });
   box.querySelectorAll('[data-a]').forEach(function(btn){
