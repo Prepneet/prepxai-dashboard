@@ -55,14 +55,14 @@ end $$;
 
 import { createClient } from '@supabase/supabase-js';
 
-const FREE_DAILY_LIMIT = 3;
+const FREE_DAILY_LIMIT = 10;
 const PAID_DAILY_LIMIT = 200;
 const MAX_QUESTION_CHARS = 600;
 const MAX_HISTORY_TURNS = 8;          // last messages kept as context (keeps replies fast and cheap)
 const MAX_IMAGE_BASE64 = 4_000_000;   // about 3 MB image
 const ALLOWED_IMAGE = ['image/jpeg', 'image/png', 'image/webp'];
 const MODEL = 'claude-haiku-5-5';
-const MAX_TOKENS = 500;
+const MAX_TOKENS = 700;
 
 /* ---------------- SYSTEM PROMPT (the tutor's rules) ---------------- */
 const SYSTEM_PROMPT = `
@@ -154,6 +154,12 @@ export default async function handler(req, res) {
   const messages = buildMessages(body.messages, image, 'x', 'x'); // validation only
   if (!messages) return json(res, 400, { error: 'Please type your doubt' });
 
+  if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    return json(res, 503, { error: 'AI tutor server configuration is incomplete. Please contact PrepX Ai support.', code: 'server_config' });
+  }
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return json(res, 503, { error: 'AI tutor is temporarily unavailable. The team has been notified.', code: 'ai_config' });
+  }
   const admin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
@@ -209,7 +215,18 @@ export default async function handler(req, res) {
         stream: true,
       }),
     });
-    if (!r.ok || !r.body) throw new Error('model ' + r.status);
+    if (!r.ok) {
+      const upstreamBody = await r.text().catch(() => '');
+      console.error('Prep Ai upstream request failed', r.status, upstreamBody.slice(0, 600));
+      await admin.rpc('refund_doubt', { uid });
+      const message = r.status === 429
+        ? 'Prep Ai is receiving too many requests right now. Please wait a moment and retry.'
+        : r.status === 401 || r.status === 403
+          ? 'Prep Ai service credentials need attention. Please try again later.'
+          : 'Prep Ai could not connect to its AI service. Please retry in a moment.';
+      return json(res, 503, { error: message, code: 'ai_upstream_' + r.status });
+    }
+    if (!r.body) throw new Error('AI service returned an empty stream');
 
     // Text streams to the browser as Claude writes it.
     res.writeHead(200, {

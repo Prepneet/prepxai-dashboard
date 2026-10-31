@@ -1,0 +1,2 @@
+-- No-op: this migration was applied to Supabase as version 20261031024736.
+-- The canonical migration file is 20261031024736_allow_academic_staff_to_publish_notes.sql.

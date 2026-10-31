@@ -7,7 +7,7 @@
 <meta name="theme-color" content="#080B18">
 <title>Dashboard · PrepX Ai</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='7' fill='%238b5cf6'/%3E%3Cpath d='M12 5l7 3.5-7 3.5-7-3.5z' fill='white'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=Caveat:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
 <script src="prepai-config.js"></script>
 <style>
@@ -184,6 +184,8 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 .note{padding:14px;border-radius:16px;background:rgba(255,255,255,.05);border:1px solid var(--edge);display:flex;flex-direction:column;gap:6px;text-align:left;width:100%}
 .note:hover{border-color:rgba(255,255,255,.25)}
 
+.handnote{margin-top:14px;padding:18px 18px 22px 26px;border-radius:14px;border:1px solid rgba(255,255,255,.14);border-left:3px solid rgba(255,120,140,.65);background:repeating-linear-gradient(to bottom,rgba(255,255,255,.045) 0,rgba(255,255,255,.045) 30px,rgba(34,211,238,.17) 31px,rgba(255,255,255,.045) 32px);font-family:Caveat,"Comic Sans MS",cursive;font-size:21px;line-height:32px;white-space:pre-wrap;color:#f5f3ff;letter-spacing:.01em}
+.note-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 /* ---------- mock lock ---------- */
 .lockwrap{position:relative}
 .lockwrap .inner{filter:blur(6px);opacity:.45;pointer-events:none;user-select:none}
@@ -235,7 +237,22 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 @media (min-width:900px) and (max-width:1199px){.grid3{grid-template-columns:1fr 1fr}}
 @media (min-width:600px) and (max-width:899px){.dgrid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:repeat(4,1fr)}}
 @media (min-width:900px){.dgrid{grid-template-columns:1fr 1fr}.quick{grid-template-columns:repeat(4,1fr)}}
-@media print{body *{visibility:hidden!important}#printArea,#printArea *{visibility:visible!important}#printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:24px;color:#000;background:#fff;font:14px/1.5 Inter,Arial,sans-serif}#printArea h1{font-size:22px;margin-bottom:6px}#printArea h2{font-size:16px;margin:14px 0 4px}}
+@page{size:A4;margin:12mm}
+@media print{
+  body *{visibility:hidden!important}
+  #printArea,#printArea *{visibility:visible!important}
+  #printArea{display:block!important;position:absolute;left:0;top:0;width:100%;padding:0;color:#18213b;background:#fff;font:12px/1.55 Inter,Arial,sans-serif}
+  #printArea .pdf-head{padding:22px;border-radius:16px;background:#10172f;color:#fff;margin-bottom:18px}
+  #printArea .pdf-brand{font:800 22px Sora,Inter,sans-serif;letter-spacing:-.04em;color:#fff}
+  #printArea .pdf-brand span{color:#9c83ff}
+  #printArea .pdf-title{font:800 25px Sora,Inter,sans-serif;margin:14px 0 4px}
+  #printArea .pdf-meta{color:#d5dcf5;margin:0}
+  #printArea .pdf-kpis{display:flex;gap:10px;margin:14px 0}
+  #printArea .pdf-kpi{flex:1;padding:10px;border:1px solid #dbe1f2;border-radius:12px;background:#f5f6ff}
+  #printArea h2{font:700 16px Sora,Inter,sans-serif;margin:18px 0 8px;color:#252d49}
+  #printArea .pdf-row{padding:9px 11px;margin:6px 0;border-left:4px solid #8b5cf6;background:#f4f5fc;border-radius:7px;page-break-inside:avoid}
+  #printArea .pdf-foot{margin-top:22px;padding-top:10px;border-top:1px solid #dbe1f2;color:#66708a;font-size:10px}
+}
 
 /* brand wordmark */
 .brand{display:inline-flex;align-items:baseline;font-family:Sora,Inter,system-ui,sans-serif;font-weight:800;letter-spacing:-.02em;line-height:1;color:inherit;white-space:nowrap}
@@ -253,7 +270,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 
   <!-- desktop sidebar -->
   <aside class="side" aria-label="Main navigation">
-    <div class="logo-wrap"><a href="#home" class="logo" aria-label="PrepX Ai home" style="padding:0;background:none"><span class="brand"><span>Prep</span><span class="bx"><svg class="xs" viewBox="0 0 56 56" aria-hidden="true"><defs><linearGradient id="pxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g stroke="url(#pxg)" stroke-width="7" stroke-linecap="round" fill="none"><path d="M9 9 L47 47"/><path d="M47 9 L9 47"/><path d="M44 12 L58 -2" stroke-width="4.5"/></g></svg></span><span class="ba">Ai</span></span></a></div>
+    <div class="logo-wrap"><a href="https://prepxai.online" class="logo" aria-label="PrepX Ai home" style="padding:0;background:none"><span class="brand"><span>Prep</span><span class="bx"><svg class="xs" viewBox="0 0 56 56" aria-hidden="true"><defs><linearGradient id="pxg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8b5cf6"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs><g stroke="url(#pxg)" stroke-width="7" stroke-linecap="round" fill="none"><path d="M9 9 L47 47"/><path d="M47 9 L9 47"/><path d="M44 12 L58 -2" stroke-width="4.5"/></g></svg></span><span class="ba">Ai</span></span></a></div>
     <a href="#home" data-r="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="2"/><rect x="14" y="3" width="7" height="5" rx="2"/><rect x="14" y="12" width="7" height="9" rx="2"/><rect x="3" y="16" width="7" height="5" rx="2"/></svg>Overview</a>
     <a href="#plan" data-r="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Study Plan</a>
     <a href="#tutor" data-r="tutor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>AI Tutor</a>
@@ -301,6 +318,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
               <button class="qa" type="button" data-go="tests"><b>Start mock test</b><span>Sunday mock and PYQs</span></button>
               <button class="qa" type="button" data-go="tutor"><b>Ask Prep Ai</b><span>Text, voice or photo</span></button>
               <button class="qa" type="button" data-go="plan"><b>Revise weak topics</b><span>From your weak subjects</span></button>
+              <button class="qa" type="button" data-go="analysis"><b>Analyse Yourself</b><span>Your full progress report</span></button>
             </div>
           </section>
         </div>
@@ -329,8 +347,44 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
             <p class="sub" style="margin:0">Longest: <span id="streakBest">0</span> days</p>
             <div class="sdays" id="streakWeek"></div>
           </section>
+          <section class="glass">
+            <div class="trow"><h2 style="margin:0">Weekly Top 20</h2><span class="tag">This week</span></div>
+            <p class="sub">Real XP points ke basis par PrepX Ai students ki weekly ranking.</p>
+            <div id="leaderboardList"><div class="empty">Leaderboard load ho raha hai…</div></div>
+            <p class="sub" style="margin-top:12px"><b>Rules:</b> Study task complete = 10 XP, PYQ attempt = 2 XP, mock test submit = 25 XP. Har week ranking refresh hoti hai. Consistency rakho — <b>You may be next!</b></p>
+            <button class="btn ghost" type="button" data-go="analysis">Analyse Yourself</button>
+          </section>
         </div>
       </div>
+    </section>
+
+    <!-- ANALYSE YOURSELF -->
+    <section class="view" id="v-analysis" aria-label="Analyse Yourself">
+      <section class="glass">
+        <div class="trow"><h2 style="margin:0">Analyse Yourself</h2><span class="tag" id="analysisDay">Day 1</span></div>
+        <p class="sub" id="analysisJoined">Your journey from joining date to today.</p>
+        <div class="kpi" id="analysisKpis"></div>
+        <div class="actions" style="margin-top:12px"><button class="btn" id="analysisPdfBtn" type="button">Download analysis PDF</button><button class="btn ghost" id="analysisShareBtn" type="button">Share analysis story</button></div>
+      </section>
+      <div class="grid2">
+        <section class="glass">
+          <h2>Syllabus progress</h2>
+          <p class="sub" id="analysisSyllabusText">Completed topics based on your checkmarks.</p>
+          <div class="pbar"><i id="analysisSyllabusBar"></i></div>
+          <div id="analysisSubjects"></div>
+        </section>
+        <section class="glass">
+          <h2>Mock test score trend</h2>
+          <p class="sub">Last attempts ka score percentage.</p>
+          <div id="analysisScoreGraph"></div>
+          <div id="analysisMockHistory"></div>
+        </section>
+      </div>
+      <section class="glass">
+        <h2>Chapter-wise completion</h2>
+        <p class="sub">Chapter ke saare topics complete hone par tick mark dikhega.</p>
+        <div id="analysisChapters"></div>
+      </section>
     </section>
 
     <!-- PLAN -->
@@ -350,6 +404,12 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
           <div class="week" id="week"></div>
         </section>
       </div>
+      <section class="glass">
+        <h2>Day strategy · Uthne se sone tak</h2>
+        <p class="sub">Apne study hours, exam countdown aur aaj ke topics ke hisaab se daily routine follow karo.</p>
+        <div class="tasks" id="dayRoutine"></div>
+        <p class="sub" id="dayStrategy" style="margin:10px 0 0"></p>
+      </section>
     </section>
 
     <!-- TUTOR -->
@@ -445,8 +505,8 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
       </section>
       <section class="glass">
         <h2>Exam change</h2>
-        <p class="sub">Changing your exam is handled by our team after payment confirmation.</p>
-        <div class="actions"><button class="btn" id="exBtn" type="button">Request exam change</button></div>
+        <p class="sub">Choose a different active exam from your saved exam list. Your dashboard will reload with the selected exam.</p>
+        <div class="actions"><button class="btn" id="exBtn" type="button">Change active exam</button><a class="btn ghost" href="https://prepxai.online/pricing.html">Change / upgrade plan</a></div>
       </section>
     </section>
 
@@ -558,7 +618,7 @@ var sb=window.supabase.createClient(SB_URL,SB_KEY);
 var P=window.PREP;
 var $=function(i){return document.getElementById(i)};
 var st={profile:null,paid:false,ex:null,days:0,stage:'',weak:[],examDate:'',chat:[],photo:null,busyChat:false};
-var ROUTES=['home','plan','tests','tutor','profile','performance','notes','market','settings'];
+var ROUTES=['home','plan','tests','tutor','profile','performance','notes','market','settings','analysis'];
 
 function pad(n){return String(n).padStart(2,'0')}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -577,6 +637,7 @@ function route(){
   window.scrollTo(0,0);
   if(!st.profile) return;
   if(r==='performance') renderPerformance();
+  if(r==='analysis') loadAnalysis();
   if(r==='notes') renderNotes();
   if(r==='settings') renderSettings();
   if(r==='profile') renderFeedbackState();
@@ -619,6 +680,25 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderChatIntro();
   renderFeedbackState();
   await loadTasks();
+  renderDayRoutine();
+  await loadExamNotices();
+  if(st.paid){
+    var sundayResult=await api('generate_sunday');
+    if(sundayResult.ok&&sundayResult.data&&sundayResult.data.test){
+      var mt=sundayResult.data.test;
+      examNotices.unshift({
+        id:'sunday-'+mt.id,tag:st.ex?st.ex.key:'',type:'mock',
+        title:'Sunday Mock unlocked · '+(mt.scheduled_for||'This Sunday'),
+        summary:mt.strategy_text||'Tumhara completed-syllabus mock ready hai.',
+        body:[mt.strategy_text||'Tumhara completed-syllabus mock ready hai.'],
+        link:null,link_text:null,src_name:'PrepX Ai',src_url:null
+      });
+    }
+  }
+  renderNotifications();
+  renderPlan();
+  renderRoadmap();
+  await loadLeaderboard();
   route();
 })();
 
@@ -672,31 +752,81 @@ function renderPlan(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
   $('hours').textContent=h.low+'–'+h.high+' hours a day';
   $('planNote').textContent=st.days+' days left. Weak subjects get extra time.';
-  $('planNote2').textContent='Tasks below are planned for today. Mark them as you go.';
+  $('planNote2').textContent='Day '+(st.dayNumber||dayNumber())+' · Aaj ke subject, chapter aur topic tasks neeche hain. Complete karte hi tick/strike-through ho jayega.';
 }
 
-function renderRoadmap(){
-  var wk=$('week');
-  wk.innerHTML='';
-  var names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var subs=st.weak.length?st.weak:['Core topics'];
-  names.forEach(function(n,i){
-    var focus=i===6?'Mock + review':subs[i%subs.length];
-    var d=document.createElement('div');
-    var b=document.createElement('b');b.textContent=n;
-    d.appendChild(b);
-    d.appendChild(document.createTextNode(focus));
-    wk.appendChild(d);
+function humanTime(min){
+  var h=Math.floor(min/60)%24,m=min%60,amp=h>=12?'PM':'AM',hh=h%12||12;
+  return hh+':'+pad(m)+' '+amp;
+}
+function renderDayRoutine(){
+  var box=$('dayRoutine');if(!box)return;box.innerHTML='';
+  var tasks=todayTasks(),cur=5*60+45,blocks=[];
+  blocks.push({time:cur,title:'Wake up + fresh start',desc:'Paani piyo, fresh ho, 10 minute stretching. Phone scrolling avoid karo.'});
+  cur=6*60+15;
+  blocks.push({time:cur,title:'Morning setup',desc:'Aaj ke 4 topics dekho, desk ready karo aur kal ki mistakes ek baar scan karo.'});
+  cur=6*60+30;
+  tasks.forEach(function(t,i){
+    var duration=Number(t.duration_min||60);
+    blocks.push({time:cur,title:'Study block '+(i+1)+' · '+t.subject,desc:t.topic+' — '+(t.description||DESC[t.task_type]||'Focused study')+' ('+duration+' min)'});
+    cur+=duration;
+    if(i===1){
+      blocks.push({time:cur,title:'Lunch + rest',desc:'Proper lunch lo, 20 minute rest karo. Screen break zaroor lo.'});cur+=60;
+    }else if(i===2){
+      blocks.push({time:cur,title:'Walk + refresh',desc:'30 minute walk, snack aur thoda relax.'});cur+=30;
+    }else if(i<tasks.length-1){
+      blocks.push({time:cur,title:'Short break',desc:'15 minute break. Paani piyo aur aankhon ko rest do.'});cur+=15;
+    }
   });
+  if(cur<20*60){
+    blocks.push({time:cur,title:'Light revision / PYQ practice',desc:'Aaj ke topics ke 10–20 questions solve karo aur wrong answers note karo.'});
+    cur+=45;
+  }
+  blocks.push({time:cur,title:'Daily review + tomorrow setup',desc:'Completed topics tick karo, pending work note karo aur kal ka target set karo.'});
+  blocks.push({time:Math.max(cur+30,22*60),title:'Sleep',desc:'7–8 hours ki sleep lo. Late-night scrolling avoid karo.'});
+  blocks.forEach(function(x){
+    var d=document.createElement('div');d.className='tcard';
+    var row=document.createElement('div');row.className='trow';
+    var time=document.createElement('span');time.className='badge';time.textContent=humanTime(x.time);
+    var title=document.createElement('b');title.className='tt';title.textContent=x.title;
+    row.appendChild(time);row.appendChild(title);d.appendChild(row);
+    var desc=document.createElement('div');desc.className='tmeta';desc.textContent=x.desc;d.appendChild(desc);
+    box.appendChild(d);
+  });
+  var priority=st.weak.length?st.weak.join(', '):'all subjects';
+  $('dayStrategy').textContent='Aaj ki strategy: '+(st.days<=30?'New theory kam, timed practice + revision zyada. ':'Concept clear karo, phir practice set solve karo. ')+'Priority subjects: '+priority+'. Har block ke baad 5 minute mein mistakes note karo.';
+}
+function renderRoadmap(){
+  var wk=$('week');wk.innerHTML='';
+  var dayNow=st.dayNumber||dayNumber();
+  var weekStart=Math.floor((dayNow-1)/7)*7+1;
+  var startIndex=(weekStart-1)*4;
+  var topics=SYLLABUS_TOPICS.slice(startIndex,startIndex+28);
+  var joined=st.profile&&st.profile.created_at?new Date(st.profile.created_at):new Date();
+  for(var day=0;day<7;day++){
+    var d=document.createElement('div');
+    var dayNo=weekStart+day;
+    var date=new Date(joined.getFullYear(),joined.getMonth(),joined.getDate()+dayNo-1);
+    var b=document.createElement('b');b.textContent='Day '+dayNo+' · '+date.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+    d.appendChild(b);
+    var chosen=topics.slice(day*4,day*4+4);
+    var lines=chosen.map(function(x){return x.subject+' · '+x.chapter+' / '+x.title});
+    if(!lines.length)lines=['Syllabus revision / mock review'];
+    d.appendChild(document.createTextNode(lines.join(' • ')));
+    if(chosen.length&&chosen.every(function(x){return x.completed})){
+      d.classList.add('hit');d.appendChild(document.createTextNode(' ✓'));
+    }
+    wk.appendChild(d);
+  }
 }
 function renderLock(){$('mockCard').classList.toggle('is-open',st.paid)}
 function renderSunday(){
   var t=new Date();
-  var add=(7-t.getDay())%7; if(add===0) add=7;
+  var add=(7-t.getDay())%7;
   var d=new Date(t.getFullYear(),t.getMonth(),t.getDate()+add);
-  $('sunDays').textContent=add+(add===1?' day to go':' days to go');
+  $('sunDays').textContent=add===0?'Today':add+(add===1?' day to go':' days to go');
   $('sunDate').textContent=d.toDateString();
-  $('sunInfo').textContent='Next Sunday mock is on:';
+  $('sunInfo').textContent=add===0?'Sunday mock is today:':'Next Sunday mock is on:';
 }
 
 /* ---------- study tasks: generate, complete, skip, reschedule, streak ---------- */
@@ -717,25 +847,88 @@ function todayTasks(){
   return allTasks.filter(function(x){return x.task_date===t}).sort(function(a,b){return a.position-b.position});
 }
 
+var SYLLABUS_TOPICS=[];
+var SYLLABUS_EXAM_ID=null;
+var EXAM_SLUG_MAP={
+  'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','JEE Main':'jee-main',
+  'JEE Advanced':'jee-main','NEET UG':'neet-ug','CUET UG':'cuet-ug',
+  'SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA / CDS':'nda',
+  'Banking Exams':'ibps-sbi-banking'
+};
+function dayNumber(){
+  var created=st.profile&&st.profile.created_at?new Date(st.profile.created_at):new Date();
+  var today=new Date();today=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  var joined=new Date(created.getFullYear(),created.getMonth(),created.getDate());
+  return Math.max(1,Math.floor((today-joined)/86400000)+1);
+}
+async function loadSyllabusForStudent(){
+  SYLLABUS_TOPICS=[];SYLLABUS_EXAM_ID=null;
+  if(!st.ex)return;
+  var slug=EXAM_SLUG_MAP[st.ex.key];
+  if(!slug)return;
+  var er=await sb.from('exams').select('id,slug,name').eq('slug',slug).eq('is_active',true).maybeSingle();
+  if(er.error||!er.data){toast('Selected exam ka syllabus database mein map nahi hua.');return}
+  SYLLABUS_EXAM_ID=er.data.id;
+  var nr=await sb.from('syllabus_nodes').select('id,title,level,parent_id,sort_order,est_hours').eq('exam_id',er.data.id).order('sort_order');
+  if(nr.error){toast('Syllabus load nahi hua: '+nr.error.message);return}
+  var nodes=nr.data||[],byId={};
+  nodes.forEach(function(n){byId[n.id]=n});
+  var pr=await sb.from('student_syllabus_progress').select('node_id,completed').eq('user_id',st.profile.id);
+  var done={};(pr.data||[]).forEach(function(x){if(x.completed)done[x.node_id]=true});
+  SYLLABUS_TOPICS=nodes.filter(function(n){return n.level==='topic'&&byId[n.parent_id]&&byId[n.parent_id].level==='chapter'}).map(function(n){
+    var chapter=byId[n.parent_id],subject=byId[chapter.parent_id];
+    return {id:n.id,title:n.title,chapter:chapter.title,subject:subject?subject.title:'General',sort_order:n.sort_order,completed:!!done[n.id]};
+  });
+  var weak=st.weak.map(function(x){return x.toLowerCase().trim()});
+  SYLLABUS_TOPICS.sort(function(a,b){
+    var aw=weak.some(function(w){return a.subject.toLowerCase().indexOf(w)>=0||w.indexOf(a.subject.toLowerCase())>=0})?0:1;
+    var bw=weak.some(function(w){return b.subject.toLowerCase().indexOf(w)>=0||w.indexOf(b.subject.toLowerCase())>=0})?0:1;
+    return aw-bw||a.sort_order-b.sort_order;
+  });
+  st.dayNumber=dayNumber();
+}
 function planFor(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
   var total=Math.round(h.mid*60/5)*5;
-  var subs=st.weak.length?st.weak:['Core topics'];
-  var shares=[['learn',.4],['practice',.25],['revision',.2],['analysis',.15]];
-  var sum=shares.reduce(function(a,b){return a+b[1]},0);
-  var cur=6*60+30; // first block at 06:30
-  var out=[];
-  shares.forEach(function(sh,i){
-    var mins=Math.max(15,Math.round(total*sh[1]/sum/5)*5);
-    var subj=sh[0]==='learn'||sh[0]==='revision'?subs[0]:subs[1%subs.length];
-    out.push({subject:subj,topic:(sh[0]==='learn'?'New concepts: ':sh[0]==='practice'?'Practice set: ':sh[0]==='revision'?'Revise: ':'Review mistakes: ')+subj,
-      description:DESC[sh[0]],task_type:sh[0],duration_min:mins,scheduled_time:clock(cur),position:i});
-    cur+=mins+15; // 15-minute break after each block
+  var dayStart=Math.max(0,((st.dayNumber||dayNumber())-1)*4);
+  var dayWindow=SYLLABUS_TOPICS.slice(dayStart,dayStart+4);
+  var chosen=dayWindow.filter(function(x){return !x.completed});
+  if(chosen.length<4){
+    var previous=SYLLABUS_TOPICS.slice(0,dayStart).filter(function(x){return !x.completed});
+    chosen=chosen.concat(previous.slice(0,4-chosen.length));
+  }
+  if(chosen.length<4){
+    var upcoming=SYLLABUS_TOPICS.slice(dayStart+4).filter(function(x){return !x.completed});
+    chosen=chosen.concat(upcoming.slice(0,4-chosen.length));
+  }
+  if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(0,4);
+  if(!chosen.length){
+    var fallback=st.weak.length?st.weak:['Core topics'];
+    var legacy=[['learn','Naya concept samjho'],['practice','Practice questions solve karo'],['revision','Aaj ka revision'],['analysis','Mistakes analyse karo']];
+    return legacy.map(function(x,i){return {
+      node_id:null,subject:fallback[i%fallback.length],topic:x[1]+': '+fallback[i%fallback.length],
+      description:'Day '+(st.dayNumber||1)+' · '+x[1],task_type:x[0],
+      duration_min:Math.max(30,Math.round(total/4/5)*5),scheduled_time:clock(390+i*120),position:i
+    }});
+  }
+  var types=['learn','practice','revision','analysis'];
+  var labels=['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
+  var cur=6*60+30,out=[];
+  chosen.forEach(function(topic,i){
+    var mins=Math.max(30,Math.round(total/chosen.length/5)*5);
+    out.push({
+      node_id:topic.id,subject:topic.subject,
+      topic:topic.chapter+' — '+topic.title,
+      description:'Day '+(st.dayNumber||1)+' · '+labels[i]+' · Chapter: '+topic.chapter,
+      task_type:types[i],duration_min:mins,scheduled_time:clock(cur),position:i
+    });
+    cur+=mins+15;
   });
   return out;
 }
 
 async function loadTasks(){
+  await loadSyllabusForStudent();
   var r=await sb.from('study_tasks').select('*').eq('user_id',st.profile.id).order('task_date',{ascending:true}).limit(2000);
   if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];}
   else allTasks=r.data||[];
@@ -748,7 +941,14 @@ async function loadTasks(){
       await sb.from('study_tasks').update({status:'missed'}).in('id',ids).eq('user_id',st.profile.id);
       missed.forEach(function(x){x.status='missed'});
     }
-    // 2. create today's plan once, and add a catch-up task for the most recent missed topic
+    // 2. Replace only an untouched legacy generic plan; never erase student-completed work.
+    var todayRows=allTasks.filter(function(x){return x.task_date===t});
+    if(todayRows.length&&todayRows.every(function(x){return !x.node_id&&x.status==='pending'})&&SYLLABUS_TOPICS.length){
+      var oldIds=todayRows.map(function(x){return x.id});
+      var del=await sb.from('study_tasks').delete().in('id',oldIds).eq('user_id',st.profile.id);
+      if(!del.error)allTasks=allTasks.filter(function(x){return x.task_date!==t});
+    }
+    // 3. Create today's topic-level plan once.
     if(!allTasks.some(function(x){return x.task_date===t})){
       var rows=planFor();
       if(missed.length){
@@ -823,18 +1023,29 @@ async function setStatus(id,status){
   var patch={status:status,completed_at:status==='completed'?new Date().toISOString():null};
   var r=await sb.from('study_tasks').update(patch).eq('id',id).eq('user_id',st.profile.id);
   if(r.error){toast('Could not update task: '+r.error.message);return}
-  delete running[id];
   var t=allTasks.find(function(x){return x.id===id});
+  if(t&&t.node_id){
+    var progress=await sb.from('student_syllabus_progress').upsert({
+      user_id:st.profile.id,node_id:t.node_id,completed:status==='completed',
+      completed_at:status==='completed'?new Date().toISOString():null,updated_at:new Date().toISOString()
+    },{onConflict:'user_id,node_id'});
+    if(progress.error){toast('Task saved, but syllabus progress sync failed: '+progress.error.message)}
+    else{
+      var node=SYLLABUS_TOPICS.find(function(x){return x.id===t.node_id});
+      if(node)node.completed=status==='completed';
+    }
+  }
+  delete running[id];
   if(t){t.status=status;t.completed_at=patch.completed_at}
-  toast(status==='completed'?'Nice. Task completed.':'Task updated.');
-  renderTasks();renderStreak();renderHomeProgress();
+  toast(status==='completed'?'Shabash! Topic complete hua.':'Task updated.');
+  renderTasks();renderStreak();renderHomeProgress();renderRoadmap();renderDayRoutine();
 }
 
 async function rescheduleTask(id){
   var t=allTasks.find(function(x){return x.id===id});
   if(!t)return;
   var tomorrow=addDays(localISO(),1);
-  var copy={user_id:st.profile.id,task_date:tomorrow,position:t.position+100,subject:t.subject,topic:t.topic,description:t.description,task_type:t.task_type,duration_min:t.duration_min,scheduled_time:t.scheduled_time,status:'pending'};
+  var copy={user_id:st.profile.id,node_id:t.node_id||null,task_date:tomorrow,position:t.position+100,subject:t.subject,topic:t.topic,description:t.description,task_type:t.task_type,duration_min:t.duration_min,scheduled_time:t.scheduled_time,status:'pending'};
   var ins=await sb.from('study_tasks').insert(copy).select();
   if(ins.error){toast('Could not reschedule: '+ins.error.message);return}
   var up=await sb.from('study_tasks').update({status:'rescheduled'}).eq('id',id).eq('user_id',st.profile.id);
@@ -846,6 +1057,144 @@ async function rescheduleTask(id){
   renderTasks();renderStreak();renderHomeProgress();
 }
 
+async function loadLeaderboard(){
+  var box=$('leaderboardList');if(!box)return;
+  var r=await sb.rpc('weekly_top_students');
+  box.innerHTML='';
+  if(r.error){box.innerHTML='<div class="empty">Leaderboard abhi load nahi ho paya. Thodi der baad retry karein.</div>';return}
+  var rows=r.data||[];
+  if(!rows.length){box.innerHTML='<div class="empty">Is week leaderboard abhi start hua hai. Tasks complete karke pehle XP points kamao — You may be next!</div>';return}
+  rows.forEach(function(x){
+    var row=document.createElement('div');row.className='srow';
+    var left=document.createElement('div');left.style.minWidth='0';
+    var name=document.createElement('b');name.textContent='#'+x.rank+'  '+x.display_name;left.appendChild(name);
+    var exam=document.createElement('div');exam.className='tmeta';exam.textContent=x.target_exam||'Exam not set';left.appendChild(exam);
+    var pts=document.createElement('b');pts.textContent=Number(x.xp||0)+' XP';row.appendChild(left);row.appendChild(pts);box.appendChild(row);
+  });
+}
+function buildAnalysisPrint(){
+  var pa=$('printArea');pa.innerHTML='';
+  var head=document.createElement('div');head.className='pdf-head';
+  var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
+  var title=document.createElement('div');title.className='pdf-title';title.textContent='STUDENT PERFORMANCE REPORT';head.appendChild(title);
+  var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=(st.ex?st.ex.label:'Exam not set')+' · '+$('analysisJoined').textContent;head.appendChild(meta);pa.appendChild(head);
+  function addSection(title,id){
+    var h=document.createElement('h2');h.textContent=title;pa.appendChild(h);
+    var src=$(id);var rows=src?Array.prototype.slice.call(src.children):[];
+    rows.forEach(function(row){var d=document.createElement('div');d.className='pdf-row';d.textContent=row.textContent;pa.appendChild(d)});
+    if(!rows.length&&src&&src.textContent){var d=document.createElement('div');d.className='pdf-row';d.textContent=src.textContent;pa.appendChild(d)}
+  }
+  addSection('Key metrics','analysisKpis');
+  var p=document.createElement('p');p.textContent=$('analysisSyllabusText').textContent;pa.appendChild(p);
+  addSection('Subject-wise progress','analysisSubjects');
+  addSection('Chapter-wise completion','analysisChapters');
+  addSection('Mock test history','analysisMockHistory');
+  var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Personal performance report';pa.appendChild(foot);
+  pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
+}
+async function shareAnalysisStory(){
+  var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;var c=canvas.getContext('2d');
+  var bg=c.createLinearGradient(0,0,1080,1920);bg.addColorStop(0,'#10152f');bg.addColorStop(1,'#0c2947');c.fillStyle=bg;c.fillRect(0,0,1080,1920);
+  c.fillStyle='rgba(255,255,255,.08)';c.fillRect(64,64,952,1792);
+  c.fillStyle='#fff';c.font='800 62px Sora,Arial';c.fillText('PrepX Ai',96,170);
+  c.fillStyle='#b9c2e4';c.font='600 28px Inter,Arial';c.fillText('MY PREPARATION ANALYSIS',98,250);
+  c.fillStyle='#fff';c.font='800 54px Sora,Arial';c.fillText(st.ex?st.ex.label:'Exam preparation',98,345);
+  c.fillStyle='#9c83ff';c.font='700 44px Inter,Arial';c.fillText($('analysisSyllabusText').textContent.slice(0,42),98,450);
+  var k=Array.prototype.slice.call($('analysisKpis').children,0,6),y=560;
+  k.forEach(function(item){c.fillStyle='rgba(255,255,255,.1)';c.fillRect(96,y-42,888,118);c.fillStyle='#b9c2e4';c.font='26px Inter,Arial';c.fillText(item.querySelector('small')?item.querySelector('small').textContent:'Progress',126,y);c.fillStyle='#fff';c.font='700 36px Sora,Arial';c.fillText(item.querySelector('b')?item.querySelector('b').textContent:'—',126,y+48);y+=138});
+  c.fillStyle='#b9c2e4';c.font='28px Inter,Arial';c.fillText('Consistency today. Confidence on exam day.',98,1710);
+  c.fillStyle='#fff';c.font='700 30px Inter,Arial';c.fillText('prepxai.online',98,1780);
+  var blob=await new Promise(function(resolve){canvas.toBlob(resolve,'image/png')});
+  if(!blob){toast('Story image create nahi ho payi.');return}
+  var file=new File([blob],'prepxai-analysis.png',{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'PrepX Ai performance analysis'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='prepxai-analysis.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  toast('Analysis story image ready to share.');
+}
+$('analysisPdfBtn').onclick=buildAnalysisPrint;
+$('analysisShareBtn').onclick=shareAnalysisStory;
+async function loadAnalysis(){
+  if(!st.profile||!st.profile.id)return;
+  if(!SYLLABUS_TOPICS.length)await loadSyllabusForStudent();
+  var uid=st.profile.id;
+  var results=await Promise.all([
+    sb.from('mock_attempts').select('id,test_id,score,accuracy,correct,incorrect,unattempted,time_taken_sec,submitted_at').eq('user_id',uid).not('submitted_at','is',null).order('submitted_at',{ascending:true}).limit(100),
+    sb.from('pyq_attempts').select('id,question_id,is_correct,time_taken_sec,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(2000),
+    sb.from('xp_events').select('points,created_at').eq('user_id',uid).limit(5000)
+  ]);
+  var mocks=results[0].data||[],pyqs=results[1].data||[],xp=results[2].data||[];
+  var testMap={};
+  var testIds=Array.from(new Set(mocks.map(function(x){return x.test_id})));
+  if(testIds.length){
+    var tr=await sb.from('mock_tests').select('id,title,total_marks').in('id',testIds);
+    (tr.data||[]).forEach(function(x){testMap[x.id]=x});
+  }
+  var topics=SYLLABUS_TOPICS,total=topics.length,done=topics.filter(function(x){return x.completed}).length;
+  var pct=total?Math.round(done/total*100):0;
+  var completedTasks=allTasks.filter(function(x){return x.status==='completed'});
+  var studyMinutes=completedTasks.reduce(function(a,x){return a+Number(x.duration_min||0)},0);
+  var accuracy=pyqs.length?Math.round(pyqs.filter(function(x){return x.is_correct}).length/pyqs.length*100):0;
+  var mockAccuracy=mocks.length?Math.round(mocks.reduce(function(a,x){return a+Number(x.accuracy||0)},0)/mocks.length):0;
+  var xpTotal=xp.reduce(function(a,x){return a+Number(x.points||0)},0);
+  $('analysisDay').textContent='Day '+(st.dayNumber||dayNumber());
+  var joined=st.profile.created_at?new Date(st.profile.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'Not available';
+  $('analysisJoined').textContent='Joined '+joined+' · '+(st.ex?st.ex.label:'Exam not selected')+' · Data updates as you complete tasks and tests.';
+  var kpis=[
+    ['Syllabus',done+' / '+total+' topics'],
+    ['Study time',(studyMinutes/60).toFixed(1)+' hours'],
+    ['Mock tests',String(mocks.length)],
+    ['PYQs attempted',String(pyqs.length)],
+    ['PYQ accuracy',accuracy+'%'],
+    ['XP earned',String(xpTotal)+' XP']
+  ];
+  var kbox=$('analysisKpis');kbox.innerHTML='';
+  kpis.forEach(function(k){var d=document.createElement('div');var b=document.createElement('b');b.textContent=k[1];var small=document.createElement('small');small.textContent=k[0];d.appendChild(b);d.appendChild(small);kbox.appendChild(d)});
+  $('analysisSyllabusText').textContent=done+' of '+total+' topics completed · '+pct+'% syllabus progress';
+  $('analysisSyllabusBar').style.width=pct+'%';
+  var subjectMap={};
+  topics.forEach(function(t){var x=subjectMap[t.subject]||(subjectMap[t.subject]={done:0,total:0});x.total++;if(t.completed)x.done++});
+  var sbx=$('analysisSubjects');sbx.innerHTML='';
+  Object.keys(subjectMap).sort().forEach(function(name){
+    var x=subjectMap[name],row=document.createElement('div');row.className='srow';
+    var label=document.createElement('span');label.textContent=name;
+    var val=document.createElement('b');val.textContent=x.done+'/'+x.total+' · '+Math.round(x.done/x.total*100)+'%';
+    row.appendChild(label);row.appendChild(val);sbx.appendChild(row);
+  });
+  var chapterMap={};
+  topics.forEach(function(t){var key=t.subject+'||'+t.chapter;var x=chapterMap[key]||(chapterMap[key]={subject:t.subject,chapter:t.chapter,done:0,total:0});x.total++;if(t.completed)x.done++});
+  var cbx=$('analysisChapters');cbx.innerHTML='';
+  Object.keys(chapterMap).sort().forEach(function(key){
+    var x=chapterMap[key],row=document.createElement('div');row.className='srow';
+    var label=document.createElement('div');label.style.minWidth='0';
+    var title=document.createElement('b');title.textContent=x.chapter;label.appendChild(title);
+    var meta=document.createElement('div');meta.className='tmeta';meta.textContent=x.subject;label.appendChild(meta);
+    var val=document.createElement('b');val.textContent=(x.done===x.total?'✓ ':'')+x.done+'/'+x.total;
+    row.appendChild(label);row.appendChild(val);cbx.appendChild(row);
+  });
+  var graph=$('analysisScoreGraph');graph.innerHTML='';
+  var last=mocks.slice(-8);
+  if(!last.length){graph.innerHTML='<div class="empty">Abhi mock test score nahi hai. Sunday mock attempt karne ke baad graph yahan dikhega.</div>'}
+  else{
+    var bars=document.createElement('div');bars.className='bars';
+    last.forEach(function(m){
+      var t=testMap[m.test_id]||{},percent=t.total_marks?Math.max(0,Math.min(100,Number(m.score||0)/Number(t.total_marks)*100)):Math.max(0,Math.min(100,Number(m.accuracy||0)));
+      var col=document.createElement('div');col.className='col';
+      var value=document.createElement('span');value.className='val';value.textContent=Math.round(percent)+'%';
+      var bar=document.createElement('div');bar.className='bar';bar.style.height=Math.max(3,percent)+'%';
+      var label=document.createElement('small');label.textContent=new Date(m.submitted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      col.appendChild(value);col.appendChild(bar);col.appendChild(label);bars.appendChild(col);
+    });
+    graph.appendChild(bars);
+  }
+  var history=$('analysisMockHistory');history.innerHTML='';
+  if(!mocks.length)history.innerHTML='<div class="empty">No mock attempts yet.</div>';
+  mocks.slice(-10).reverse().forEach(function(m){
+    var t=testMap[m.test_id]||{},row=document.createElement('div');row.className='srow';
+    var left=document.createElement('span');left.textContent=(t.title||'Mock test')+' · '+new Date(m.submitted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+    var right=document.createElement('b');right.textContent=Number(m.score||0)+' marks · '+Number(m.accuracy||0)+'%';
+    row.appendChild(left);row.appendChild(right);history.appendChild(row);
+  });
+}
 function renderHomeProgress(){
   var list=todayTasks().filter(function(x){return x.status!=='rescheduled'});
   var done=list.filter(function(x){return x.status==='completed'});
@@ -909,22 +1258,81 @@ async function renderTests(){
   if(!st.paid){$('mockCard').classList.remove('is-open');return}
   $('mockCard').classList.add('is-open');
   var box=$('mockInner');
-  box.innerHTML='<h2>Mock tests &amp; PYQs</h2><p class="sub">Loading tests…</p>';
+  box.innerHTML='<h2>Mock tests &amp; PYQs</h2><p class="sub">Tumhare selected exam ke practice sets aur previous year questions.</p>';
+  var pyqPanel=document.createElement('section');
+  pyqPanel.className='tcard';
+  pyqPanel.innerHTML='<div class="tt">Previous Year Questions</div><p class="tmeta">Active exam: '+esc(st.ex?st.ex.label:'Not selected')+' · Answers check honge aur performance save hogi.</p><div class="tact"><button class="btn primary" id="startPyqBtn" type="button">Practice PYQs</button></div><div id="pyqArea"></div>';
+  box.appendChild(pyqPanel);
+  $('startPyqBtn').onclick=function(){loadPyqPractice()};
   var r=await api('list');
-  if(!r.ok){box.innerHTML='<h2>Mock tests &amp; PYQs</h2><div class="empty">'+esc(r.data.error||'Could not load tests.')+'</div>';return}
+  if(!r.ok){var err=document.createElement('div');err.className='empty';err.textContent=r.data.error||'Could not load mock tests.';box.appendChild(err);return}
   var tests=r.data.tests||[];
-  box.innerHTML='<h2>Mock tests &amp; PYQs</h2><p class="sub">Timed, with negative marking where your exam uses it.</p>';
-  if(!tests.length){box.innerHTML+='<div class="empty">No mock tests are published yet. They will appear here once added.</div>';return}
+  var heading=document.createElement('h2');heading.textContent='Published mock tests';heading.style.marginTop='12px';box.appendChild(heading);
+  if(!tests.length){var empty=document.createElement('div');empty.className='empty';empty.textContent='Abhi mock tests publish nahi hue hain. PYQ practice upar se start kar sakte ho.';box.appendChild(empty);return}
   var list=document.createElement('div');list.className='tasks';
   tests.forEach(function(t){
     var c=document.createElement('div');c.className='tcard';
-    c.innerHTML='<div class="trow"><span class="badge">'+esc(t.exam)+'</span><span class="tmeta">'+t.duration_min+' min · '+t.total_marks+' marks'+(Number(t.negative_marks)>0?' · −'+t.negative_marks+' per wrong':'')+'</span></div><div class="tt">'+esc(t.title)+'</div><div class="tact"><button class="btn primary" type="button">Start test</button></div>';
+    var dateLabel=t.scheduled_for?' · '+new Date(t.scheduled_for+'T00:00:00').toLocaleDateString('en-IN',{day:'numeric',month:'short'}):'';
+    c.innerHTML='<div class="trow"><span class="badge">'+esc(t.exam)+'</span><span class="tmeta">'+t.duration_min+' min · '+t.total_marks+' marks'+(Number(t.negative_marks)>0?' · −'+t.negative_marks+' per wrong':'')+esc(dateLabel)+'</span></div><div class="tt">'+esc(t.title)+'</div>'+(t.strategy_text?'<p class="tmeta">'+esc(t.strategy_text)+'</p>':'')+'<div class="tact"><button class="btn primary" type="button">Start test</button></div>';
     c.querySelector('button').onclick=function(){startMock(t.id)};
     list.appendChild(c);
   });
   box.appendChild(list);
 }
 
+var PYQ={items:[],index:0,startedAt:0,answered:false};
+async function pyqApi(action,payload){
+  var session=await sb.auth.getSession();
+  var token=session.data&&session.data.session&&session.data.session.access_token;
+  if(!token){location.replace('login.html');return {ok:false,data:{error:'Please sign in again.'}}}
+  try{
+    var r=await fetch('/api/pyq',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(Object.assign({action:action},payload||{}))});
+    var data=await r.json().catch(function(){return {}});
+    return {ok:r.ok,data:data};
+  }catch(e){return {ok:false,data:{error:'Network error. Please try again.'}}}
+}
+async function loadPyqPractice(){
+  var area=$('pyqArea');area.innerHTML='<p class="tmeta">PYQs load ho rahe hain…</p>';
+  var r=await pyqApi('list');
+  if(!r.ok){area.textContent=r.data.error||'PYQs load nahi hue.';return}
+  PYQ.items=r.data.questions||[];PYQ.index=0;
+  if(!PYQ.items.length){area.innerHTML='<div class="empty">Is exam ke PYQs abhi upload nahi hue hain. PrepX Ai team content publish karte hi yahan dikh jayega.</div>';return}
+  renderPyqQuestion();
+}
+function renderPyqQuestion(){
+  var area=$('pyqArea'),q=PYQ.items[PYQ.index];
+  if(!q){area.innerHTML='<div class="empty">Practice set complete! Tumhara attempt save ho gaya.</div>';return}
+  PYQ.startedAt=Date.now();PYQ.answered=false;
+  area.innerHTML='';
+  var meta=document.createElement('p');meta.className='tmeta';meta.textContent='Question '+(PYQ.index+1)+' / '+PYQ.items.length+' · '+(q.difficulty||'Practice')+(q.source?' · '+q.source:'');area.appendChild(meta);
+  var question=document.createElement('div');question.className='tt';question.style.margin='10px 0';question.textContent=q.body;area.appendChild(question);
+  var options=document.createElement('div');options.style.cssText='display:flex;flex-direction:column;gap:8px';
+  (q.options||[]).forEach(function(option,i){
+    var b=document.createElement('button');b.type='button';b.className='opt';
+    var letter=document.createElement('b');letter.textContent=String.fromCharCode(65+i);
+    b.appendChild(letter);b.appendChild(document.createTextNode(String(option)));
+    b.onclick=function(){submitPyqAnswer(q,i,options)};
+    options.appendChild(b);
+  });
+  area.appendChild(options);
+  var feedback=document.createElement('div');feedback.id='pyqFeedback';feedback.className='rv';feedback.hidden=true;feedback.style.marginTop='10px';area.appendChild(feedback);
+  var next=document.createElement('button');next.id='pyqNext';next.className='btn primary';next.type='button';next.textContent='Next question';next.hidden=true;next.style.marginTop='10px';
+  next.onclick=function(){PYQ.index++;renderPyqQuestion()};
+  area.appendChild(next);
+}
+async function submitPyqAnswer(q,selected,options){
+  if(PYQ.answered)return;
+  PYQ.answered=true;
+  options.querySelectorAll('button').forEach(function(b){b.disabled=true});
+  var r=await pyqApi('answer',{question_id:q.id,selected_option:selected,time_taken_sec:Math.round((Date.now()-PYQ.startedAt)/1000)});
+  var feedback=$('pyqFeedback');
+  if(!r.ok){PYQ.answered=false;feedback.hidden=false;feedback.textContent=r.data.error||'Answer save nahi hua. Dobara try karein.';options.querySelectorAll('button').forEach(function(b){b.disabled=false});return}
+  var d=r.data,buttons=options.querySelectorAll('button');
+  buttons.forEach(function(b,i){if(i===d.correct_option)b.classList.add('right');else if(i===selected)b.classList.add('wrong')});
+  feedback.hidden=false;
+  feedback.textContent=(d.correct?'Correct! 🎉':'Not quite. Correct answer: '+String.fromCharCode(65+d.correct_option)+'.')+(d.explanation?' '+d.explanation:'');
+  $('pyqNext').hidden=false;
+}
 async function startMock(testId){
   var r=await api('start',{test_id:testId});
   if(!r.ok){toast(r.data.error||'Could not start the test.');return}
@@ -1161,12 +1569,43 @@ async function renderPerformance(){
 /* ---------- notifications (built from real data only) ---------- */
 function notifPrefs(){
   var d={tasks:true,exam:true,mock:true,streak:true,sub:true};
-  try{var o=JSON.parse(localStorage.getItem('prepx_notif_prefs')||'{}');return Object.assign(d,o)}catch(e){return d}
+  var saved=st.profile&&st.profile.notify_prefs;
+  return Object.assign(d,saved&&typeof saved==='object'?saved:{});
 }
 function readSet(){
   try{return new Set(JSON.parse(localStorage.getItem('prepx_notif_read_'+st.profile.id)||'[]'))}catch(e){return new Set()}
 }
 function saveReadSet(set){localStorage.setItem('prepx_notif_read_'+st.profile.id,JSON.stringify(Array.from(set).slice(-200)))}
+var examNotices=[];
+async function loadExamNotices(){
+  examNotices=[];
+  if(!st.ex)return;
+  var r=await sb.from('exam_updates').select('id,tag,type,title,summary,body,link,link_text,src_name,src_url,published_at,created_at').eq('status','approved').order('published_at',{ascending:false}).limit(100);
+  if(r.error)return;
+  var aliases={
+    'BPSC':['bpsc'],'Railways (RRB)':['rrb','railway','ntpc'],
+    'JEE Main':['jee'],'JEE Advanced':['jee advanced','jee'],
+    'NEET UG':['neet'],'CUET UG':['cuet'],'SSC Exams':['ssc'],
+    'UPSC CSE':['upsc'],'NDA / CDS':['nda','cds'],
+    'Banking Exams':['banking','ibps','sbi']
+  };
+  var terms=aliases[st.ex.key]||[st.ex.key.toLowerCase()];
+  examNotices=(r.data||[]).filter(function(x){
+    var tag=String(x.tag||'').toLowerCase();
+    return terms.some(function(term){return tag.indexOf(term)>=0});
+  }).slice(0,20);
+  if(SYLLABUS_EXAM_ID){
+    var mocks=await sb.from('mock_tests').select('id,title,scheduled_for,strategy_text').eq('exam_id',SYLLABUS_EXAM_ID).eq('exam',st.ex.key).eq('published',true).eq('is_active',true).gte('scheduled_for',localISO()).order('scheduled_for').limit(5);
+    (mocks.data||[]).forEach(function(m){
+      if(m.strategy_text)examNotices.unshift({
+        id:'mock-'+m.id,tag:st.ex.key,type:'mock',
+        title:m.title+' · '+(m.scheduled_for||'Upcoming Sunday'),
+        summary:m.strategy_text,body:[m.strategy_text],link:null,link_text:null,
+        src_name:'PrepX Ai Academic Team',src_url:null
+      });
+    });
+  }
+}
 function buildNotifications(){
   var out=[],pr=notifPrefs(),t=localISO();
   var list=todayTasks().filter(function(x){return x.status!=='rescheduled'});
@@ -1177,8 +1616,12 @@ function buildNotifications(){
   if(pr.tasks&&pending>0) out.push({id:'tasks-'+t,type:'tasks',title:pending+' task'+(pending>1?'s':'')+' pending today',text:'Open Study to start or mark them complete.'});
   if(pr.tasks&&missed>0) out.push({id:'missed-'+t,type:'tasks',title:missed+' missed task'+(missed>1?'s':''),text:'A catch-up task was added to today\'s plan.'});
   if(pr.streak&&list.length&&!done) out.push({id:'streak-'+t,type:'streak',title:'Keep your streak alive',text:'Complete one study task today to count toward your streak.'});
-  var sun=addDays(t,(7-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]).getDay())%7||7);
-  var toSun=Math.round((new Date(+sun.split('-')[0],+sun.split('-')[1]-1,+sun.split('-')[2])-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]))/86400000);
+  examNotices.forEach(function(n){
+    var summary=n.summary||((Array.isArray(n.body)?n.body:[]).join(' · '))||'Tap to read this exam update.';
+    out.push({id:'notice-'+n.id,type:'notice',kind:n.type||'exam_update',title:n.title,text:summary,body:n.body,link:n.link,link_text:n.link_text,source:n.src_name,source_url:n.src_url});
+  });
+  var toSun=(7-new Date(+t.split('-')[0],+t.split('-')[1]-1,+t.split('-')[2]).getDay())%7;
+  var sun=addDays(t,toSun);
   if(pr.mock&&st.paid&&toSun<=1) out.push({id:'mock-'+sun,type:'mock',title:toSun===0?'Sunday mock is today':'Sunday mock is tomorrow',text:'Plan a full timed test in Tests.'});
   if(pr.sub){
     if(!st.paid) out.push({id:'sub-free',type:'sub',title:'You are on the Free plan',text:'Mock tests and PYQs are part of Plus and Pro.'});
@@ -1201,7 +1644,25 @@ function renderNotifications(){
   if(!items.length){box.innerHTML='<div class="empty">Nothing new right now.</div>';return}
   items.forEach(function(i){
     var d=document.createElement('div');d.className='nitem'+(read.has(i.id)?' read':'');
-    d.innerHTML='<span class="d"></span><div><b>'+esc(i.title)+'</b>'+esc(i.text)+'</div>';
+    d.style.cursor='pointer';
+    var content=document.createElement('div');
+    var title=document.createElement('b');title.textContent=i.title;content.appendChild(title);
+    var summary=document.createElement('div');summary.textContent=i.text;content.appendChild(summary);
+    d.appendChild(document.createElement('span'));d.firstChild.className='d';d.appendChild(content);
+    d.onclick=function(){
+      var reads=readSet();reads.add(i.id);saveReadSet(reads);d.classList.add('read');
+      var unread=items.filter(function(x){return !reads.has(x.id)}).length;
+      $('bellCount').textContent=unread;$('bellCount').hidden=unread===0;
+      if(i.type==='notice'&&!content.querySelector('.rv')){
+        var detail=document.createElement('div');detail.className='rv';detail.style.marginTop='8px';
+        var body=Array.isArray(i.body)?i.body:[];
+        body.forEach(function(line){var p=document.createElement('p');p.textContent='• '+line;detail.appendChild(p)});
+        if(i.source){var src=document.createElement('p');src.textContent='Source: '+i.source;detail.appendChild(src)}
+        if(i.link&&/^https:\/\//i.test(i.link)){var a=document.createElement('a');a.href=i.link;a.target='_blank';a.rel='noopener noreferrer';a.textContent=i.link_text||'Official link';detail.appendChild(a)}
+        if(i.kind==='mock'){var go=document.createElement('button');go.type='button';go.className='btn primary';go.style.marginTop='8px';go.textContent='Open Sunday mock';go.onclick=function(e){e.stopPropagation();location.hash='#tests'};detail.appendChild(go)}
+        content.appendChild(detail);
+      }else if(i.type==='mock'||i.type==='tasks'){location.hash='#tests'}
+    };
     box.appendChild(d);
   });
 }
@@ -1222,7 +1683,7 @@ document.addEventListener('click',function(e){
 /* ---------- feedback (WhatsApp, user sends manually) ---------- */
 // Set your support WhatsApp number in full international format, digits only, e.g. '919999999999'.
 // It is used only inside the link, never printed on the page.
-var FEEDBACK_WA_NUMBER='';
+var FEEDBACK_WA_NUMBER='919473124215';
 var FB_LABEL={very_good:'Very Good',okay:'Okay',not_good:'Not Good',bug:'Problem / Bug',custom:'Own feedback'};
 var fbChoice=null;
 function renderFeedbackState(){
@@ -1263,8 +1724,11 @@ async function renderNotes(){
     BOOKS=new Set((bk.data||[]).map(function(x){return x.note_id}));
     var ex=$('nExam');
     ex.innerHTML='<option value="">All exams</option>'+P.EXAMS.map(function(e){return '<option value="'+esc(e.key)+'">'+esc(e.label)+'</option>'}).join('');
+    if(!NFILTER.exam&&st.ex)NFILTER.exam=st.ex.key;
+    ex.value=NFILTER.exam;
   }
-  var subs=Array.from(new Set(NOTES.map(function(n){return n.subject}))).sort();
+  var scoped=NOTES.filter(function(n){return !NFILTER.exam||n.exam===NFILTER.exam});
+  var subs=Array.from(new Set(scoped.map(function(n){return n.subject}))).sort();
   var sel=$('nSubject');var cur=sel.value;
   sel.innerHTML='<option value="">All subjects</option>'+subs.map(function(s){return '<option value="'+esc(s)+'">'+esc(s)+'</option>'}).join('');
   sel.value=subs.indexOf(cur)>=0?cur:'';
@@ -1301,7 +1765,10 @@ function openNote(id){
   $('nReader').hidden=false;
   $('nReadBody').innerHTML='<div class="trow"><span class="badge">'+esc(n.kind==='revision'?'Short revision':n.kind==='formula'?'Formula':'Detailed')+'</span><button class="btn '+(saved?'primary':'')+'" id="nBook" type="button" style="min-height:36px;padding:6px 12px;font-size:12.5px">'+(saved?'Saved ★':'Bookmark')+'</button></div>'+
     '<h2 style="margin-top:10px">'+esc(n.title)+'</h2><div class="tmeta" style="margin-bottom:10px">'+esc(n.subject)+' · '+esc(n.topic)+'</div>'+
-    '<div style="white-space:pre-wrap;font-size:14.5px;line-height:1.7">'+esc(n.body)+'</div>';
+    '<div class="handnote" id="noteHandBody">'+esc(n.body)+'</div>'+
+    '<div class="note-actions"><button class="btn" id="notePdf" type="button">Download PDF</button><button class="btn" id="noteShare" type="button">Share story</button></div>';
+  $('notePdf').onclick=function(){buildNotePrint(n)};
+  $('noteShare').onclick=function(){shareNoteStory(n)};
   $('nBook').onclick=async function(){
     if(BOOKS.has(n.id)){
       var d=await sb.from('note_bookmarks').delete().eq('user_id',st.profile.id).eq('note_id',n.id);
@@ -1378,32 +1845,45 @@ function renderSettings(){
   $('langSel').value=(st.profile.preferred_language)||'en';
 }
 document.querySelectorAll('[data-np]').forEach(function(c){
-  c.addEventListener('change',function(){
+  c.addEventListener('change',async function(){
     var p=notifPrefs();p[c.getAttribute('data-np')]=c.checked;
-    localStorage.setItem('prepx_notif_prefs',JSON.stringify(p));
-    renderNotifications();
-    toast('Notification settings saved');
+    c.disabled=true;
+    try{
+      var r=await sb.from('profiles').update({notify_prefs:p}).eq('id',st.profile.id).select('id').maybeSingle();
+      if(r.error||!r.data){c.checked=!c.checked;toast('Could not save notification settings. Please sign in again and retry.');return}
+      st.profile.notify_prefs=p;
+      renderNotifications();
+      toast('Notification settings saved');
+    }catch(e){c.checked=!c.checked;toast('Network error while saving settings.')}
+    finally{c.disabled=false}
   });
 });
 $('langSave').onclick=async function(){
-  var r=await sb.from('profiles').update({preferred_language:$('langSel').value}).eq('id',st.profile.id);
-  if(r.error){toast('Could not save language: '+r.error.message);return}
-  st.profile.preferred_language=$('langSel').value;
-  toast('Language saved');
+  var b=$('langSave'),value=$('langSel').value;b.disabled=true;
+  try{
+    var r=await sb.from('profiles').update({preferred_language:value}).eq('id',st.profile.id).select('id').maybeSingle();
+    if(r.error||!r.data){toast('Language save nahi hua. Session refresh karke dobara try karein.');return}
+    st.profile.preferred_language=value;
+    toast('Language saved');
+  }catch(e){toast('Network error while saving language.')}
+  finally{b.disabled=false}
 };
 $('pwSave').onclick=async function(){
   var a=$('pw1').value,b=$('pw2').value;
   var err=a.length<8?'Password must be at least 8 characters.':a!==b?'Passwords do not match.':'';
   $('pwErr').textContent=err;
   if(err)return;
-  var btn=$('pwSave');btn.disabled=true;
-  var r=await sb.auth.updateUser({password:a});
-  btn.disabled=false;
-  if(r.error){$('pwErr').textContent=r.error.message;return}
-  $('pwSave').textContent='Updated';
-  setTimeout(function(){$('pwSave').textContent='Update password'},1500);
-  $('pw1').value='';$('pw2').value='';
-  toast('Password updated');
+  var btn=$('pwSave');btn.disabled=true;btn.textContent='Updating…';
+  try{
+    var session=await sb.auth.getSession();
+    if(!session.data||!session.data.session){$('pwErr').textContent='Session expired. Please sign in again.';return}
+    var r=await sb.auth.updateUser({password:a});
+    if(r.error){$('pwErr').textContent=r.error.message;return}
+    $('pw1').value='';$('pw2').value='';
+    $('pwErr').textContent='Password successfully updated.';
+    toast('Password updated');
+  }catch(e){$('pwErr').textContent='Network error. Check your connection and try again.'}
+  finally{btn.disabled=false;btn.textContent='Update password'}
 };
 
 /* ---------- AI tutor: conversation, photo, voice ---------- */
@@ -1671,7 +2151,7 @@ $('dSave').onclick=async function(){
   var dates={};
   document.querySelectorAll('[data-ed]').forEach(function(inp){if(inp.value)dates[inp.getAttribute('data-ed')]=inp.value});
   var u={
-    name:$('pName').value.trim().slice(0,80)||null,
+    name:$('pName').value.trim().slice(0,80)||st.profile.name||'Student',
     phone:$('pPhone').value.trim()||null,
     age:$('pAge').value.trim()?+$('pAge').value.trim():null,
     preferred_language:$('pLang').value||null,
@@ -1684,51 +2164,133 @@ $('dSave').onclick=async function(){
     daily_hours:$('dHours').value.trim().slice(0,4)||null,
     weakness:$('dWeak').value.trim().slice(0,200)||null
   };
-  var r=await sb.from('profiles').update(u).eq('id',st.profile.id);
+  var r;
+  try{r=await sb.from('profiles').update(u).eq('id',st.profile.id).select('id').maybeSingle()}
+  catch(e){b.disabled=false;b.textContent='Save profile';toast('Network error while saving profile.');return}
   b.disabled=false;b.textContent='Save profile';
-  if(r.error){toast('Could not save: '+r.error.message);return}
-  toast('Saved. Updating your plan…');
+  if(r.error||!r.data){toast('Profile save nahi hua. Session/RLS issue ho sakta hai; please sign in again.');return}
+  st.profile=Object.assign({},st.profile,u);
+  toast('Profile saved. Updating your plan…');
   setTimeout(function(){location.reload()},900);
 };
 
 /* ---------- plan as PDF and share ---------- */
 function buildPrint(){
   var pa=$('printArea');pa.innerHTML='';
-  function el(tag,text){var e=document.createElement(tag);e.textContent=text;return e}
-  pa.appendChild(el('h1','PrepX Ai · Daily plan'));
-  pa.appendChild(el('p',(st.ex?st.ex.label:'Exam not set')+' · '+st.days+' days left'));
-  pa.appendChild(el('p','Study time: '+$('hours').textContent));
-  pa.appendChild(el('h2','Today'));
-  var ul=document.createElement('ul');
-  todayTasks().forEach(function(t){ul.appendChild(el('li',(t.scheduled_time||'')+'  '+(TYPES[t.task_type]||t.task_type)+': '+t.subject+' – '+t.topic+' ('+t.duration_min+' min)'))});
-  pa.appendChild(ul);
-  pa.appendChild(el('h2','This week'));
-  var ul2=document.createElement('ul');
-  Array.prototype.forEach.call($('week').children,function(d){ul2.appendChild(el('li',d.textContent))});
-  pa.appendChild(ul2);
-  pa.appendChild(el('p','Generated by prepxai.online. Check official notices before acting on any exam date.'));
+  function el(tag,text,cls){var e=document.createElement(tag);e.textContent=text;if(cls)e.className=cls;return e}
+  var head=el('div','', 'pdf-head');
+  var brand=el('div','', 'pdf-brand');brand.appendChild(document.createTextNode('Prep'));brand.appendChild(el('span','X'));brand.appendChild(document.createTextNode(' Ai'));
+  head.appendChild(brand);
+  head.appendChild(el('div','YOUR PERSONAL STUDY BLUEPRINT','pdf-title'));
+  head.appendChild(el('p',(st.ex?st.ex.label:'Exam not set')+' · Day '+(st.dayNumber||dayNumber())+' · '+st.days+' days left','pdf-meta'));
+  pa.appendChild(head);
+  var kpis=el('div','','pdf-kpis');
+  [['Daily target',$('hours').textContent],['Topics today',String(todayTasks().length)],['Completed today',String(todayTasks().filter(function(t){return t.status==='completed'}).length)]].forEach(function(x){
+    var d=el('div','', 'pdf-kpi');d.appendChild(el('b',x[0]));d.appendChild(el('div',x[1]));kpis.appendChild(d);
+  });
+  pa.appendChild(kpis);
+  pa.appendChild(el('h2','Today’s study plan'));
+  todayTasks().forEach(function(t){
+    var status=t.status==='completed'?'✓ Completed':'○ Pending';
+    pa.appendChild(el('div',(t.scheduled_time||'')+' · '+(TYPES[t.task_type]||t.task_type)+' · '+t.subject+' / '+t.topic+' · '+t.duration_min+' min · '+status,'pdf-row'));
+  });
+  pa.appendChild(el('h2','Day routine · Wake up to sleep'));
+  Array.prototype.forEach.call($('dayRoutine').children,function(d){pa.appendChild(el('div',d.textContent,'pdf-row'))});
+  pa.appendChild(el('h2','Weekly roadmap'));
+  Array.prototype.forEach.call($('week').children,function(d){pa.appendChild(el('div',d.textContent,'pdf-row'))});
+  pa.appendChild(el('div','PrepX Ai · prepxai.online · Personalized study plan. Verify exam dates and notifications from official sources.','pdf-foot'));
   pa.hidden=false;
 }
-$('pdfBtn').onclick=function(){buildPrint();window.print();setTimeout(function(){$('printArea').hidden=true},500)};
+$('pdfBtn').onclick=function(){buildPrint();window.print();setTimeout(function(){$('printArea').hidden=true},800)};
+function buildNotePrint(n){
+  var pa=$('printArea');pa.innerHTML='';
+  var head=document.createElement('div');head.className='pdf-head';
+  var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
+  var title=document.createElement('div');title.className='pdf-title';title.textContent=n.title;head.appendChild(title);
+  var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=n.subject+' · '+n.topic+' · '+(n.kind==='formula'?'Formula sheet':n.kind==='revision'?'Short revision':'Detailed notes');head.appendChild(meta);pa.appendChild(head);
+  var body=document.createElement('div');body.style.whiteSpace='pre-wrap';body.style.fontSize='13px';body.style.lineHeight='1.7';body.style.padding='8px 4px';body.textContent=n.body;pa.appendChild(body);
+  var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Verify important facts with your official exam syllabus.';pa.appendChild(foot);
+  pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
+}
+async function shareNoteStory(n){
+  var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;var c=canvas.getContext('2d');
+  var bg=c.createLinearGradient(0,0,1080,1920);bg.addColorStop(0,'#10152f');bg.addColorStop(1,'#18224b');c.fillStyle=bg;c.fillRect(0,0,1080,1920);
+  c.fillStyle='rgba(255,255,255,.08)';c.fillRect(64,64,952,1792);
+  c.fillStyle='#fff';c.font='800 60px Sora,Arial';c.fillText('PrepX Ai',96,170);
+  c.fillStyle='#9c83ff';c.font='700 28px Inter,Arial';c.fillText(n.kind==='formula'?'FORMULA SHEET':n.kind==='revision'?'SHORT REVISION':'STUDY NOTES',98,260);
+  c.fillStyle='#fff';c.font='800 52px Sora,Arial';
+  var titleWords=String(n.title||'Study notes').split(/\s+/),titleLines=[],line='';
+  titleWords.forEach(function(w){var test=line?line+' '+w:w;if(c.measureText(test).width>850&&line){titleLines.push(line);line=w}else line=test});if(line)titleLines.push(line);
+  titleLines.slice(0,3).forEach(function(x,i){c.fillText(x,98,350+i*65)});
+  c.fillStyle='#b9c2e4';c.font='30px Inter,Arial';c.fillText(n.subject+' · '+n.topic,98,570);
+  c.fillStyle='rgba(255,255,255,.12)';c.fillRect(96,620,888,2);
+  c.fillStyle='#fff';c.font='28px Inter,Arial';
+  var words=String(n.body||'').replace(/\s+/g,' ').split(' '),lines=[],current='';
+  words.forEach(function(w){var test=current?current+' '+w:w;if(c.measureText(test).width>850&&current){lines.push(current);current=w}else current=test});if(current)lines.push(current);
+  c.fillStyle='#e7eaff';lines.slice(0,24).forEach(function(x,i){c.fillText(x,98,700+i*42)});
+  c.fillStyle='#b9c2e4';c.font='28px Inter,Arial';c.fillText('Study smart · Revise daily · Stay consistent',98,1740);
+  c.fillStyle='#fff';c.font='700 30px Inter,Arial';c.fillText('prepxai.online',98,1800);
+  var blob=await new Promise(function(resolve){canvas.toBlob(resolve,'image/png')});
+  if(!blob){toast('Story image create nahi ho payi.');return}
+  var file=new File([blob],'prepxai-notes-story.png',{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:n.title,text:'PrepX Ai study notes'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='prepxai-notes-story.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  toast('Notes story image ready to share.');
+}
+function createStoryCanvas(){
+  var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;
+  var c=canvas.getContext('2d');
+  var bg=c.createLinearGradient(0,0,1080,1920);bg.addColorStop(0,'#10152f');bg.addColorStop(.55,'#1b1644');bg.addColorStop(1,'#071b36');
+  c.fillStyle=bg;c.fillRect(0,0,1080,1920);
+  c.globalAlpha=.22;c.fillStyle='#8b5cf6';c.beginPath();c.arc(950,180,260,0,Math.PI*2);c.fill();c.fillStyle='#22d3ee';c.beginPath();c.arc(90,1650,280,0,Math.PI*2);c.fill();c.globalAlpha=1;
+  c.fillStyle='rgba(255,255,255,.08)';c.fillRect(64,64,952,1792);
+  c.fillStyle='#ffffff';c.font='800 64px Sora, Arial';c.fillText('Prep',96,170);
+  var grad=c.createLinearGradient(245,110,345,170);grad.addColorStop(0,'#b59cff');grad.addColorStop(1,'#5edcff');c.fillStyle=grad;c.fillText('X',245,170);c.fillStyle='#fff';c.fillText(' Ai',295,170);
+  c.fillStyle='#b9c2e4';c.font='600 26px Inter, Arial';c.fillText('YOUR STUDY PLAN',98,245);
+  c.fillStyle='#fff';c.font='800 56px Sora, Arial';c.fillText(st.ex?st.ex.label:'Exam preparation',98,340);
+  c.fillStyle='#b9c2e4';c.font='32px Inter, Arial';c.fillText((st.days||0)+' days left · '+$('hours').textContent,98,405);
+  c.fillStyle='rgba(255,255,255,.12)';c.fillRect(96,470,888,2);
+  c.fillStyle='#fff';c.font='700 36px Sora, Arial';c.fillText('TODAY’S TARGETS',98,550);
+  var tasks=todayTasks().slice(0,6),y=640;
+  tasks.forEach(function(t,i){
+    c.fillStyle='rgba(255,255,255,.09)';c.fillRect(96,y-48,888,150);
+    c.fillStyle='#9c83ff';c.font='700 26px Inter, Arial';c.fillText(String(i+1).padStart(2,'0')+'  '+(t.subject||'Study'),126,y);
+    c.fillStyle='#fff';c.font='600 27px Inter, Arial';
+    var text=(t.topic||'Topic').slice(0,52);c.fillText(text,126,y+48);
+    c.fillStyle='#b9c2e4';c.font='24px Inter, Arial';c.fillText((t.duration_min||0)+' min · '+(t.scheduled_time||''),126,y+88);
+    y+=170;
+  });
+  c.fillStyle='#b9c2e4';c.font='28px Inter, Arial';c.fillText('Consistency today. Confidence on exam day.',98,1710);
+  c.fillStyle='#fff';c.font='700 30px Inter, Arial';c.fillText('prepxai.online',98,1780);
+  c.fillStyle='#9c83ff';c.font='24px Inter, Arial';c.fillText('You may be next!',760,1780);
+  return canvas;
+}
 $('shareBtn').onclick=async function(){
-  var txt='My PrepX Ai plan: '+$('hours').textContent+' a day, '+st.days+' days left'+(st.ex?' for '+st.ex.label:'')+'.';
+  var canvas=createStoryCanvas();
+  var blob=await new Promise(function(resolve){canvas.toBlob(resolve,'image/png')});
+  if(!blob){toast('Story image create nahi ho payi.');return}
+  var file=new File([blob],'prepxai-study-plan.png',{type:'image/png'});
   try{
-    if(navigator.share){await navigator.share({title:'PrepX Ai plan',text:txt})}
-    else{await navigator.clipboard.writeText(txt);toast('Plan copied')}
-  }catch(e){}
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:'PrepX Ai Study Plan',text:'My study plan on PrepX Ai'});
+      return;
+    }
+  }catch(e){if(e&&e.name==='AbortError')return}
+  var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='prepxai-study-plan.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  toast('Story image ready. Ab ise WhatsApp/Instagram story par share kar sakte ho.');
 };
 
 /* ---------- exam change request (saved to database) ---------- */
-$('exBtn').onclick=async function(){
-  if(!confirm('Changing your exam is done after payment confirmation. Do you want to request a change?'))return;
-  var b=$('exBtn');b.disabled=true;
-  var r=await sb.from('exam_change_requests').insert({user_id:st.profile.id,current_exam:st.profile.target_exam||null});
-  b.disabled=false;
-  if(r.error){toast('Could not send request. Please try again.');return}
-  toast('Request saved. Our team will contact you after payment confirmation.');
+$('exBtn').onclick=function(){
+  location.hash='#profile';
+  setTimeout(function(){
+    var select=$('dExam');
+    if(select){select.focus();select.scrollIntoView({behavior:'smooth',block:'center'});}
+    toast('Select your new active exam, then tap Save profile.');
+  },120);
 };
 
-$('bellBtn').onclick=function(){toast('Notifications will appear here soon.')};
+
 
 $('outBtn').onclick=async function(){
   await sb.auth.signOut();
