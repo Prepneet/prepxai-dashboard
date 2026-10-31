@@ -989,12 +989,17 @@ async function renderTests(){
   if(!st.paid){$('mockCard').classList.remove('is-open');return}
   $('mockCard').classList.add('is-open');
   var box=$('mockInner');
-  box.innerHTML='<h2>Mock tests &amp; PYQs</h2><p class="sub">Loading tests…</p>';
+  box.innerHTML='<h2>Mock tests &amp; PYQs</h2><p class="sub">Tumhare selected exam ke practice sets aur previous year questions.</p>';
+  var pyqPanel=document.createElement('section');
+  pyqPanel.className='tcard';
+  pyqPanel.innerHTML='<div class="tt">Previous Year Questions</div><p class="tmeta">Active exam: '+esc(st.ex?st.ex.label:'Not selected')+' · Answers check honge aur performance save hogi.</p><div class="tact"><button class="btn primary" id="startPyqBtn" type="button">Practice PYQs</button></div><div id="pyqArea"></div>';
+  box.appendChild(pyqPanel);
+  $('startPyqBtn').onclick=function(){loadPyqPractice()};
   var r=await api('list');
-  if(!r.ok){box.innerHTML='<h2>Mock tests &amp; PYQs</h2><div class="empty">'+esc(r.data.error||'Could not load tests.')+'</div>';return}
+  if(!r.ok){var err=document.createElement('div');err.className='empty';err.textContent=r.data.error||'Could not load mock tests.';box.appendChild(err);return}
   var tests=r.data.tests||[];
-  box.innerHTML='<h2>Mock tests &amp; PYQs</h2><p class="sub">Timed, with negative marking where your exam uses it.</p>';
-  if(!tests.length){box.innerHTML+='<div class="empty">No mock tests are published yet. They will appear here once added.</div>';return}
+  var heading=document.createElement('h2');heading.textContent='Published mock tests';heading.style.marginTop='12px';box.appendChild(heading);
+  if(!tests.length){var empty=document.createElement('div');empty.className='empty';empty.textContent='Abhi mock tests publish nahi hue hain. PYQ practice upar se start kar sakte ho.';box.appendChild(empty);return}
   var list=document.createElement('div');list.className='tasks';
   tests.forEach(function(t){
     var c=document.createElement('div');c.className='tcard';
@@ -1005,6 +1010,59 @@ async function renderTests(){
   box.appendChild(list);
 }
 
+var PYQ={items:[],index:0,startedAt:0,answered:false};
+async function pyqApi(action,payload){
+  var session=await sb.auth.getSession();
+  var token=session.data&&session.data.session&&session.data.session.access_token;
+  if(!token){location.replace('login.html');return {ok:false,data:{error:'Please sign in again.'}}}
+  try{
+    var r=await fetch('/api/pyq',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(Object.assign({action:action},payload||{}))});
+    var data=await r.json().catch(function(){return {}});
+    return {ok:r.ok,data:data};
+  }catch(e){return {ok:false,data:{error:'Network error. Please try again.'}}}
+}
+async function loadPyqPractice(){
+  var area=$('pyqArea');area.innerHTML='<p class="tmeta">PYQs load ho rahe hain…</p>';
+  var r=await pyqApi('list');
+  if(!r.ok){area.textContent=r.data.error||'PYQs load nahi hue.';return}
+  PYQ.items=r.data.questions||[];PYQ.index=0;
+  if(!PYQ.items.length){area.innerHTML='<div class="empty">Is exam ke PYQs abhi upload nahi hue hain. PrepX Ai team content publish karte hi yahan dikh jayega.</div>';return}
+  renderPyqQuestion();
+}
+function renderPyqQuestion(){
+  var area=$('pyqArea'),q=PYQ.items[PYQ.index];
+  if(!q){area.innerHTML='<div class="empty">Practice set complete! Tumhara attempt save ho gaya.</div>';return}
+  PYQ.startedAt=Date.now();PYQ.answered=false;
+  area.innerHTML='';
+  var meta=document.createElement('p');meta.className='tmeta';meta.textContent='Question '+(PYQ.index+1)+' / '+PYQ.items.length+' · '+(q.difficulty||'Practice')+(q.source?' · '+q.source:'');area.appendChild(meta);
+  var question=document.createElement('div');question.className='tt';question.style.margin='10px 0';question.textContent=q.body;area.appendChild(question);
+  var options=document.createElement('div');options.style.cssText='display:flex;flex-direction:column;gap:8px';
+  (q.options||[]).forEach(function(option,i){
+    var b=document.createElement('button');b.type='button';b.className='opt';
+    var letter=document.createElement('b');letter.textContent=String.fromCharCode(65+i);
+    b.appendChild(letter);b.appendChild(document.createTextNode(String(option)));
+    b.onclick=function(){submitPyqAnswer(q,i,options)};
+    options.appendChild(b);
+  });
+  area.appendChild(options);
+  var feedback=document.createElement('div');feedback.id='pyqFeedback';feedback.className='rv';feedback.hidden=true;feedback.style.marginTop='10px';area.appendChild(feedback);
+  var next=document.createElement('button');next.id='pyqNext';next.className='btn primary';next.type='button';next.textContent='Next question';next.hidden=true;next.style.marginTop='10px';
+  next.onclick=function(){PYQ.index++;renderPyqQuestion()};
+  area.appendChild(next);
+}
+async function submitPyqAnswer(q,selected,options){
+  if(PYQ.answered)return;
+  PYQ.answered=true;
+  options.querySelectorAll('button').forEach(function(b){b.disabled=true});
+  var r=await pyqApi('answer',{question_id:q.id,selected_option:selected,time_taken_sec:Math.round((Date.now()-PYQ.startedAt)/1000)});
+  var feedback=$('pyqFeedback');
+  if(!r.ok){PYQ.answered=false;feedback.hidden=false;feedback.textContent=r.data.error||'Answer save nahi hua. Dobara try karein.';options.querySelectorAll('button').forEach(function(b){b.disabled=false});return}
+  var d=r.data,buttons=options.querySelectorAll('button');
+  buttons.forEach(function(b,i){if(i===d.correct_option)b.classList.add('right');else if(i===selected)b.classList.add('wrong')});
+  feedback.hidden=false;
+  feedback.textContent=(d.correct?'Correct! 🎉':'Not quite. Correct answer: '+String.fromCharCode(65+d.correct_option)+'.')+(d.explanation?' '+d.explanation:'');
+  $('pyqNext').hidden=false;
+}
 async function startMock(testId){
   var r=await api('start',{test_id:testId});
   if(!r.ok){toast(r.data.error||'Could not start the test.');return}
