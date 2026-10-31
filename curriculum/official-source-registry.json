@@ -138,6 +138,11 @@
   ],
   "verificationResults": {
     "checkedAt": "2026-10-31",
+    "totalTopicNodes": 3175,
+    "sourceLinkedTopicNodes": 3175,
+    "officialTopics": 814,
+    "supplementaryTopics": 7,
+    "pendingTopicReviews": 2354,
     "neet": {
       "officialTopics": 555,
       "supplementaryTopics": 7,
@@ -169,7 +174,11 @@
       "pendingTopics": 45,
       "syllabusYear": 2026
     },
-    "otherExams": "All remaining topic-level records are source-linked but remain pending review; do not label them verified.",
-    "note": "Recompute aggregate counts after the new syllabus branches are inserted; topic-level review remains incomplete for most exams."
+    "newBranches": {
+      "sscComputerKnowledge": 15,
+      "bankingComputerAptitude": 12,
+      "biharPoliceEnglishAndSocialScience": 27
+    },
+    "otherExams": "All remaining topic-level records are source-linked but remain pending review; do not label them verified."
   }
 }
