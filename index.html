@@ -995,7 +995,7 @@ function planFor(){
   return out;
 }
 
-async function loadTasks(){
+async async function loadTasks(){
   await loadSyllabusForStudent();
   var r=await sb.from('study_tasks').select('*').eq('user_id',st.profile.id).order('task_date',{ascending:true}).limit(2000);
   if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];}
@@ -1794,7 +1794,7 @@ $('fbSend').onclick=async function(){
 var NOTES=[],BOOKS=new Set(),NOTE_PROGRESS={},NFILTER={kind:'',exam:'',subject:'',q:''};
 function recentKey(){return 'prepx_recent_'+st.profile.id}
 function recent(){try{return JSON.parse(localStorage.getItem(recentKey())||'[]')}catch(e){return []}}
-async function renderNotes(){
+async async function renderNotes(){
   if(!st.profile||!st.profile.id)return;
   if(!NOTES.length){
     var r=await sb.from('notes').select('id,exam,subject,topic,kind,title,body,syllabus_node_id,language,content_json,key_points,quick_revision,diagram_spec,reading_minutes,syllabus_year,source_name,source_url,is_original,content_version').eq('is_active',true).order('created_at',{ascending:false}).limit(500);
@@ -1932,7 +1932,7 @@ function renderRecent(){
     box.appendChild(b);
   });
 }
-async function renderChecklist(){
+async async function renderChecklist(){
   var box=$('ckList');box.innerHTML='';
   var r=await sb.from('revision_checklist').select('id,item,done').eq('user_id',st.profile.id).order('created_at',{ascending:true}).limit(200);
   if(r.error){box.innerHTML='<div class="empty">Could not load checklist.</div>';return}
