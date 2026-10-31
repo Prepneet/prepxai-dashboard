@@ -693,7 +693,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
 /* ---------- auth gate (unchanged logic) ---------- */
 (async function boot(){
   var s=await sb.auth.getSession();
-  if(!s.data||!s.data.session){location.replace('login.html');return}
+  if(!s.data||!s.data.session){location.replace('/login');return}
   var user=s.data.session.user;
   st.userId=user.id;st.userEmail=user.email||'';
   var pr=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
@@ -1322,7 +1322,7 @@ var MOCK={attempt:null,qs:[],idx:0,ans:{},marked:{},times:{},qStart:0,endAt:0,ti
 async function api(action,payload){
   var s=await sb.auth.getSession();
   var token=s.data&&s.data.session&&s.data.session.access_token;
-  if(!token){location.replace('login.html');return {ok:false,data:{}}}
+  if(!token){location.replace('/login');return {ok:false,data:{}}}
   var body=Object.assign({action:action},payload||{});
   try{
     var r=await fetch('/api/mock',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(body)});
@@ -1361,7 +1361,7 @@ var PYQ={items:[],index:0,startedAt:0,answered:false};
 async function pyqApi(action,payload){
   var session=await sb.auth.getSession();
   var token=session.data&&session.data.session&&session.data.session.access_token;
-  if(!token){location.replace('login.html');return {ok:false,data:{error:'Please sign in again.'}}}
+  if(!token){location.replace('/login');return {ok:false,data:{error:'Please sign in again.'}}}
   try{
     var r=await fetch('/api/pyq',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(Object.assign({action:action},payload||{}))});
     var data=await r.json().catch(function(){return {}});
@@ -2148,7 +2148,7 @@ async function sendDoubt(){
   try{
     var s=await sb.auth.getSession();
     var token=s.data&&s.data.session&&s.data.session.access_token;
-    if(!token){location.replace('login.html');return}
+    if(!token){location.replace('/login');return}
     var body={messages:st.chat.slice(-8)};
     if(photo) body.image={media_type:photo.media_type,data:photo.data};
     var r=await fetch('/api/doubt',{
@@ -2443,7 +2443,7 @@ $('exBtn').onclick=function(){
 
 $('outBtn').onclick=async function(){
   await sb.auth.signOut();
-  location.replace('login.html');
+  location.replace('/login');
 };
 
 })();
