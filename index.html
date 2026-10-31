@@ -2247,7 +2247,20 @@ function renderDates(prof){
     lab.appendChild(inp);box.appendChild(lab);
   });
 }
-$('dExam').addEventListener('change',function(){if(st.profile)renderDates(st.profile);updateCompletion()});
+$('dExam').addEventListener('change',function(){
+  var next=this.value;
+  if(st.profile){
+    var previous=st.profile.target_exam;
+    var previousDate=$('dDate').value;
+    st.profile.exam_dates=Object.assign({},st.profile.exam_dates||{});
+    if(previous&&previousDate)st.profile.exam_dates[previous]=previousDate;
+    if(next&&pTargets.indexOf(next)<0)pTargets.push(next);
+    $('dDate').value=next&&st.profile.exam_dates[next]?st.profile.exam_dates[next]:'';
+    st.profile.target_exam=next;
+    renderTargets(st.profile);
+  }
+  updateCompletion();
+});
 PROF_FIELDS.forEach(function(id){var el=$(id);if(el){el.addEventListener('input',updateCompletion);el.addEventListener('change',updateCompletion)}});
 
 function completionItems(){
@@ -2297,8 +2310,12 @@ function validateDetails(){
 $('dSave').onclick=async function(){
   if(!validateDetails()){toast('Please fix the highlighted details');return}
   var b=$('dSave');b.disabled=true;b.textContent='Saving…';
-  var dates={};
-  document.querySelectorAll('[data-ed]').forEach(function(inp){if(inp.value)dates[inp.getAttribute('data-ed')]=inp.value});
+  var dates=Object.assign({},st.profile.exam_dates||{});
+  document.querySelectorAll('[data-ed]').forEach(function(inp){
+    var key=inp.getAttribute('data-ed');
+    if(inp.value)dates[key]=inp.value;else delete dates[key];
+  });
+  if($('dExam').value)delete dates[$('dExam').value];
   var u={
     name:$('pName').value.trim().slice(0,80)||st.profile.name||'Student',
     phone:$('pPhone').value.trim()||null,
