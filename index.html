@@ -998,7 +998,7 @@ function planFor(){
 async async async function loadTasks(){
   await loadSyllabusForStudent();
   var r=await sb.from('study_tasks').select('*').eq('user_id',st.profile.id).order('task_date',{ascending:true}).limit(2000);
-  if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];}
+  if(r.error){toast('Could not load tasks: '+r.error.message);allTasks=[];return;}
   else allTasks=r.data||[];
   if(st.ex){
     var t=localISO();
