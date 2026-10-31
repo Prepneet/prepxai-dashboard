@@ -660,7 +660,7 @@ var SB_KEY='sb_publishable_YXu_zr1Bk2GBr7H3PGTfQQ_vqVwT2BB';
 var sb=window.supabase.createClient(SB_URL,SB_KEY);
 var P=window.PREP;
 var $=function(i){return document.getElementById(i)};
-var st={profile:null,paid:false,ex:null,days:0,stage:'',weak:[],examDate:'',chat:[],photo:null,busyChat:false};
+var st={profile:null,userId:null,userEmail:'',paid:false,ex:null,days:0,stage:'',weak:[],examDate:'',chat:[],photo:null,busyChat:false};
 var ROUTES=['home','plan','tests','tutor','profile','performance','notes','market','settings','analysis'];
 
 function pad(n){return String(n).padStart(2,'0')}
@@ -695,6 +695,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   var s=await sb.auth.getSession();
   if(!s.data||!s.data.session){location.replace('login.html');return}
   var user=s.data.session.user;
+  st.userId=user.id;st.userEmail=user.email||'';
   var pr=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
   var prof=(pr.data)||{};
   st.profile=prof;
@@ -2301,12 +2302,13 @@ $('dSave').onclick=async function(){
     daily_hours:$('dHours').value.trim().slice(0,4)||null,
     weakness:$('dWeak').value.trim().slice(0,200)||null
   };
-  var r;
-  try{r=await sb.from('profiles').update(u).eq('id',st.profile.id).select('id').maybeSingle()}
-  catch(e){b.disabled=false;b.textContent='Save profile';toast('Network error while saving profile.');return}
+  var r,profileId=st.profile.id||st.userId;
+  var payload=Object.assign({id:profileId,email:st.userEmail,name:u.name},u);
+  try{r=await sb.from('profiles').upsert(payload,{onConflict:'id'}).select('id').maybeSingle()}
+  catch(e){b.disabled=false;b.textContent='Save profile';toast('Profile save failed: '+(e.message||'network error'));return}
   b.disabled=false;b.textContent='Save profile';
-  if(r.error||!r.data){toast('Profile save nahi hua. Session/RLS issue ho sakta hai; please sign in again.');return}
-  st.profile=Object.assign({},st.profile,u);
+  if(r.error||!r.data){toast('Profile save failed: '+(r.error?r.error.message:'No profile row returned.'));return}
+  st.profile=Object.assign({id:profileId,email:st.userEmail},st.profile,u);
   toast('Profile saved. Updating your plan…');
   setTimeout(function(){location.reload()},900);
 };
