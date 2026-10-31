@@ -1327,6 +1327,17 @@ async function loadExamNotices(){
     var tag=String(x.tag||'').toLowerCase();
     return terms.some(function(term){return tag.indexOf(term)>=0});
   }).slice(0,20);
+  if(SYLLABUS_EXAM_ID){
+    var mocks=await sb.from('mock_tests').select('id,title,scheduled_for,strategy_text').eq('exam_id',SYLLABUS_EXAM_ID).eq('exam',st.ex.key).eq('published',true).eq('is_active',true).gte('scheduled_for',localISO()).order('scheduled_for').limit(5);
+    (mocks.data||[]).forEach(function(m){
+      if(m.strategy_text)examNotices.unshift({
+        id:'mock-'+m.id,tag:st.ex.key,type:'mock',
+        title:m.title+' · '+(m.scheduled_for||'Upcoming Sunday'),
+        summary:m.strategy_text,body:[m.strategy_text],link:null,link_text:null,
+        src_name:'PrepX Ai Academic Team',src_url:null
+      });
+    });
+  }
 }
 function buildNotifications(){
   var out=[],pr=notifPrefs(),t=localISO();
