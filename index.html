@@ -202,6 +202,29 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
 .note-table th{background:rgba(139,92,246,.2);color:#e9ddff}
 .note-diagram{margin:16px 0;padding:14px;border:1px dashed rgba(34,211,238,.4);border-radius:14px;background:rgba(34,211,238,.05)}
 .note-diagram>b{display:block;text-align:center;color:#a5f3fc;font:700 23px Caveat,cursive;margin-bottom:10px}
+.note-svg{display:block;width:100%;max-height:340px;margin:auto;overflow:visible}
+.note-svg .orbit{fill:none;stroke:rgba(167,139,250,.8);stroke-width:2;stroke-dasharray:7 6}
+.note-svg .nucleus{fill:rgba(139,92,246,.55);stroke:#c4b5fd;stroke-width:2}
+.note-svg .nucleus-core{fill:#f0abfc}
+.note-svg .electron{fill:#67e8f9;stroke:#cffafe;stroke-width:2}
+.note-svg .svg-label{fill:#e8eaff;font:15px Inter,Arial,sans-serif}
+.note-svg .axis{stroke:rgba(226,232,240,.65);stroke-width:2;fill:none}
+.note-svg .trajectory{stroke:#67e8f9;stroke-width:4;stroke-dasharray:10 8;fill:none;animation:noteDash 7s linear infinite}
+.note-svg .vector-arrow{stroke:#c4b5fd;stroke-width:3;fill:none}
+.note-svg .guide{stroke:rgba(196,181,253,.65);stroke-width:2;stroke-dasharray:5 5;fill:none}
+.note-svg .launch-dot{fill:#f0abfc}
+.note-svg .cell-membrane{fill:rgba(34,211,238,.08);stroke:#67e8f9;stroke-width:5}
+.note-svg .cell-cytoplasm{fill:rgba(139,92,246,.08);stroke:rgba(167,139,250,.4);stroke-width:2}
+.note-svg .cell-nucleus{fill:rgba(139,92,246,.32);stroke:#c4b5fd;stroke-width:3;animation:notePulse 3s ease-in-out infinite}
+.note-svg .cell-nucleolus{fill:#f0abfc}
+.note-svg .cell-mito{fill:rgba(251,191,36,.18);stroke:#fbbf24;stroke-width:3}
+.note-svg .cell-detail{fill:none;stroke:#fbbf24;stroke-width:2}
+.note-svg .cell-er,.note-svg .cell-golgi{fill:none;stroke:#67e8f9;stroke-width:4;stroke-linecap:round}
+.note-svg .cell-golgi{stroke:#c4b5fd}
+.note-svg .cell-ribosomes circle{fill:#f0abfc}
+.diagram-caption{margin:8px 4px 0;color:var(--mu);font:12px/1.5 Inter,sans-serif;text-align:center}
+@keyframes noteDash{to{stroke-dashoffset:-90}}
+@keyframes notePulse{50%{filter:drop-shadow(0 0 9px rgba(196,181,253,.75))}}
 .diagram-flow{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
 .diagram-flow span{padding:8px 12px;border-radius:11px;background:rgba(139,92,246,.2);border:1px solid rgba(167,139,250,.4);font:700 19px Caveat,cursive;text-align:center}
 .diagram-flow i{font-style:normal;color:var(--cy);font-weight:800}
