@@ -1023,6 +1023,7 @@ async function loadTasks(){
       var rows=planFor().filter(function(x){return !existingTitles.has(x.topic)});
       if(missed.length){
         var last=missed[missed.length-1];
+        rows=rows.filter(function(x){return !last.node_id||x.node_id!==last.node_id});
         rows.unshift({node_id:last.node_id||null,subject:last.subject,topic:'Catch up: '+last.topic,description:'You missed this earlier. Do it first.',task_type:'revision',duration_min:30,scheduled_time:clock(6*60),position:-1});
       }
       var needed=4-todayRows.length;
