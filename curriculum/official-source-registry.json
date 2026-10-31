@@ -92,6 +92,21 @@
       "source": "https://www.upsc.gov.in/exams-related-info/exam-notification/archives",
       "status": "source_found_review_pending",
       "note": "NDA and CDS are separate exams with different papers; current combined DB entry needs separation."
+    },
+    {
+      "slug": "jee-advanced",
+      "name": "JEE Advanced",
+      "authority": "IIT Roorkee / JEE Advanced",
+      "syllabusYear": 2026,
+      "source": "https://jeeadv.ac.in/documents/jee-advanced-2026-syllabus.pdf",
+      "status": "source_found_review_pending",
+      "note": "Official 2026 syllabus PDF located; JEE Advanced is not yet a separate exam row in the current database and must not reuse JEE Main topics."
     }
+  ],
+  "coverageNotes": [
+    "The dashboard configuration currently exposes JEE Main and JEE Advanced separately, but the database only has a JEE Main syllabus row. JEE Advanced requires its own exam row and curriculum.",
+    "The database contains Bihar Police syllabus data, but the student-facing exam selector configuration does not yet include Bihar Police.",
+    "NDA and CDS are currently combined in the student-facing selector, although UPSC publishes separate exam papers and syllabi. Split the curriculum mapping before claiming full coverage.",
+    "GATE, BITSAT, VITEEE and state CETs are not currently in the dashboard's supported exam selector; do not imply they are supported until their exam records and syllabi are added."
   ]
 }
