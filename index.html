@@ -364,6 +364,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
         <div class="trow"><h2 style="margin:0">Analyse Yourself</h2><span class="tag" id="analysisDay">Day 1</span></div>
         <p class="sub" id="analysisJoined">Your journey from joining date to today.</p>
         <div class="kpi" id="analysisKpis"></div>
+        <div class="actions" style="margin-top:12px"><button class="btn" id="analysisPdfBtn" type="button">Download analysis PDF</button><button class="btn ghost" id="analysisShareBtn" type="button">Share analysis story</button></div>
       </section>
       <div class="grid2">
         <section class="glass">
@@ -1046,6 +1047,47 @@ async function loadLeaderboard(){
     var pts=document.createElement('b');pts.textContent=Number(x.xp||0)+' XP';row.appendChild(left);row.appendChild(pts);box.appendChild(row);
   });
 }
+function buildAnalysisPrint(){
+  var pa=$('printArea');pa.innerHTML='';
+  var head=document.createElement('div');head.className='pdf-head';
+  var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
+  var title=document.createElement('div');title.className='pdf-title';title.textContent='STUDENT PERFORMANCE REPORT';head.appendChild(title);
+  var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=(st.ex?st.ex.label:'Exam not set')+' · '+$('analysisJoined').textContent;head.appendChild(meta);pa.appendChild(head);
+  function addSection(title,id){
+    var h=document.createElement('h2');h.textContent=title;pa.appendChild(h);
+    var src=$(id);var rows=src?Array.prototype.slice.call(src.children):[];
+    rows.forEach(function(row){var d=document.createElement('div');d.className='pdf-row';d.textContent=row.textContent;pa.appendChild(d)});
+    if(!rows.length&&src&&src.textContent){var d=document.createElement('div');d.className='pdf-row';d.textContent=src.textContent;pa.appendChild(d)}
+  }
+  addSection('Key metrics','analysisKpis');
+  var p=document.createElement('p');p.textContent=$('analysisSyllabusText').textContent;pa.appendChild(p);
+  addSection('Subject-wise progress','analysisSubjects');
+  addSection('Chapter-wise completion','analysisChapters');
+  addSection('Mock test history','analysisMockHistory');
+  var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Personal performance report';pa.appendChild(foot);
+  pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
+}
+async function shareAnalysisStory(){
+  var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;var c=canvas.getContext('2d');
+  var bg=c.createLinearGradient(0,0,1080,1920);bg.addColorStop(0,'#10152f');bg.addColorStop(1,'#0c2947');c.fillStyle=bg;c.fillRect(0,0,1080,1920);
+  c.fillStyle='rgba(255,255,255,.08)';c.fillRect(64,64,952,1792);
+  c.fillStyle='#fff';c.font='800 62px Sora,Arial';c.fillText('PrepX Ai',96,170);
+  c.fillStyle='#b9c2e4';c.font='600 28px Inter,Arial';c.fillText('MY PREPARATION ANALYSIS',98,250);
+  c.fillStyle='#fff';c.font='800 54px Sora,Arial';c.fillText(st.ex?st.ex.label:'Exam preparation',98,345);
+  c.fillStyle='#9c83ff';c.font='700 44px Inter,Arial';c.fillText($('analysisSyllabusText').textContent.slice(0,42),98,450);
+  var k=Array.prototype.slice.call($('analysisKpis').children,0,6),y=560;
+  k.forEach(function(item){c.fillStyle='rgba(255,255,255,.1)';c.fillRect(96,y-42,888,118);c.fillStyle='#b9c2e4';c.font='26px Inter,Arial';c.fillText(item.querySelector('small')?item.querySelector('small').textContent:'Progress',126,y);c.fillStyle='#fff';c.font='700 36px Sora,Arial';c.fillText(item.querySelector('b')?item.querySelector('b').textContent:'—',126,y+48);y+=138});
+  c.fillStyle='#b9c2e4';c.font='28px Inter,Arial';c.fillText('Consistency today. Confidence on exam day.',98,1710);
+  c.fillStyle='#fff';c.font='700 30px Inter,Arial';c.fillText('prepxai.online',98,1780);
+  var blob=await new Promise(function(resolve){canvas.toBlob(resolve,'image/png')});
+  if(!blob){toast('Story image create nahi ho payi.');return}
+  var file=new File([blob],'prepxai-analysis.png',{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:'PrepX Ai performance analysis'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='prepxai-analysis.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  toast('Analysis story image ready to share.');
+}
+$('analysisPdfBtn').onclick=buildAnalysisPrint;
+$('analysisShareBtn').onclick=shareAnalysisStory;
 async function loadAnalysis(){
   if(!st.profile||!st.profile.id)return;
   if(!SYLLABUS_TOPICS.length)await loadSyllabusForStudent();
