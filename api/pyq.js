@@ -47,6 +47,7 @@ export default async function handler(req, res) {
     let q = db.from('questions')
       .select('id,body,options,difficulty,source,node_id')
       .eq('exam_id', me.exam.id)
+      .eq('is_pyq', true)
       .is('mock_test_id', null)
       .order('created_at', { ascending: false })
       .limit(100);
@@ -73,6 +74,7 @@ export default async function handler(req, res) {
       .select('id,exam_id,correct_option,explanation,options')
       .eq('id', id)
       .eq('exam_id', me.exam.id)
+      .eq('is_pyq', true)
       .is('mock_test_id', null)
       .maybeSingle();
     if (error || !question) return json(res, 404, { error: 'Question not found for your active exam.' });
