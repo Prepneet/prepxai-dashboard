@@ -436,7 +436,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
     <section class="view" id="v-tutor" aria-label="AI Tutor">
       <section class="glass chat">
         <div class="chat-head">
-          <div><h2 style="margin:0">Prep Ai</h2><div class="sub" style="margin:0">Ask by typing, speaking, or a photo</div></div>
+          <div><h2 style="margin:0">Prep Ai</h2><div class="sub" style="margin:0">Ask by typing, speaking, or a photo</div><div class="sub" id="tutorStatus" style="margin:4px 0 0">Checking tutor connection…</div></div>
           <button class="btn ghost" id="newChat" type="button" style="min-height:38px;padding:6px 12px;font-size:13px">New chat</button>
         </div>
         <div class="msgs" id="msgs" role="log" aria-live="polite"></div>
@@ -662,7 +662,7 @@ function route(){
   if(r==='settings') renderSettings();
   if(r==='profile') renderFeedbackState();
   if(r==='tests') renderTests();
-  if(r==='tutor') setTimeout(function(){$('msgs').scrollTop=$('msgs').scrollHeight},50);
+  if(r==='tutor'){checkTutorStatus();setTimeout(function(){$('msgs').scrollTop=$('msgs').scrollHeight},50);}
 }
 window.addEventListener('hashchange',route);
 document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){location.hash=b.getAttribute('data-go')})});
@@ -2124,7 +2124,7 @@ async function sendDoubt(){
     else bubble.textContent=full;
     st.chat.push({role:'assistant',content:full});
     var pl=r.headers.get('X-Plan')||'free';
-    $('usageNote').textContent=(pl!=='free')?'Plan: '+pl.toUpperCase():'Free plan · 3 doubts a day';
+    $('usageNote').textContent=(pl!=='free')?'Plan: '+pl.toUpperCase():'Free plan · 10 doubts a day';
   }catch(e){
     showTyping(false);
     var nb=addBubble('ai','Network error. Please try again.');
