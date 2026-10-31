@@ -2430,11 +2430,13 @@ $('shareBtn').onclick=async function(){
 /* ---------- exam change request (saved to database) ---------- */
 $('exBtn').onclick=function(){
   location.hash='#profile';
-  setTimeout(function(){
-    var select=$('dExam');
-    if(select){select.focus();select.scrollIntoView({behavior:'smooth',block:'center'});}
-    toast('Select your new active exam, then tap Save profile.');
-  },120);
+  var select=$('dExam');
+  if(select){
+    select.scrollIntoView({behavior:'smooth',block:'center'});
+    select.focus();
+    try{if(select.showPicker)select.showPicker()}catch(e){}
+  }
+  toast('Choose your new active exam, then tap Save profile.');
 };
 
 
