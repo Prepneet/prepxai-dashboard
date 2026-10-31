@@ -1,1 +1,2 @@
-create policy "academic staff manage notes" on public.notes for all to authenticated using (public.has_staff_role(array['owner','super_admin','academic'])) with check (public.has_staff_role(array['owner','super_admin','academic']));
+-- No-op: this migration was applied to Supabase as version 20261031024736.
+-- The canonical migration file is 20261031024736_allow_academic_staff_to_publish_notes.sql.
