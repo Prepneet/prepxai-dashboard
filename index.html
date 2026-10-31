@@ -334,7 +334,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
             <div class="trow"><h2 style="margin:0">Weekly Top 20</h2><span class="tag">This week</span></div>
             <p class="sub">Real XP points ke basis par PrepX Ai students ki weekly ranking.</p>
             <div id="leaderboardList"><div class="empty">Leaderboard load ho raha hai…</div></div>
-            <p class="sub" style="margin-top:12px">**Rules:** Study task complete = 10 XP, PYQ attempt = 2 XP, mock test submit = 25 XP. Har week ranking refresh hoti hai. Consistency rakho — <b>You may be next!</b></p>
+            <p class="sub" style="margin-top:12px"><b>Rules:</b> Study task complete = 10 XP, PYQ attempt = 2 XP, mock test submit = 25 XP. Har week ranking refresh hoti hai. Consistency rakho — <b>You may be next!</b></p>
             <button class="btn ghost" type="button" data-go="analysis">Analyse Yourself</button>
           </section>
         </div>
@@ -594,7 +594,7 @@ var sb=window.supabase.createClient(SB_URL,SB_KEY);
 var P=window.PREP;
 var $=function(i){return document.getElementById(i)};
 var st={profile:null,paid:false,ex:null,days:0,stage:'',weak:[],examDate:'',chat:[],photo:null,busyChat:false};
-var ROUTES=['home','plan','tests','tutor','profile','performance','notes','market','settings'];
+var ROUTES=['home','plan','tests','tutor','profile','performance','notes','market','settings','analysis'];
 
 function pad(n){return String(n).padStart(2,'0')}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -613,6 +613,7 @@ function route(){
   window.scrollTo(0,0);
   if(!st.profile) return;
   if(r==='performance') renderPerformance();
+  if(r==='analysis') loadAnalysis();
   if(r==='notes') renderNotes();
   if(r==='settings') renderSettings();
   if(r==='profile') renderFeedbackState();
@@ -659,6 +660,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderNotifications();
   renderPlan();
   renderRoadmap();
+  await loadLeaderboard();
   route();
 })();
 
@@ -964,6 +966,103 @@ async function rescheduleTask(id){
   renderTasks();renderStreak();renderHomeProgress();
 }
 
+async function loadLeaderboard(){
+  var box=$('leaderboardList');if(!box)return;
+  var r=await sb.rpc('weekly_top_students');
+  box.innerHTML='';
+  if(r.error){box.innerHTML='<div class="empty">Leaderboard abhi load nahi ho paya. Thodi der baad retry karein.</div>';return}
+  var rows=r.data||[];
+  if(!rows.length){box.innerHTML='<div class="empty">Is week leaderboard abhi start hua hai. Tasks complete karke pehle XP points kamao — You may be next!</div>';return}
+  rows.forEach(function(x){
+    var row=document.createElement('div');row.className='srow';
+    var left=document.createElement('div');left.style.minWidth='0';
+    var name=document.createElement('b');name.textContent='#'+x.rank+'  '+x.display_name;left.appendChild(name);
+    var exam=document.createElement('div');exam.className='tmeta';exam.textContent=x.target_exam||'Exam not set';left.appendChild(exam);
+    var pts=document.createElement('b');pts.textContent=Number(x.xp||0)+' XP';row.appendChild(left);row.appendChild(pts);box.appendChild(row);
+  });
+}
+async function loadAnalysis(){
+  if(!st.profile||!st.profile.id)return;
+  if(!SYLLABUS_TOPICS.length)await loadSyllabusForStudent();
+  var uid=st.profile.id;
+  var results=await Promise.all([
+    sb.from('mock_attempts').select('id,test_id,score,accuracy,correct,incorrect,unattempted,time_taken_sec,submitted_at').eq('user_id',uid).not('submitted_at','is',null).order('submitted_at',{ascending:true}).limit(100),
+    sb.from('pyq_attempts').select('id,question_id,is_correct,time_taken_sec,created_at').eq('user_id',uid).order('created_at',{ascending:false}).limit(2000),
+    sb.from('xp_events').select('points,created_at').eq('user_id',uid).limit(5000)
+  ]);
+  var mocks=results[0].data||[],pyqs=results[1].data||[],xp=results[2].data||[];
+  var testMap={};
+  var testIds=Array.from(new Set(mocks.map(function(x){return x.test_id})));
+  if(testIds.length){
+    var tr=await sb.from('mock_tests').select('id,title,total_marks').in('id',testIds);
+    (tr.data||[]).forEach(function(x){testMap[x.id]=x});
+  }
+  var topics=SYLLABUS_TOPICS,total=topics.length,done=topics.filter(function(x){return x.completed}).length;
+  var pct=total?Math.round(done/total*100):0;
+  var completedTasks=allTasks.filter(function(x){return x.status==='completed'});
+  var studyMinutes=completedTasks.reduce(function(a,x){return a+Number(x.duration_min||0)},0);
+  var accuracy=pyqs.length?Math.round(pyqs.filter(function(x){return x.is_correct}).length/pyqs.length*100):0;
+  var mockAccuracy=mocks.length?Math.round(mocks.reduce(function(a,x){return a+Number(x.accuracy||0)},0)/mocks.length):0;
+  var xpTotal=xp.reduce(function(a,x){return a+Number(x.points||0)},0);
+  $('analysisDay').textContent='Day '+(st.dayNumber||dayNumber());
+  var joined=st.profile.created_at?new Date(st.profile.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'Not available';
+  $('analysisJoined').textContent='Joined '+joined+' · '+(st.ex?st.ex.label:'Exam not selected')+' · Data updates as you complete tasks and tests.';
+  var kpis=[
+    ['Syllabus',done+' / '+total+' topics'],
+    ['Study time',(studyMinutes/60).toFixed(1)+' hours'],
+    ['Mock tests',String(mocks.length)],
+    ['PYQs attempted',String(pyqs.length)],
+    ['PYQ accuracy',accuracy+'%'],
+    ['XP earned',String(xpTotal)+' XP']
+  ];
+  var kbox=$('analysisKpis');kbox.innerHTML='';
+  kpis.forEach(function(k){var d=document.createElement('div');var b=document.createElement('b');b.textContent=k[1];var small=document.createElement('small');small.textContent=k[0];d.appendChild(b);d.appendChild(small);kbox.appendChild(d)});
+  $('analysisSyllabusText').textContent=done+' of '+total+' topics completed · '+pct+'% syllabus progress';
+  $('analysisSyllabusBar').style.width=pct+'%';
+  var subjectMap={};
+  topics.forEach(function(t){var x=subjectMap[t.subject]||(subjectMap[t.subject]={done:0,total:0});x.total++;if(t.completed)x.done++});
+  var sbx=$('analysisSubjects');sbx.innerHTML='';
+  Object.keys(subjectMap).sort().forEach(function(name){
+    var x=subjectMap[name],row=document.createElement('div');row.className='srow';
+    var label=document.createElement('span');label.textContent=name;
+    var val=document.createElement('b');val.textContent=x.done+'/'+x.total+' · '+Math.round(x.done/x.total*100)+'%';
+    row.appendChild(label);row.appendChild(val);sbx.appendChild(row);
+  });
+  var chapterMap={};
+  topics.forEach(function(t){var key=t.subject+'||'+t.chapter;var x=chapterMap[key]||(chapterMap[key]={subject:t.subject,chapter:t.chapter,done:0,total:0});x.total++;if(t.completed)x.done++});
+  var cbx=$('analysisChapters');cbx.innerHTML='';
+  Object.keys(chapterMap).sort().forEach(function(key){
+    var x=chapterMap[key],row=document.createElement('div');row.className='srow';
+    var label=document.createElement('div');label.style.minWidth='0';
+    var title=document.createElement('b');title.textContent=x.chapter;label.appendChild(title);
+    var meta=document.createElement('div');meta.className='tmeta';meta.textContent=x.subject;label.appendChild(meta);
+    var val=document.createElement('b');val.textContent=(x.done===x.total?'✓ ':'')+x.done+'/'+x.total;
+    row.appendChild(label);row.appendChild(val);cbx.appendChild(row);
+  });
+  var graph=$('analysisScoreGraph');graph.innerHTML='';
+  var last=mocks.slice(-8);
+  if(!last.length){graph.innerHTML='<div class="empty">Abhi mock test score nahi hai. Sunday mock attempt karne ke baad graph yahan dikhega.</div>'}
+  else{
+    var bars=document.createElement('div');bars.className='bars';
+    last.forEach(function(m){
+      var t=testMap[m.test_id]||{},percent=t.total_marks?Math.max(0,Math.min(100,Number(m.score||0)/Number(t.total_marks)*100)):Math.max(0,Math.min(100,Number(m.accuracy||0)));
+      var col=document.createElement('div');col.className='col';
+      var value=document.createElement('span');value.className='val';value.textContent=Math.round(percent)+'%';
+      var bar=document.createElement('div');bar.className='bar';bar.style.height=Math.max(3,percent)+'%';
+      var label=document.createElement('small');label.textContent=new Date(m.submitted_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+      col.appendChild(value);col.appendChild(bar);col.appendChild(label);bars.appendChild(col);
+    });
+    graph.appendChild(bars);
+  }
+  var history=$('analysisMockHistory');history.innerHTML='';
+  if(!mocks.length)history.innerHTML='<div class="empty">No mock attempts yet.</div>';
+  mocks.slice(-10).reverse().forEach(function(m){
+    var t=testMap[m.test_id]||{},row=document.createElement('div');row.className='srow';
+    var left=document.createElement('span');left.textContent=t.title||'Mock test';
+    var right=document.createElement('b');right.textContent=Number(m.score||0)+' marks · '+Number(m.accuracy||0)+'%';
+    row.appendChild(left);row.appendChild(right);history.appendChild(row);
+  });
+}
 function renderHomeProgress(){
   var list=todayTasks().filter(function(x){return x.status!=='rescheduled'});
   var done=list.filter(function(x){return x.status==='completed'});
