@@ -74,9 +74,21 @@ ul.list{list-style:none;display:flex;flex-direction:column;gap:8px}
 ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--edge);font-size:14px;line-height:1.45}
 .big{font-size:24px;font-weight:800;margin-bottom:4px}
 .empty{padding:16px;border-radius:16px;border:1px dashed rgba(255,255,255,.18);font-size:13px;color:var(--mu);line-height:1.55;text-align:center}
-.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
-.week div{padding:9px 3px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--edge);text-align:center;font-size:11px;line-height:1.3;color:var(--mu);min-width:0;overflow:hidden}
-.week b{display:block;color:var(--tx);font-size:12px;margin-bottom:3px}
+.week{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.week-day{min-width:0;padding:14px;border-radius:17px;background:linear-gradient(145deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid var(--edge);color:var(--tx);text-align:left;overflow:hidden}
+.week-day.is-today{border-color:rgba(34,211,238,.58);box-shadow:inset 0 0 0 1px rgba(34,211,238,.12),0 10px 28px -22px rgba(34,211,238,.8)}
+.week-day.is-done{border-color:rgba(124,255,178,.42)}
+.week-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px;flex-wrap:wrap}
+.week-date{font-size:13px;font-weight:700;color:var(--tx);line-height:1.4}
+.week-state{font-size:10px;font-weight:700;letter-spacing:.03em;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--mu);white-space:nowrap}
+.week-day.is-today .week-state{background:rgba(34,211,238,.14);color:#a5f3fc}
+.week-day.is-done .week-state{background:rgba(124,255,178,.13);color:#b8ffd2}
+.week-topics{display:flex;flex-direction:column;gap:8px}
+.week-topic{min-width:0;padding:9px 10px;border-radius:12px;background:rgba(4,9,24,.34);border:1px solid rgba(255,255,255,.07)}
+.week-topic b{display:block;font-size:12px;line-height:1.45;color:var(--tx);overflow-wrap:anywhere}
+.week-topic small{display:block;margin-top:3px;font-size:11px;line-height:1.45;color:var(--mu);overflow-wrap:anywhere}
+.week-empty{font-size:12px;color:var(--mu);line-height:1.5;padding:10px;border:1px dashed var(--edge);border-radius:12px}
+@media(max-width:640px){.week{grid-template-columns:minmax(0,1fr);gap:9px}.week-day{padding:13px}.week-topic b{font-size:13px}.week-topic small{font-size:12px}}
 
 /* forms */
 .dgrid{display:grid;gap:12px;grid-template-columns:1fr}
@@ -871,19 +883,34 @@ function renderRoadmap(){
   var topics=SYLLABUS_TOPICS.slice(startIndex,startIndex+28);
   var joined=st.profile&&st.profile.created_at?new Date(st.profile.created_at):new Date();
   for(var day=0;day<7;day++){
-    var d=document.createElement('div');
     var dayNo=weekStart+day;
     var date=new Date(joined.getFullYear(),joined.getMonth(),joined.getDate()+dayNo-1);
-    var b=document.createElement('b');b.textContent='Day '+dayNo+' · '+date.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
-    d.appendChild(b);
     var chosen=topics.slice(day*4,day*4+4);
-    var lines=chosen.map(function(x){return x.subject+' · '+x.chapter+' / '+x.title});
-    if(!lines.length)lines=['Syllabus revision / mock review'];
-    d.appendChild(document.createTextNode(lines.join(' • ')));
-    if(chosen.length&&chosen.every(function(x){return x.completed})){
-      d.classList.add('hit');d.appendChild(document.createTextNode(' ✓'));
+    var d=document.createElement('article');d.className='week-day';
+    if(dayNo===dayNow)d.classList.add('is-today');
+    var complete=chosen.length>0&&chosen.every(function(x){return !!x.completed});
+    if(complete)d.classList.add('is-done');
+    var head=document.createElement('div');head.className='week-head';
+    var title=document.createElement('div');title.className='week-date';
+    title.textContent='Day '+dayNo+' · '+date.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',month:'short'});
+    var state=document.createElement('span');state.className='week-state';
+    state.textContent=complete?'✓ Completed':(dayNo===dayNow?'TODAY':'UPCOMING');
+    head.appendChild(title);head.appendChild(state);d.appendChild(head);
+    var list=document.createElement('div');list.className='week-topics';
+    if(chosen.length){
+      chosen.forEach(function(x){
+        var item=document.createElement('div');item.className='week-topic';
+        var topic=document.createElement('b');topic.textContent=x.title||x.chapter||'Study topic';
+        var meta=document.createElement('small');meta.textContent=[x.subject,x.chapter&&x.title?x.chapter:null].filter(Boolean).join(' · ');
+        item.appendChild(topic);if(meta.textContent)item.appendChild(meta);
+        list.appendChild(item);
+      });
+    }else{
+      var empty=document.createElement('div');empty.className='week-empty';
+      empty.textContent='Syllabus revision, practice questions and mock review.';
+      list.appendChild(empty);
     }
-    wk.appendChild(d);
+    d.appendChild(list);wk.appendChild(d);
   }
 }
 function renderLock(){$('mockCard').classList.toggle('is-open',st.paid)}
