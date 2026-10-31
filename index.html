@@ -877,8 +877,17 @@ async function loadSyllabusForStudent(){
 function planFor(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
   var total=Math.round(h.mid*60/5)*5;
-  var pending=SYLLABUS_TOPICS.filter(function(x){return !x.completed});
-  var chosen=pending.slice(0,4);
+  var dayStart=Math.max(0,((st.dayNumber||dayNumber())-1)*4);
+  var dayWindow=SYLLABUS_TOPICS.slice(dayStart,dayStart+4);
+  var chosen=dayWindow.filter(function(x){return !x.completed});
+  if(chosen.length<4){
+    var previous=SYLLABUS_TOPICS.slice(0,dayStart).filter(function(x){return !x.completed});
+    chosen=chosen.concat(previous.slice(0,4-chosen.length));
+  }
+  if(chosen.length<4){
+    var upcoming=SYLLABUS_TOPICS.slice(dayStart+4).filter(function(x){return !x.completed});
+    chosen=chosen.concat(upcoming.slice(0,4-chosen.length));
+  }
   if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(0,4);
   if(!chosen.length){
     var fallback=st.weak.length?st.weak:['Core topics'];
