@@ -7,6 +7,14 @@
     {
       "source": "/login/",
       "destination": "/login.html"
+    },
+    {
+      "source": "/plans",
+      "destination": "/plans.html"
+    },
+    {
+      "source": "/plans/",
+      "destination": "/plans.html"
     }
   ]
 }
