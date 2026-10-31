@@ -2131,6 +2131,41 @@ function buildPrint(){
   pa.hidden=false;
 }
 $('pdfBtn').onclick=function(){buildPrint();window.print();setTimeout(function(){$('printArea').hidden=true},800)};
+function buildNotePrint(n){
+  var pa=$('printArea');pa.innerHTML='';
+  var head=document.createElement('div');head.className='pdf-head';
+  var brand=document.createElement('div');brand.className='pdf-brand';brand.textContent='PrepX Ai';head.appendChild(brand);
+  var title=document.createElement('div');title.className='pdf-title';title.textContent=n.title;head.appendChild(title);
+  var meta=document.createElement('p');meta.className='pdf-meta';meta.textContent=n.subject+' · '+n.topic+' · '+(n.kind==='formula'?'Formula sheet':n.kind==='revision'?'Short revision':'Detailed notes');head.appendChild(meta);pa.appendChild(head);
+  var body=document.createElement('div');body.style.whiteSpace='pre-wrap';body.style.fontSize='13px';body.style.lineHeight='1.7';body.style.padding='8px 4px';body.textContent=n.body;pa.appendChild(body);
+  var foot=document.createElement('div');foot.className='pdf-foot';foot.textContent='PrepX Ai · prepxai.online · Verify important facts with your official exam syllabus.';pa.appendChild(foot);
+  pa.hidden=false;window.print();setTimeout(function(){pa.hidden=true},800);
+}
+async function shareNoteStory(n){
+  var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;var c=canvas.getContext('2d');
+  var bg=c.createLinearGradient(0,0,1080,1920);bg.addColorStop(0,'#10152f');bg.addColorStop(1,'#18224b');c.fillStyle=bg;c.fillRect(0,0,1080,1920);
+  c.fillStyle='rgba(255,255,255,.08)';c.fillRect(64,64,952,1792);
+  c.fillStyle='#fff';c.font='800 60px Sora,Arial';c.fillText('PrepX Ai',96,170);
+  c.fillStyle='#9c83ff';c.font='700 28px Inter,Arial';c.fillText(n.kind==='formula'?'FORMULA SHEET':n.kind==='revision'?'SHORT REVISION':'STUDY NOTES',98,260);
+  c.fillStyle='#fff';c.font='800 52px Sora,Arial';
+  var titleWords=String(n.title||'Study notes').split(/\s+/),titleLines=[],line='';
+  titleWords.forEach(function(w){var test=line?line+' '+w:w;if(c.measureText(test).width>850&&line){titleLines.push(line);line=w}else line=test});if(line)titleLines.push(line);
+  titleLines.slice(0,3).forEach(function(x,i){c.fillText(x,98,350+i*65)});
+  c.fillStyle='#b9c2e4';c.font='30px Inter,Arial';c.fillText(n.subject+' · '+n.topic,98,570);
+  c.fillStyle='rgba(255,255,255,.12)';c.fillRect(96,620,888,2);
+  c.fillStyle='#fff';c.font='28px Inter,Arial';
+  var words=String(n.body||'').replace(/\s+/g,' ').split(' '),lines=[],current='';
+  words.forEach(function(w){var test=current?current+' '+w:w;if(c.measureText(test).width>850&&current){lines.push(current);current=w}else current=test});if(current)lines.push(current);
+  c.fillStyle='#e7eaff';lines.slice(0,24).forEach(function(x,i){c.fillText(x,98,700+i*42)});
+  c.fillStyle='#b9c2e4';c.font='28px Inter,Arial';c.fillText('Study smart · Revise daily · Stay consistent',98,1740);
+  c.fillStyle='#fff';c.font='700 30px Inter,Arial';c.fillText('prepxai.online',98,1800);
+  var blob=await new Promise(function(resolve){canvas.toBlob(resolve,'image/png')});
+  if(!blob){toast('Story image create nahi ho payi.');return}
+  var file=new File([blob],'prepxai-notes-story.png',{type:'image/png'});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:n.title,text:'PrepX Ai study notes'});return}}catch(e){if(e&&e.name==='AbortError')return}
+  var url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='prepxai-notes-story.png';document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},1000);
+  toast('Notes story image ready to share.');
+}
 function createStoryCanvas(){
   var canvas=document.createElement('canvas');canvas.width=1080;canvas.height=1920;
   var c=canvas.getContext('2d');
