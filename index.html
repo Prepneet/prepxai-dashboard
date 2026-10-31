@@ -2066,6 +2066,16 @@ else{
   };
 }
 
+async function checkTutorStatus(){
+  var el=$('tutorStatus');if(!el)return;
+  el.textContent='Checking tutor connection…';el.style.color='var(--mu)';
+  try{
+    var r=await fetch('/api/tutor-health',{method:'GET',cache:'no-store'});
+    var j=await r.json().catch(function(){return {}});
+    if(r.ok&&j.ready){el.textContent='Prep Ai is ready';el.style.color='#86efac';}
+    else{el.textContent='Prep Ai server setup needs attention';el.style.color='#fbbf24';}
+  }catch(e){el.textContent='Could not check tutor connection';el.style.color='#fbbf24';}
+}
 function setSending(on){
   st.busyChat=on;
   $('sendBtn').disabled=on;
@@ -2127,7 +2137,7 @@ async function sendDoubt(){
     $('usageNote').textContent=(pl!=='free')?'Plan: '+pl.toUpperCase():'Free plan · 10 doubts a day';
   }catch(e){
     showTyping(false);
-    var nb=addBubble('ai','Network error. Please try again.');
+    var nb=addBubble('ai','Connection to Prep Ai was interrupted. Please check your internet and try again.');
     nb.classList.add('err');
     st.chat.pop();
   }finally{
