@@ -619,6 +619,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderChatIntro();
   renderFeedbackState();
   await loadTasks();
+  renderPlan();
   renderRoadmap();
   route();
 })();
@@ -673,7 +674,7 @@ function renderPlan(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
   $('hours').textContent=h.low+'–'+h.high+' hours a day';
   $('planNote').textContent=st.days+' days left. Weak subjects get extra time.';
-  $('planNote2').textContent='Tasks below are planned for today. Mark them as you go.';
+  $('planNote2').textContent='Day '+(st.dayNumber||dayNumber())+' · Aaj ke subject, chapter aur topic tasks neeche hain. Complete karte hi tick/strike-through ho jayega.';
 }
 
 function renderRoadmap(){
@@ -770,6 +771,15 @@ function planFor(){
   var pending=SYLLABUS_TOPICS.filter(function(x){return !x.completed});
   var chosen=pending.slice(0,4);
   if(!chosen.length)chosen=SYLLABUS_TOPICS.slice(0,4);
+  if(!chosen.length){
+    var fallback=st.weak.length?st.weak:['Core topics'];
+    var legacy=[['learn','Naya concept samjho'],['practice','Practice questions solve karo'],['revision','Aaj ka revision'],['analysis','Mistakes analyse karo']];
+    return legacy.map(function(x,i){return {
+      node_id:null,subject:fallback[i%fallback.length],topic:x[1]+': '+fallback[i%fallback.length],
+      description:'Day '+(st.dayNumber||1)+' · '+x[1],task_type:x[0],
+      duration_min:Math.max(30,Math.round(total/4/5)*5),scheduled_time:clock(390+i*120),position:i
+    }});
+  }
   var types=['learn','practice','revision','analysis'];
   var labels=['Naya concept samjho','Topic-wise questions solve karo','Aaj ke concepts revise karo','Mistakes analyse karo'];
   var cur=6*60+30,out=[];
