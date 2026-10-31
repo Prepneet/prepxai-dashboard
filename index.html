@@ -702,29 +702,34 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderFeedbackState();
   await loadTasks();
   renderDayRoutine();
-  await loadExamNotices();
-  if(st.paid){
-    var sundayResult=await api('generate_sunday');
-    if(sundayResult.ok&&sundayResult.data&&sundayResult.data.test){
-      var mt=sundayResult.data.test;
-      examNotices.unshift({
-        id:'sunday-'+mt.id,tag:st.ex?st.ex.key:'',type:'mock',
-        title:'Sunday Mock unlocked · '+(mt.scheduled_for||'This Sunday'),
-        summary:mt.strategy_text||'Tumhara completed-syllabus mock ready hai.',
-        body:[mt.strategy_text||'Tumhara completed-syllabus mock ready hai.'],
-        link:null,link_text:null,src_name:'PrepX Ai',src_url:null
-      });
-    }
-  }
+  renderPlan();
+  renderRoadmap();
   renderNotifications();
-  renderPlan();
-  renderRoadmap();
-  await loadLeaderboard();
-  renderRoadmap();
-  renderPlan();
+  // Show the usable dashboard as soon as core student data is ready.
   $('loading').hidden=true;
   $('app').hidden=false;
   route();
+  // Non-critical feeds load in the background and cannot delay the dashboard.
+  (async function(){
+    try{
+      await loadExamNotices();
+      if(st.paid){
+        var sundayResult=await api('generate_sunday');
+        if(sundayResult.ok&&sundayResult.data&&sundayResult.data.test){
+          var mt=sundayResult.data.test;
+          examNotices.unshift({
+            id:'sunday-'+mt.id,tag:st.ex?st.ex.key:'',type:'mock',
+            title:'Sunday Mock unlocked · '+(mt.scheduled_for||'This Sunday'),
+            summary:mt.strategy_text||'Tumhara completed-syllabus mock ready hai.',
+            body:[mt.strategy_text||'Tumhara completed-syllabus mock ready hai.'],
+            link:null,link_text:null,src_name:'PrepX Ai',src_url:null
+          });
+        }
+      }
+      renderNotifications();
+      await loadLeaderboard();
+    }catch(feedError){console.warn('Background dashboard feed failed',feedError)}
+  })();
 })();
 
 /* ---------- exam + countdown ---------- */
