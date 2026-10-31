@@ -301,6 +301,7 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
               <button class="qa" type="button" data-go="tests"><b>Start mock test</b><span>Sunday mock and PYQs</span></button>
               <button class="qa" type="button" data-go="tutor"><b>Ask Prep Ai</b><span>Text, voice or photo</span></button>
               <button class="qa" type="button" data-go="plan"><b>Revise weak topics</b><span>From your weak subjects</span></button>
+              <button class="qa" type="button" data-go="analysis"><b>Analyse Yourself</b><span>Your full progress report</span></button>
             </div>
           </section>
         </div>
@@ -329,8 +330,43 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
             <p class="sub" style="margin:0">Longest: <span id="streakBest">0</span> days</p>
             <div class="sdays" id="streakWeek"></div>
           </section>
+          <section class="glass">
+            <div class="trow"><h2 style="margin:0">Weekly Top 20</h2><span class="tag">This week</span></div>
+            <p class="sub">Real XP points ke basis par PrepX Ai students ki weekly ranking.</p>
+            <div id="leaderboardList"><div class="empty">Leaderboard load ho raha hai…</div></div>
+            <p class="sub" style="margin-top:12px">**Rules:** Study task complete = 10 XP, PYQ attempt = 2 XP, mock test submit = 25 XP. Har week ranking refresh hoti hai. Consistency rakho — <b>You may be next!</b></p>
+            <button class="btn ghost" type="button" data-go="analysis">Analyse Yourself</button>
+          </section>
         </div>
       </div>
+    </section>
+
+    <!-- ANALYSE YOURSELF -->
+    <section class="view" id="v-analysis" aria-label="Analyse Yourself">
+      <section class="glass">
+        <div class="trow"><h2 style="margin:0">Analyse Yourself</h2><span class="tag" id="analysisDay">Day 1</span></div>
+        <p class="sub" id="analysisJoined">Your journey from joining date to today.</p>
+        <div class="kpi" id="analysisKpis"></div>
+      </section>
+      <div class="grid2">
+        <section class="glass">
+          <h2>Syllabus progress</h2>
+          <p class="sub" id="analysisSyllabusText">Completed topics based on your checkmarks.</p>
+          <div class="pbar"><i id="analysisSyllabusBar"></i></div>
+          <div id="analysisSubjects"></div>
+        </section>
+        <section class="glass">
+          <h2>Mock test score trend</h2>
+          <p class="sub">Last attempts ka score percentage.</p>
+          <div id="analysisScoreGraph"></div>
+          <div id="analysisMockHistory"></div>
+        </section>
+      </div>
+      <section class="glass">
+        <h2>Chapter-wise completion</h2>
+        <p class="sub">Chapter ke saare topics complete hone par tick mark dikhega.</p>
+        <div id="analysisChapters"></div>
+      </section>
     </section>
 
     <!-- PLAN -->
