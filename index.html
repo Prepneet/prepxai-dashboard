@@ -386,6 +386,12 @@ ul.list li{padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05)
           <div class="week" id="week"></div>
         </section>
       </div>
+      <section class="glass">
+        <h2>Day strategy · Uthne se sone tak</h2>
+        <p class="sub">Apne study hours, exam countdown aur aaj ke topics ke hisaab se daily routine follow karo.</p>
+        <div class="tasks" id="dayRoutine"></div>
+        <p class="sub" id="dayStrategy" style="margin:10px 0 0"></p>
+      </section>
     </section>
 
     <!-- TUTOR -->
@@ -656,6 +662,7 @@ document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('c
   renderChatIntro();
   renderFeedbackState();
   await loadTasks();
+  renderDayRoutine();
   await loadExamNotices();
   renderNotifications();
   renderPlan();
