@@ -785,20 +785,23 @@ function renderDayRoutine(){
 }
 function renderRoadmap(){
   var wk=$('week');wk.innerHTML='';
-  var names=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-  var topics=SYLLABUS_TOPICS.slice();
-  var start=0;
+  var dayNow=st.dayNumber||dayNumber();
+  var weekStart=Math.floor((dayNow-1)/7)*7+1;
+  var startIndex=(weekStart-1)*4;
+  var topics=SYLLABUS_TOPICS.slice(startIndex,startIndex+28);
+  var joined=st.profile&&st.profile.created_at?new Date(st.profile.created_at):new Date();
   for(var day=0;day<7;day++){
     var d=document.createElement('div');
-    var b=document.createElement('b');b.textContent=names[day];
+    var dayNo=weekStart+day;
+    var date=new Date(joined.getFullYear(),joined.getMonth(),joined.getDate()+dayNo-1);
+    var b=document.createElement('b');b.textContent='Day '+dayNo+' · '+date.toLocaleDateString('en-IN',{day:'numeric',month:'short'});
     d.appendChild(b);
-    var chosen=topics.slice(start,start+4);start+=4;
+    var chosen=topics.slice(day*4,day*4+4);
     var lines=chosen.map(function(x){return x.subject+' · '+x.chapter+' / '+x.title});
-    if(!lines.length)lines=['Syllabus revision'];
+    if(!lines.length)lines=['Syllabus revision / mock review'];
     d.appendChild(document.createTextNode(lines.join(' • ')));
     if(chosen.length&&chosen.every(function(x){return x.completed})){
-      d.classList.add('hit');
-      d.appendChild(document.createTextNode(' ✓'));
+      d.classList.add('hit');d.appendChild(document.createTextNode(' ✓'));
     }
     wk.appendChild(d);
   }
