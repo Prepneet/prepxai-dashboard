@@ -1014,17 +1014,24 @@ async function loadTasks(){
       var del=await sb.from('study_tasks').delete().in('id',oldIds).eq('user_id',st.profile.id);
       if(!del.error)allTasks=allTasks.filter(function(x){return x.task_date!==t});
     }
-    // 3. Create today's topic-level plan once.
-    if(!allTasks.some(function(x){return x.task_date===t})){
-      var rows=planFor();
+    // 3. Top up today's plan to four tasks without replacing completed or rescheduled work.
+    todayRows=allTasks.filter(function(x){return x.task_date===t});
+    if(todayRows.length<4){
+      var existingTitles=new Set(todayRows.map(function(x){return x.topic}));
+      var rows=planFor().filter(function(x){return !existingTitles.has(x.topic)});
       if(missed.length){
         var last=missed[missed.length-1];
-        rows.unshift({subject:last.subject,topic:'Catch up: '+last.topic,description:'You missed this earlier. Do it first.',task_type:'revision',duration_min:30,scheduled_time:clock(6*60),position:-1});
+        rows.unshift({node_id:last.node_id||null,subject:last.subject,topic:'Catch up: '+last.topic,description:'You missed this earlier. Do it first.',task_type:'revision',duration_min:30,scheduled_time:clock(6*60),position:-1});
       }
-      var ins=rows.map(function(x,i){return Object.assign({user_id:st.profile.id,task_date:t,status:'pending'},x,{position:i})});
-      var ir=await sb.from('study_tasks').insert(ins).select();
-      if(ir.error){toast('Could not create today\'s tasks: '+ir.error.message)}
-      else allTasks=allTasks.concat(ir.data||[]);
+      var needed=4-todayRows.length;
+      rows=rows.slice(0,needed);
+      var nextPosition=todayRows.reduce(function(m,x){return Math.max(m,Number(x.position||0)+1)},0);
+      var ins=rows.map(function(x,i){return Object.assign({user_id:st.profile.id,task_date:t,status:'pending'},x,{position:nextPosition+i})});
+      if(ins.length){
+        var ir=await sb.from('study_tasks').insert(ins).select();
+        if(ir.error){toast('Could not complete today\'s plan: '+ir.error.message)}
+        else allTasks=allTasks.concat(ir.data||[]);
+      }
     }
   }
   renderTasks();
@@ -1119,8 +1126,8 @@ async function rescheduleTask(id){
   t.status='rescheduled';
   if(ins.data) allTasks=allTasks.concat(ins.data);
   delete running[id];
-  toast('Moved to tomorrow.');
-  renderTasks();renderStreak();renderHomeProgress();
+  toast('Moved to tomorrow. Tomorrow’s plan will fill the remaining study blocks automatically.');
+  renderTasks();renderStreak();renderHomeProgress();renderDayRoutine();
 }
 
 async function loadLeaderboard(){
