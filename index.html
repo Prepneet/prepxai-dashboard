@@ -750,9 +750,15 @@ function setupExam(){
   if(!info) info=P.examDateFor(ex.key,y);
   if(!info||P.daysLeft(info.date)<0) info=P.examDateFor(ex.key,y+1);
   st.ex=ex;
+  $('examName').textContent=ex.label;
+  if(!info||!info.date){
+    st.days=365;st.examDate='';
+    $('examMeta').textContent='Official exam date is not available yet. Add the date in Profile when the authority announces it.';
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(function(id){$(id).textContent='--'});
+    return;
+  }
   st.days=P.daysLeft(info.date);
   st.examDate=info.date;
-  $('examName').textContent=ex.label;
   $('examMeta').textContent=info.date+'  ·  '+info.status.toUpperCase()+'  —  '+info.note;
   startTimer(info.date);
 }
@@ -772,6 +778,12 @@ function startTimer(iso){
 }
 
 /* ---------- plan: hours summary ---------- */
+function targetStudyHours(){
+  var chosen=Number(st.profile&&st.profile.daily_hours);
+  if(chosen>=1&&chosen<=14)return chosen;
+  if(!st.ex)return 4;
+  return P.recommendHours(st.ex.key,st.stage,st.days||365).mid;
+}
 function renderPlan(){
   if(!st.ex){
     $('hours').textContent='—';
@@ -779,9 +791,10 @@ function renderPlan(){
     $('planNote2').textContent='';
     return;
   }
-  var h=P.recommendHours(st.ex.key,st.stage,st.days);
-  $('hours').textContent=h.low+'–'+h.high+' hours a day';
-  $('planNote').textContent=st.days+' days left. Weak subjects get extra time.';
+  var h=P.recommendHours(st.ex.key,st.stage,st.days||365);
+  var chosen=Number(st.profile&&st.profile.daily_hours);
+  $('hours').textContent=chosen>=1&&chosen<=14?chosen+' hours a day (your target)':h.low+'–'+h.high+' hours a day';
+  $('planNote').textContent=st.examDate?st.days+' days left. Weak subjects get extra time.':'Exam date not announced. Your plan uses your daily study target and syllabus progress.';
   $('planNote2').textContent='Day '+(st.dayNumber||dayNumber())+' · Aaj ke subject, chapter aur topic tasks neeche hain. Complete karte hi tick/strike-through ho jayega.';
 }
 
@@ -880,7 +893,7 @@ function todayTasks(){
 var SYLLABUS_TOPICS=[];
 var SYLLABUS_EXAM_ID=null;
 var EXAM_SLUG_MAP={
-  'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','JEE Main':'jee-main',
+  'BPSC':'bpsc','Railways (RRB)':'rrb-ntpc','Bihar Police':'bihar-police','JEE Main':'jee-main',
   'JEE Advanced':'jee-main','NEET UG':'neet-ug','CUET UG':'cuet-ug',
   'SSC Exams':'ssc-cgl','UPSC CSE':'upsc-cse','NDA / CDS':'nda',
   'Banking Exams':'ibps-sbi-banking'
@@ -919,7 +932,7 @@ async function loadSyllabusForStudent(){
 }
 function planFor(){
   var h=P.recommendHours(st.ex.key,st.stage,st.days);
-  var total=Math.round(h.mid*60/5)*5;
+  var total=Math.round(targetStudyHours()*60/5)*5;
   var dayStart=Math.max(0,((st.dayNumber||dayNumber())-1)*4);
   var dayWindow=SYLLABUS_TOPICS.slice(dayStart,dayStart+4);
   var chosen=dayWindow.filter(function(x){return !x.completed});
